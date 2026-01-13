@@ -3,13 +3,17 @@ on:
   push:
     branches: ["main"]
   workflow_dispatch:
+
+# This section prevents the "Multiple Artifacts" error by canceling old runs
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
 permissions:
   contents: read
   pages: write
   id-token: write
-concurrency:
-  group: "pages"
-  cancel-in-progress: true # This kills any "Double" runs automatically
+
 jobs:
   deploy:
     environment:
@@ -19,12 +23,17 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '.' # Uploads the whole repo including the db folder
+          # This ensures ONLY the current files are packaged
+          path: '.'
+          if-no-files-found: error
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
