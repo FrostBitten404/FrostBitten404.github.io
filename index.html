@@ -3,40 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FROST | Minimal Cloud</title>
+    <title>FROST | Database</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;700&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #050508; --primary: #00f3ff; --card-bg: #0a0a15; --text: #e0e0ff; --dim: rgba(224, 224, 255, 0.2); }
+        :root { --bg: #030305; --primary: #00f3ff; --card-bg: #080810; --text: #e0e0ff; --dim: rgba(224, 224, 255, 0.2); }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
-        body { background: var(--bg); color: var(--text); min-height: 100vh; padding: 10vh 20px; }
-        .container { max-width: 800px; margin: 0 auto; }
+        body { background: var(--bg); color: var(--text); min-height: 100vh; padding: 10vh 20px; overflow-x: hidden; }
+        .container { max-width: 900px; margin: 0 auto; }
         header { margin-bottom: 60px; text-align: center; }
-        .logo { font-size: 1.2rem; font-weight: 300; letter-spacing: 15px; text-transform: uppercase; opacity: 0.5; }
+        .logo { font-size: 1rem; font-weight: 300; letter-spacing: 12px; text-transform: uppercase; opacity: 0.4; }
 
-        /* Grid Hover Effects */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 25px; }
-        .grid:hover .card:not(:hover) { opacity: 0.15; filter: grayscale(1) blur(2px); }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 30px; }
+        .grid:hover .card:not(:hover) { opacity: 0.1; filter: blur(4px); }
 
         .card {
-            background: var(--card-bg); padding: 40px; border-radius: 2px; cursor: pointer;
+            background: var(--card-bg); padding: 40px 30px; border-radius: 2px; cursor: pointer;
             border: 1px solid rgba(255, 255, 255, 0.02); position: relative; text-decoration: none; color: inherit;
         }
-        /* Blue Glow Hover */
-        .card:hover { border-color: var(--primary); box-shadow: 0 0 50px rgba(0, 243, 255, 0.1); transform: translateY(-5px); }
-        .card-title { font-size: 0.8rem; font-weight: 700; margin-bottom: 10px; color: #fff; letter-spacing: 2px; text-transform: uppercase; }
-        .card-desc { font-size: 0.7rem; color: var(--dim); line-height: 1.8; }
+        .card:hover { border-color: var(--primary); box-shadow: 0 0 40px rgba(0, 243, 255, 0.1); transform: translateY(-5px); }
+        .card-title { font-size: 0.85rem; font-weight: 700; margin-bottom: 10px; color: #fff; letter-spacing: 2px; text-transform: uppercase; }
+        .card-desc { font-size: 0.75rem; color: var(--dim); line-height: 1.6; }
 
-        /* Hidden Admin */
         #adminBtn { position: fixed; bottom: 20px; right: 20px; width: 40px; height: 40px; opacity: 0; cursor: pointer; color: var(--primary); font-size: 0.7rem; display: flex; align-items: center; justify-content: center; z-index: 1000; }
         #adminBtn:hover { opacity: 1; }
 
         #adminPanel { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 2000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
-        .admin-box { width: 100%; max-width: 350px; display: flex; flex-direction: column; gap: 15px; }
+        .admin-box { width: 100%; max-width: 380px; display: flex; flex-direction: column; gap: 12px; }
         input, textarea { background: #0c0c15; border: 1px solid #1a1a25; padding: 15px; border-radius: 4px; color: #fff; outline: none; font-size: 0.8rem; }
-        input:focus { border-color: var(--primary); }
         .btn { background: var(--primary); color: #000; border: none; padding: 15px; border-radius: 4px; font-weight: 700; cursor: pointer; }
-        textarea { height: 150px; font-family: monospace; font-size: 0.65rem; }
+        textarea { height: 120px; font-family: monospace; font-size: 0.65rem; margin-top: 5px; }
     </style>
 </head>
 <body>
@@ -50,26 +46,28 @@
 
     <div id="adminPanel">
         <div class="admin-box" id="loginBox">
-            <h2 style="letter-spacing: 5px; font-size: 1rem; margin-bottom: 10px;">AUTH</h2>
+            <h2 style="letter-spacing: 5px; font-size: 1rem; margin-bottom: 10px; text-align: center;">PROTECTED</h2>
             <input type="text" id="user" placeholder="User">
             <input type="password" id="pass" placeholder="Pass">
-            <button class="btn" onclick="login()">ENTER</button>
+            <button class="btn" onclick="login()">SIGN IN</button>
             <button onclick="closeAdmin()" style="background:none; border:none; color:#333; cursor:pointer;">Exit</button>
         </div>
 
         <div class="admin-box" id="actions" style="display:none;">
-            <h2 style="letter-spacing: 5px; font-size: 1rem;">SYNC</h2>
+            <h2 style="letter-spacing: 5px; font-size: 1rem; text-align: center;">CLOUD SYNC</h2>
             <input type="text" id="newT" placeholder="Title">
             <input type="text" id="newU" placeholder="URL">
             <input type="text" id="newD" placeholder="Description">
-            <button class="btn" onclick="gen()">GENERATE JSON</button>
+            <button class="btn" onclick="gen()">GENERATE & SYNC</button>
             <textarea id="out" readonly></textarea>
-            <button onclick="location.reload()" style="background:none; border:none; color:red; cursor:pointer;">Logout</button>
+            <button class="btn" style="background:#222; color:#fff;" onclick="copyJSON()">COPY TO CLIPBOARD</button>
+            <button onclick="location.reload()" style="background:none; border:none; color:red; cursor:pointer; margin-top: 10px;">Logout</button>
         </div>
     </div>
 
     <script>
-        const DATA_URL = `https://raw.githubusercontent.com/FrostBitten404/FrostBitten404.github.io/main/db/links.json?nocache=${Date.now()}`;
+        const REPO = "FrostBitten404/FrostBitten404.github.io";
+        const DATA_URL = `https://raw.githubusercontent.com/${REPO}/main/db/links.json?v=${Date.now()}`;
         let links = [];
 
         async function sync() {
@@ -98,8 +96,14 @@
             if(t && u) {
                 links.push({title: t, url: u, desc: d});
                 draw();
-                alert("JSON Generated. Update db/links.json on GitHub.");
             }
+        }
+
+        function copyJSON() {
+            const area = document.getElementById('out');
+            area.select();
+            document.execCommand('copy');
+            alert("JSON Copied! Now update db/links.json on GitHub.");
         }
 
         function login() {
