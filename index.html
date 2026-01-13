@@ -3,184 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FROST | Shared Database</title>
+    <title>FROST | Cloud Sync</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --frost-primary: #00f3ff;
-            --frost-bg: #050510;
-            --frost-card-bg: rgba(16, 16, 37, 0.8);
-            --frost-border: rgba(0, 243, 255, 0.3);
-            --frost-text: #e0e0ff;
+            --bg: #050508;
+            --primary: #00f3ff;
+            --card-bg: #0a0a15;
+            --text: #e0e0ff;
+            --dim: rgba(224, 224, 255, 0.4);
         }
-        
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
-        body { background-color: var(--frost-bg); color: var(--frost-text); min-height: 100vh; overflow-x: hidden; }
-        #particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
-        
-        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
-        
-        header { 
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid var(--frost-border);
-        }
-        
-        .logo { font-size: 2rem; font-weight: 800; color: var(--frost-primary); display: flex; align-items: center; gap: 12px; }
-        
-        .controls { display: flex; gap: 15px; margin-bottom: 30px; }
-        input, select { 
-            background: rgba(255,255,255,0.05); border: 1px solid var(--frost-border); 
-            padding: 12px; border-radius: 8px; color: white; outline: none; 
-        }
-        #searchInput { flex: 1; }
 
-        .btn-add { background: var(--frost-primary); color: #000; border: none; padding: 0 20px; border-radius: 8px; font-weight: 700; cursor: pointer; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); }
+        body { background: var(--bg); color: var(--text); min-height: 100vh; padding: 60px 20px; }
+        .container { max-width: 900px; margin: 0 auto; }
+        header { margin-bottom: 80px; text-align: center; }
+        .logo { font-size: 1.5rem; font-weight: 700; letter-spacing: 8px; text-transform: uppercase; opacity: 0.8; }
 
-        .link-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
-        
-        .card { 
-            background: var(--frost-card-bg); border: 1px solid var(--frost-border); 
-            border-radius: 16px; padding: 20px; backdrop-filter: blur(10px); 
-            transition: 0.3s; position: relative;
-        }
-        .card:hover { transform: translateY(-5px); border-color: var(--frost-primary); }
-        
-        .card-tag { font-size: 0.7rem; color: var(--frost-primary); text-transform: uppercase; letter-spacing: 1px; }
-        .card-title { font-size: 1.3rem; margin: 10px 0; font-weight: 700; }
-        .card-desc { color: #8a8ab5; font-size: 0.9rem; margin-bottom: 20px; min-height: 40px; }
-        
-        .card-actions { display: flex; gap: 10px; }
-        .btn-card { flex: 1; padding: 10px; text-align: center; text-decoration: none; border-radius: 6px; font-weight: 700; font-size: 0.8rem; }
-        .btn-open { background: var(--frost-primary); color: #000; }
-        .btn-del { background: rgba(255, 50, 50, 0.2); color: #ff5050; border: 1px solid #ff5050; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 30px; }
+        .grid:hover .card:not(:hover) { opacity: 0.3; filter: blur(2px); transform: scale(0.95); }
 
-        /* Modal Styles */
-        #modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8); z-index: 100; align-items: center; justify-content: center;
+        .card {
+            background: var(--card-bg); padding: 30px; border-radius: 4px; cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.03); position: relative; text-decoration: none; color: inherit;
         }
-        .modal-content { 
-            background: #0a0a1a; padding: 30px; border-radius: 20px; border: 1px solid var(--frost-primary);
-            width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 15px;
-        }
+        .card:hover { border-color: var(--primary); box-shadow: 0 0 30px rgba(0, 243, 255, 0.15); transform: translateY(-5px); }
+        .card-title { font-size: 1rem; font-weight: 700; margin-bottom: 8px; color: #fff; }
+        .card-desc { font-size: 0.8rem; color: var(--dim); line-height: 1.6; }
+
+        #adminTrigger { position: fixed; bottom: 20px; right: 20px; width: 40px; height: 40px; opacity: 0; cursor: pointer; color: var(--primary); font-weight: 700; display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        #adminTrigger:hover { opacity: 1; }
+
+        #adminPanel { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 2000; display: none; flex-direction: column; align-items: center; justify-content: center; }
+        .login-box, .admin-controls { width: 350px; display: flex; flex-direction: column; gap: 15px; text-align: center; }
+        input, textarea { background: #111; border: 1px solid #222; padding: 12px; border-radius: 4px; color: #fff; outline: none; width: 100%; }
+        .btn { background: var(--primary); color: #000; border: none; padding: 12px; border-radius: 4px; font-weight: 700; cursor: pointer; }
+        textarea { height: 150px; font-family: 'Roboto Mono', monospace; font-size: 0.7rem; }
     </style>
 </head>
 <body>
 
-    <canvas id="particles"></canvas>
-
-    <div id="modal">
-        <div class="modal-content">
-            <h3>Add New Resource</h3>
-            <input type="text" id="linkTitle" placeholder="Title (e.g. Roblox Exec)">
-            <input type="text" id="linkUrl" placeholder="URL (https://...)">
-            <input type="text" id="linkDesc" placeholder="Description">
-            <select id="linkType">
-                <option value="APP">App</option>
-                <option value="GAME">Game</option>
-                <option value="TOOL">Tool</option>
-            </select>
-            <button class="btn-add" style="height: 45px;" onclick="saveLink()">ADD TO DATABASE</button>
-            <button onclick="toggleModal()" style="background:none; color:white; border:none; cursor:pointer;">Cancel</button>
-        </div>
+    <div class="container">
+        <header><div class="logo">Frost</div></header>
+        <div class="grid" id="mainGrid"></div>
     </div>
 
-    <div class="container">
-        <header>
-            <div class="logo"><i class="fas fa-snowflake"></i> FROST DB</div>
-            <button class="btn-add" onclick="toggleModal()">+ ADD LINK</button>
-        </header>
+    <div id="adminTrigger" onclick="showLogin()">A</div>
 
-        <div class="controls">
-            <input type="text" id="searchInput" placeholder="Search the squad vault...">
+    <div id="adminPanel">
+        <div class="login-box" id="loginBox">
+            <h2>Access Required</h2>
+            <input type="text" id="user" placeholder="Username">
+            <input type="password" id="pass" placeholder="Password">
+            <button class="btn" onclick="checkAuth()">LOGIN</button>
+            <button onclick="closeAdmin()" style="color:#555; background:none; border:none; margin-top:10px; cursor:pointer;">Exit</button>
         </div>
 
-        <div class="link-grid" id="linkGrid">
-            </div>
+        <div class="admin-controls" id="adminActions" style="display:none;">
+            <h2>Admin Cloud Sync</h2>
+            <p style="color:var(--dim); font-size:0.8rem;">Add links below, then copy the generated code to your GitHub <b>db/links.json</b> file.</p>
+            <input type="text" id="newTitle" placeholder="Title">
+            <input type="text" id="newUrl" placeholder="URL">
+            <input type="text" id="newDesc" placeholder="Description">
+            <button class="btn" onclick="generateJSON()">ADD & GENERATE JSON</button>
+            <hr style="border:0; border-top:1px solid #222; margin:10px 0;">
+            <p style="font-size:0.7rem;">Current File Content (Copy This):</p>
+            <textarea id="outputJson" readonly></textarea>
+            <button onclick="logout()" style="color:red; background:none; border:none; cursor:pointer;">Logout</button>
+        </div>
     </div>
 
     <script>
-        let links = JSON.parse(localStorage.getItem('frost_links')) || [
-            { title: "GitHub Repo", url: "#", desc: "Manage your source code here.", type: "SYSTEM" }
-        ];
+        // REPLACE WITH YOUR REPO NAME
+        const DB_URL = "https://raw.githubusercontent.com/FrostBitten404/FrostBitten404.github.io/main/db/links.json";
+        let db = [];
 
-        function renderLinks() {
-            const grid = document.getElementById('linkGrid');
-            const search = document.getElementById('searchInput').value.toLowerCase();
-            
-            grid.innerHTML = '';
-            links.filter(l => l.title.toLowerCase().includes(search)).forEach((link, index) => {
-                grid.innerHTML += `
-                    <div class="card">
-                        <span class="card-tag">${link.type}</span>
-                        <div class="card-title">${link.title}</div>
-                        <p class="card-desc">${link.desc}</p>
-                        <div class="card-actions">
-                            <a href="${link.url}" target="_blank" class="btn-card btn-open">OPEN</a>
-                            <button onclick="deleteLink(${index})" class="btn-card btn-del">DELETE</button>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        function saveLink() {
-            const title = document.getElementById('linkTitle').value;
-            const url = document.getElementById('linkUrl').value;
-            const desc = document.getElementById('linkDesc').value;
-            const type = document.getElementById('linkType').value;
-
-            if(title && url) {
-                links.push({ title, url, desc, type });
-                localStorage.setItem('frost_links', JSON.stringify(links));
-                toggleModal();
-                renderLinks();
-                // Clear fields
-                document.getElementById('linkTitle').value = '';
-                document.getElementById('linkUrl').value = '';
+        async function loadCloudData() {
+            try {
+                const response = await fetch(DB_URL);
+                db = await response.json();
+                render();
+            } catch (e) {
+                console.error("Cloud DB not found, using local fallback");
+                db = JSON.parse(localStorage.getItem('frost_db')) || [];
+                render();
             }
         }
 
-        function deleteLink(index) {
-            links.splice(index, 1);
-            localStorage.setItem('frost_links', JSON.stringify(links));
-            renderLinks();
+        function render() {
+            const grid = document.getElementById('mainGrid');
+            grid.innerHTML = db.map(item => `
+                <a href="${item.url}" class="card" target="_blank">
+                    <div class="card-title">${item.title}</div>
+                    <p class="card-desc">${item.desc}</p>
+                </a>
+            `).join('');
+            document.getElementById('outputJson').value = JSON.stringify(db, null, 2);
         }
 
-        function toggleModal() {
-            const m = document.getElementById('modal');
-            m.style.display = m.style.display === 'flex' ? 'none' : 'flex';
+        function generateJSON() {
+            const title = document.getElementById('newTitle').value;
+            const url = document.getElementById('newUrl').value;
+            const desc = document.getElementById('newDesc').value;
+            if(title && url) {
+                db.push({title, url, desc});
+                render();
+                alert("Updated JSON generated. Copy it from the box below and paste it into GitHub.");
+            }
         }
 
-        document.getElementById('searchInput').addEventListener('input', renderLinks);
+        function checkAuth() {
+            if(document.getElementById('user').value === "Admin" && document.getElementById('pass').value === "YM2012") {
+                document.getElementById('loginBox').style.display = 'none';
+                document.getElementById('adminActions').style.display = 'block';
+            }
+        }
 
-        // Particle logic
-        const canvas = document.getElementById('particles');
-        const ctx = canvas.getContext('2d');
-        let width, height, pArr = [];
-        function init() {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-            pArr = Array.from({length: 40}, () => ({
-                x: Math.random() * width, y: Math.random() * height,
-                vX: (Math.random() - 0.5) * 0.5, vY: (Math.random() - 0.5) * 0.5
-            }));
-        }
-        function animate() {
-            ctx.clearRect(0, 0, width, height);
-            ctx.fillStyle = '#00f3ff';
-            pArr.forEach(p => {
-                p.x += p.vX; p.y += p.vY;
-                if(p.x < 0 || p.x > width) p.vX *= -1;
-                if(p.y < 0 || p.y > height) p.vY *= -1;
-                ctx.beginPath(); ctx.arc(p.x, p.y, 1, 0, Math.PI*2); ctx.fill();
-            });
-            requestAnimationFrame(animate);
-        }
-        window.onresize = init;
-        init(); animate();
-        renderLinks();
+        function showLogin() { document.getElementById('adminPanel').style.display = 'flex'; }
+        function closeAdmin() { document.getElementById('adminPanel').style.display = 'none'; }
+        function logout() { closeAdmin(); }
+
+        loadCloudData();
     </script>
 </body>
 </html>
