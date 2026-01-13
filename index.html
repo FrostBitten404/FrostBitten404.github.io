@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FROST | Link Database</title>
+    <title>FROST | Shared Database</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&display=swap" rel="stylesheet">
     <style>
@@ -14,44 +14,163 @@
             --frost-border: rgba(0, 243, 255, 0.3);
             --frost-text: #e0e0ff;
         }
+        
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
         body { background-color: var(--frost-bg); color: var(--frost-text); min-height: 100vh; overflow-x: hidden; }
-        #particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+        #particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+        
         .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
-        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; border-bottom: 1px solid var(--frost-border); padding-bottom: 20px; }
+        
+        header { 
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid var(--frost-border);
+        }
+        
         .logo { font-size: 2rem; font-weight: 800; color: var(--frost-primary); display: flex; align-items: center; gap: 12px; }
-        .card { background: var(--frost-card-bg); border: 1px solid var(--frost-border); border-radius: 16px; padding: 30px; backdrop-filter: blur(10px); text-align: center; max-width: 500px; margin: 0 auto; }
-        .btn-visit { display: block; width: 100%; padding: 15px; background: var(--frost-primary); color: #000; text-decoration: none; border-radius: 8px; font-weight: 700; margin-top: 20px; transition: 0.3s; }
-        .btn-visit:hover { box-shadow: 0 0 20px var(--frost-primary); transform: scale(1.02); }
+        
+        .controls { display: flex; gap: 15px; margin-bottom: 30px; }
+        input, select { 
+            background: rgba(255,255,255,0.05); border: 1px solid var(--frost-border); 
+            padding: 12px; border-radius: 8px; color: white; outline: none; 
+        }
+        #searchInput { flex: 1; }
+
+        .btn-add { background: var(--frost-primary); color: #000; border: none; padding: 0 20px; border-radius: 8px; font-weight: 700; cursor: pointer; }
+
+        .link-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        
+        .card { 
+            background: var(--frost-card-bg); border: 1px solid var(--frost-border); 
+            border-radius: 16px; padding: 20px; backdrop-filter: blur(10px); 
+            transition: 0.3s; position: relative;
+        }
+        .card:hover { transform: translateY(-5px); border-color: var(--frost-primary); }
+        
+        .card-tag { font-size: 0.7rem; color: var(--frost-primary); text-transform: uppercase; letter-spacing: 1px; }
+        .card-title { font-size: 1.3rem; margin: 10px 0; font-weight: 700; }
+        .card-desc { color: #8a8ab5; font-size: 0.9rem; margin-bottom: 20px; min-height: 40px; }
+        
+        .card-actions { display: flex; gap: 10px; }
+        .btn-card { flex: 1; padding: 10px; text-align: center; text-decoration: none; border-radius: 6px; font-weight: 700; font-size: 0.8rem; }
+        .btn-open { background: var(--frost-primary); color: #000; }
+        .btn-del { background: rgba(255, 50, 50, 0.2); color: #ff5050; border: 1px solid #ff5050; }
+
+        /* Modal Styles */
+        #modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 100; align-items: center; justify-content: center;
+        }
+        .modal-content { 
+            background: #0a0a1a; padding: 30px; border-radius: 20px; border: 1px solid var(--frost-primary);
+            width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 15px;
+        }
     </style>
 </head>
 <body>
+
     <canvas id="particles"></canvas>
-    <div class="container">
-        <header><div class="logo"><i class="fas fa-snowflake"></i> FROST DB</div></header>
-        <div class="card">
-            <span style="color:var(--frost-primary); font-size: 0.8rem; letter-spacing: 2px;">SYSTEM ONLINE</span>
-            <h1 style="margin: 15px 0;">Database Initialized</h1>
-            <p style="color: #8a8ab5;">The manual deployment workflow is now managing your site. Any changes you commit to this repository will reflect live within seconds.</p>
-            <a href="https://github.com/FrostBitten404/FrostBitten404.github.io" class="btn-visit">MANAGE FILES</a>
+
+    <div id="modal">
+        <div class="modal-content">
+            <h3>Add New Resource</h3>
+            <input type="text" id="linkTitle" placeholder="Title (e.g. Roblox Exec)">
+            <input type="text" id="linkUrl" placeholder="URL (https://...)">
+            <input type="text" id="linkDesc" placeholder="Description">
+            <select id="linkType">
+                <option value="APP">App</option>
+                <option value="GAME">Game</option>
+                <option value="TOOL">Tool</option>
+            </select>
+            <button class="btn-add" style="height: 45px;" onclick="saveLink()">ADD TO DATABASE</button>
+            <button onclick="toggleModal()" style="background:none; color:white; border:none; cursor:pointer;">Cancel</button>
         </div>
     </div>
+
+    <div class="container">
+        <header>
+            <div class="logo"><i class="fas fa-snowflake"></i> FROST DB</div>
+            <button class="btn-add" onclick="toggleModal()">+ ADD LINK</button>
+        </header>
+
+        <div class="controls">
+            <input type="text" id="searchInput" placeholder="Search the squad vault...">
+        </div>
+
+        <div class="link-grid" id="linkGrid">
+            </div>
+    </div>
+
     <script>
+        let links = JSON.parse(localStorage.getItem('frost_links')) || [
+            { title: "GitHub Repo", url: "#", desc: "Manage your source code here.", type: "SYSTEM" }
+        ];
+
+        function renderLinks() {
+            const grid = document.getElementById('linkGrid');
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            
+            grid.innerHTML = '';
+            links.filter(l => l.title.toLowerCase().includes(search)).forEach((link, index) => {
+                grid.innerHTML += `
+                    <div class="card">
+                        <span class="card-tag">${link.type}</span>
+                        <div class="card-title">${link.title}</div>
+                        <p class="card-desc">${link.desc}</p>
+                        <div class="card-actions">
+                            <a href="${link.url}" target="_blank" class="btn-card btn-open">OPEN</a>
+                            <button onclick="deleteLink(${index})" class="btn-card btn-del">DELETE</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function saveLink() {
+            const title = document.getElementById('linkTitle').value;
+            const url = document.getElementById('linkUrl').value;
+            const desc = document.getElementById('linkDesc').value;
+            const type = document.getElementById('linkType').value;
+
+            if(title && url) {
+                links.push({ title, url, desc, type });
+                localStorage.setItem('frost_links', JSON.stringify(links));
+                toggleModal();
+                renderLinks();
+                // Clear fields
+                document.getElementById('linkTitle').value = '';
+                document.getElementById('linkUrl').value = '';
+            }
+        }
+
+        function deleteLink(index) {
+            links.splice(index, 1);
+            localStorage.setItem('frost_links', JSON.stringify(links));
+            renderLinks();
+        }
+
+        function toggleModal() {
+            const m = document.getElementById('modal');
+            m.style.display = m.style.display === 'flex' ? 'none' : 'flex';
+        }
+
+        document.getElementById('searchInput').addEventListener('input', renderLinks);
+
+        // Particle logic
         const canvas = document.getElementById('particles');
         const ctx = canvas.getContext('2d');
-        let width, height, particles = [];
+        let width, height, pArr = [];
         function init() {
             width = canvas.width = window.innerWidth;
             height = canvas.height = window.innerHeight;
-            particles = Array.from({length: 40}, () => ({
+            pArr = Array.from({length: 40}, () => ({
                 x: Math.random() * width, y: Math.random() * height,
-                vX: (Math.random() - 0.5) * 0.3, vY: (Math.random() - 0.5) * 0.3
+                vX: (Math.random() - 0.5) * 0.5, vY: (Math.random() - 0.5) * 0.5
             }));
         }
         function animate() {
             ctx.clearRect(0, 0, width, height);
             ctx.fillStyle = '#00f3ff';
-            particles.forEach(p => {
+            pArr.forEach(p => {
                 p.x += p.vX; p.y += p.vY;
                 if(p.x < 0 || p.x > width) p.vX *= -1;
                 if(p.y < 0 || p.y > height) p.vY *= -1;
@@ -61,6 +180,7 @@
         }
         window.onresize = init;
         init(); animate();
+        renderLinks();
     </script>
 </body>
 </html>
