@@ -3,43 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FROST | Cloud Sync</title>
+    <title>FROST | Cloud</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #050508;
+            --bg: #030305;
             --primary: #00f3ff;
-            --card-bg: #0a0a15;
+            --card-bg: #080810;
             --text: #e0e0ff;
-            --dim: rgba(224, 224, 255, 0.4);
+            --dim: rgba(224, 224, 255, 0.3);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); }
-        body { background: var(--bg); color: var(--text); min-height: 100vh; padding: 60px 20px; }
-        .container { max-width: 900px; margin: 0 auto; }
-        header { margin-bottom: 80px; text-align: center; }
-        .logo { font-size: 1.5rem; font-weight: 700; letter-spacing: 8px; text-transform: uppercase; opacity: 0.8; }
+        body { background: var(--bg); color: var(--text); min-height: 100vh; padding: 80px 20px; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        
+        header { margin-bottom: 100px; text-align: center; }
+        .logo { font-size: 1.2rem; font-weight: 300; letter-spacing: 12px; text-transform: uppercase; opacity: 0.6; }
 
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 30px; }
-        .grid:hover .card:not(:hover) { opacity: 0.3; filter: blur(2px); transform: scale(0.95); }
+        /* Hover Fade Logic */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 40px; }
+        .grid:hover .card:not(:hover) { opacity: 0.2; filter: blur(3px); transform: scale(0.96); }
 
         .card {
-            background: var(--card-bg); padding: 30px; border-radius: 4px; cursor: pointer;
-            border: 1px solid rgba(255, 255, 255, 0.03); position: relative; text-decoration: none; color: inherit;
+            background: var(--card-bg); padding: 40px 30px; border-radius: 2px; cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.02); position: relative; text-decoration: none; color: inherit;
         }
-        .card:hover { border-color: var(--primary); box-shadow: 0 0 30px rgba(0, 243, 255, 0.15); transform: translateY(-5px); }
-        .card-title { font-size: 1rem; font-weight: 700; margin-bottom: 8px; color: #fff; }
-        .card-desc { font-size: 0.8rem; color: var(--dim); line-height: 1.6; }
+        /* Blue Glow on Hover */
+        .card:hover { border-color: var(--primary); box-shadow: 0 0 40px rgba(0, 243, 255, 0.1); transform: translateY(-2px); }
+        .card-title { font-size: 0.9rem; font-weight: 700; margin-bottom: 12px; color: #fff; text-transform: uppercase; letter-spacing: 1px; }
+        .card-desc { font-size: 0.75rem; color: var(--dim); line-height: 1.8; }
 
-        #adminTrigger { position: fixed; bottom: 20px; right: 20px; width: 40px; height: 40px; opacity: 0; cursor: pointer; color: var(--primary); font-weight: 700; display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        /* Hidden Admin Icon */
+        #adminTrigger { position: fixed; bottom: 20px; right: 20px; width: 40px; height: 40px; opacity: 0; cursor: pointer; color: var(--primary); font-size: 0.7rem; display: flex; align-items: center; justify-content: center; z-index: 1000; }
         #adminTrigger:hover { opacity: 1; }
 
-        #adminPanel { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 2000; display: none; flex-direction: column; align-items: center; justify-content: center; }
-        .login-box, .admin-controls { width: 350px; display: flex; flex-direction: column; gap: 15px; text-align: center; }
-        input, textarea { background: #111; border: 1px solid #222; padding: 12px; border-radius: 4px; color: #fff; outline: none; width: 100%; }
-        .btn { background: var(--primary); color: #000; border: none; padding: 12px; border-radius: 4px; font-weight: 700; cursor: pointer; }
-        textarea { height: 150px; font-family: 'Roboto Mono', monospace; font-size: 0.7rem; }
+        /* Admin Overlay */
+        #adminPanel { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 2000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+        .admin-box { width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 15px; }
+        input, textarea { background: #0c0c15; border: 1px solid #1a1a25; padding: 15px; border-radius: 4px; color: #fff; outline: none; width: 100%; font-size: 0.8rem; }
+        input:focus { border-color: var(--primary); }
+        .btn { background: var(--primary); color: #000; border: none; padding: 15px; border-radius: 4px; font-weight: 700; cursor: pointer; font-size: 0.8rem; }
+        textarea { height: 200px; font-family: monospace; font-size: 0.7rem; margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -49,45 +55,44 @@
         <div class="grid" id="mainGrid"></div>
     </div>
 
-    <div id="adminTrigger" onclick="showLogin()">A</div>
+    <div id="adminTrigger" onclick="showAdmin()">A</div>
 
     <div id="adminPanel">
-        <div class="login-box" id="loginBox">
-            <h2>Access Required</h2>
+        <div class="admin-box" id="loginBox">
+            <h2 style="margin-bottom: 20px; letter-spacing: 2px;">AUTH REQUIRED</h2>
             <input type="text" id="user" placeholder="Username">
             <input type="password" id="pass" placeholder="Password">
-            <button class="btn" onclick="checkAuth()">LOGIN</button>
-            <button onclick="closeAdmin()" style="color:#555; background:none; border:none; margin-top:10px; cursor:pointer;">Exit</button>
+            <button class="btn" onclick="checkAuth()">SIGN IN</button>
+            <button onclick="closeAdmin()" style="background:none; border:none; color:#444; margin-top:10px; cursor:pointer;">Exit</button>
         </div>
 
-        <div class="admin-controls" id="adminActions" style="display:none;">
-            <h2>Admin Cloud Sync</h2>
-            <p style="color:var(--dim); font-size:0.8rem;">Add links below, then copy the generated code to your GitHub <b>db/links.json</b> file.</p>
+        <div class="admin-box" id="adminActions" style="display:none;">
+            <h2 style="letter-spacing: 2px;">CLOUD SYNC</h2>
+            <p style="color:var(--dim); font-size:0.7rem; margin-bottom:10px;">Add links, then paste the code into GitHub <b>db/links.json</b></p>
             <input type="text" id="newTitle" placeholder="Title">
             <input type="text" id="newUrl" placeholder="URL">
             <input type="text" id="newDesc" placeholder="Description">
-            <button class="btn" onclick="generateJSON()">ADD & GENERATE JSON</button>
-            <hr style="border:0; border-top:1px solid #222; margin:10px 0;">
-            <p style="font-size:0.7rem;">Current File Content (Copy This):</p>
-            <textarea id="outputJson" readonly></textarea>
-            <button onclick="logout()" style="color:red; background:none; border:none; cursor:pointer;">Logout</button>
+            <button class="btn" onclick="addLink()">GENERATE UPDATED JSON</button>
+            <textarea id="outputJson" readonly placeholder="Updated JSON will appear here..."></textarea>
+            <button onclick="logout()" style="color:#ff3366; background:none; border:none; cursor:pointer; margin-top:10px;">Logout</button>
         </div>
     </div>
 
     <script>
-        // REPLACE WITH YOUR REPO NAME
-        const DB_URL = "https://raw.githubusercontent.com/FrostBitten404/FrostBitten404.github.io/main/db/links.json";
+        const REPO_OWNER = "FrostBitten404";
+        const REPO_NAME = "FrostBitten404.github.io";
+        const DB_PATH = "db/links.json";
+        
         let db = [];
 
-        async function loadCloudData() {
+        async function fetchLinks() {
             try {
-                const response = await fetch(DB_URL);
-                db = await response.json();
+                // Fetching from the raw URL ensures we get the latest cloud data
+                const res = await fetch(`https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${DB_PATH}?t=${Date.now()}`);
+                db = await res.json();
                 render();
             } catch (e) {
-                console.error("Cloud DB not found, using local fallback");
-                db = JSON.parse(localStorage.getItem('frost_db')) || [];
-                render();
+                console.error("Failed to sync with cloud. Check db/links.json path.");
             }
         }
 
@@ -102,29 +107,29 @@
             document.getElementById('outputJson').value = JSON.stringify(db, null, 2);
         }
 
-        function generateJSON() {
+        function addLink() {
             const title = document.getElementById('newTitle').value;
             const url = document.getElementById('newUrl').value;
             const desc = document.getElementById('newDesc').value;
             if(title && url) {
                 db.push({title, url, desc});
                 render();
-                alert("Updated JSON generated. Copy it from the box below and paste it into GitHub.");
+                alert("New link added to local list. Copy the JSON below and update your GitHub file.");
             }
         }
 
         function checkAuth() {
             if(document.getElementById('user').value === "Admin" && document.getElementById('pass').value === "YM2012") {
                 document.getElementById('loginBox').style.display = 'none';
-                document.getElementById('adminActions').style.display = 'block';
+                document.getElementById('adminActions').style.display = 'flex';
             }
         }
 
-        function showLogin() { document.getElementById('adminPanel').style.display = 'flex'; }
+        function showAdmin() { document.getElementById('adminPanel').style.display = 'flex'; }
         function closeAdmin() { document.getElementById('adminPanel').style.display = 'none'; }
-        function logout() { closeAdmin(); }
+        function logout() { location.reload(); }
 
-        loadCloudData();
+        fetchLinks();
     </script>
 </body>
 </html>
