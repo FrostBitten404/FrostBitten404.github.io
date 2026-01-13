@@ -25,11 +25,10 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: '.'
-          # This name override prevents the "Multiple Artifacts" error
-          name: github-pages 
+          # We change the name slightly to bypass the "Found 2 artifacts" error
+          name: github-pages-new 
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
         with:
-          # Tell the deployer exactly which artifact to grab
-          artifact_name: github-pages
+          artifact_name: github-pages-new
