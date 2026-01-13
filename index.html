@@ -3,49 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FROST | Cloud</title>
+    <title>FROST | Minimal Cloud</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg: #030305;
-            --primary: #00f3ff;
-            --card-bg: #080810;
-            --text: #e0e0ff;
-            --dim: rgba(224, 224, 255, 0.3);
-        }
+        :root { --bg: #050508; --primary: #00f3ff; --card-bg: #0a0a15; --text: #e0e0ff; --dim: rgba(224, 224, 255, 0.2); }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        body { background: var(--bg); color: var(--text); min-height: 100vh; padding: 10vh 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        header { margin-bottom: 60px; text-align: center; }
+        .logo { font-size: 1.2rem; font-weight: 300; letter-spacing: 15px; text-transform: uppercase; opacity: 0.5; }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); }
-        body { background: var(--bg); color: var(--text); min-height: 100vh; padding: 80px 20px; }
-        .container { max-width: 1000px; margin: 0 auto; }
-        
-        header { margin-bottom: 100px; text-align: center; }
-        .logo { font-size: 1.2rem; font-weight: 300; letter-spacing: 12px; text-transform: uppercase; opacity: 0.6; }
-
-        /* Hover Fade Logic */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 40px; }
-        .grid:hover .card:not(:hover) { opacity: 0.2; filter: blur(3px); transform: scale(0.96); }
+        /* Grid Hover Effects */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 25px; }
+        .grid:hover .card:not(:hover) { opacity: 0.15; filter: grayscale(1) blur(2px); }
 
         .card {
-            background: var(--card-bg); padding: 40px 30px; border-radius: 2px; cursor: pointer;
+            background: var(--card-bg); padding: 40px; border-radius: 2px; cursor: pointer;
             border: 1px solid rgba(255, 255, 255, 0.02); position: relative; text-decoration: none; color: inherit;
         }
-        /* Blue Glow on Hover */
-        .card:hover { border-color: var(--primary); box-shadow: 0 0 40px rgba(0, 243, 255, 0.1); transform: translateY(-2px); }
-        .card-title { font-size: 0.9rem; font-weight: 700; margin-bottom: 12px; color: #fff; text-transform: uppercase; letter-spacing: 1px; }
-        .card-desc { font-size: 0.75rem; color: var(--dim); line-height: 1.8; }
+        /* Blue Glow Hover */
+        .card:hover { border-color: var(--primary); box-shadow: 0 0 50px rgba(0, 243, 255, 0.1); transform: translateY(-5px); }
+        .card-title { font-size: 0.8rem; font-weight: 700; margin-bottom: 10px; color: #fff; letter-spacing: 2px; text-transform: uppercase; }
+        .card-desc { font-size: 0.7rem; color: var(--dim); line-height: 1.8; }
 
-        /* Hidden Admin Icon */
-        #adminTrigger { position: fixed; bottom: 20px; right: 20px; width: 40px; height: 40px; opacity: 0; cursor: pointer; color: var(--primary); font-size: 0.7rem; display: flex; align-items: center; justify-content: center; z-index: 1000; }
-        #adminTrigger:hover { opacity: 1; }
+        /* Hidden Admin */
+        #adminBtn { position: fixed; bottom: 20px; right: 20px; width: 40px; height: 40px; opacity: 0; cursor: pointer; color: var(--primary); font-size: 0.7rem; display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        #adminBtn:hover { opacity: 1; }
 
-        /* Admin Overlay */
         #adminPanel { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 2000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
-        .admin-box { width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 15px; }
-        input, textarea { background: #0c0c15; border: 1px solid #1a1a25; padding: 15px; border-radius: 4px; color: #fff; outline: none; width: 100%; font-size: 0.8rem; }
+        .admin-box { width: 100%; max-width: 350px; display: flex; flex-direction: column; gap: 15px; }
+        input, textarea { background: #0c0c15; border: 1px solid #1a1a25; padding: 15px; border-radius: 4px; color: #fff; outline: none; font-size: 0.8rem; }
         input:focus { border-color: var(--primary); }
-        .btn { background: var(--primary); color: #000; border: none; padding: 15px; border-radius: 4px; font-weight: 700; cursor: pointer; font-size: 0.8rem; }
-        textarea { height: 200px; font-family: monospace; font-size: 0.7rem; margin-top: 10px; }
+        .btn { background: var(--primary); color: #000; border: none; padding: 15px; border-radius: 4px; font-weight: 700; cursor: pointer; }
+        textarea { height: 150px; font-family: monospace; font-size: 0.65rem; }
     </style>
 </head>
 <body>
@@ -55,81 +46,73 @@
         <div class="grid" id="mainGrid"></div>
     </div>
 
-    <div id="adminTrigger" onclick="showAdmin()">A</div>
+    <div id="adminBtn" onclick="openAdmin()">A</div>
 
     <div id="adminPanel">
         <div class="admin-box" id="loginBox">
-            <h2 style="margin-bottom: 20px; letter-spacing: 2px;">AUTH REQUIRED</h2>
-            <input type="text" id="user" placeholder="Username">
-            <input type="password" id="pass" placeholder="Password">
-            <button class="btn" onclick="checkAuth()">SIGN IN</button>
-            <button onclick="closeAdmin()" style="background:none; border:none; color:#444; margin-top:10px; cursor:pointer;">Exit</button>
+            <h2 style="letter-spacing: 5px; font-size: 1rem; margin-bottom: 10px;">AUTH</h2>
+            <input type="text" id="user" placeholder="User">
+            <input type="password" id="pass" placeholder="Pass">
+            <button class="btn" onclick="login()">ENTER</button>
+            <button onclick="closeAdmin()" style="background:none; border:none; color:#333; cursor:pointer;">Exit</button>
         </div>
 
-        <div class="admin-box" id="adminActions" style="display:none;">
-            <h2 style="letter-spacing: 2px;">CLOUD SYNC</h2>
-            <p style="color:var(--dim); font-size:0.7rem; margin-bottom:10px;">Add links, then paste the code into GitHub <b>db/links.json</b></p>
-            <input type="text" id="newTitle" placeholder="Title">
-            <input type="text" id="newUrl" placeholder="URL">
-            <input type="text" id="newDesc" placeholder="Description">
-            <button class="btn" onclick="addLink()">GENERATE UPDATED JSON</button>
-            <textarea id="outputJson" readonly placeholder="Updated JSON will appear here..."></textarea>
-            <button onclick="logout()" style="color:#ff3366; background:none; border:none; cursor:pointer; margin-top:10px;">Logout</button>
+        <div class="admin-box" id="actions" style="display:none;">
+            <h2 style="letter-spacing: 5px; font-size: 1rem;">SYNC</h2>
+            <input type="text" id="newT" placeholder="Title">
+            <input type="text" id="newU" placeholder="URL">
+            <input type="text" id="newD" placeholder="Description">
+            <button class="btn" onclick="gen()">GENERATE JSON</button>
+            <textarea id="out" readonly></textarea>
+            <button onclick="location.reload()" style="background:none; border:none; color:red; cursor:pointer;">Logout</button>
         </div>
     </div>
 
     <script>
-        const REPO_OWNER = "FrostBitten404";
-        const REPO_NAME = "FrostBitten404.github.io";
-        const DB_PATH = "db/links.json";
-        
-        let db = [];
+        const DATA_URL = `https://raw.githubusercontent.com/FrostBitten404/FrostBitten404.github.io/main/db/links.json?nocache=${Date.now()}`;
+        let links = [];
 
-        async function fetchLinks() {
+        async function sync() {
             try {
-                // Fetching from the raw URL ensures we get the latest cloud data
-                const res = await fetch(`https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${DB_PATH}?t=${Date.now()}`);
-                db = await res.json();
-                render();
-            } catch (e) {
-                console.error("Failed to sync with cloud. Check db/links.json path.");
-            }
+                const res = await fetch(DATA_URL);
+                links = await res.json();
+                draw();
+            } catch (e) { console.log("DB Offline"); }
         }
 
-        function render() {
+        function draw() {
             const grid = document.getElementById('mainGrid');
-            grid.innerHTML = db.map(item => `
-                <a href="${item.url}" class="card" target="_blank">
-                    <div class="card-title">${item.title}</div>
-                    <p class="card-desc">${item.desc}</p>
+            grid.innerHTML = links.map(l => `
+                <a href="${l.url}" class="card" target="_blank">
+                    <div class="card-title">${l.title}</div>
+                    <p class="card-desc">${l.desc}</p>
                 </a>
             `).join('');
-            document.getElementById('outputJson').value = JSON.stringify(db, null, 2);
+            document.getElementById('out').value = JSON.stringify(links, null, 2);
         }
 
-        function addLink() {
-            const title = document.getElementById('newTitle').value;
-            const url = document.getElementById('newUrl').value;
-            const desc = document.getElementById('newDesc').value;
-            if(title && url) {
-                db.push({title, url, desc});
-                render();
-                alert("New link added to local list. Copy the JSON below and update your GitHub file.");
+        function gen() {
+            const t = document.getElementById('newT').value;
+            const u = document.getElementById('newU').value;
+            const d = document.getElementById('newD').value;
+            if(t && u) {
+                links.push({title: t, url: u, desc: d});
+                draw();
+                alert("JSON Generated. Update db/links.json on GitHub.");
             }
         }
 
-        function checkAuth() {
+        function login() {
             if(document.getElementById('user').value === "Admin" && document.getElementById('pass').value === "YM2012") {
                 document.getElementById('loginBox').style.display = 'none';
-                document.getElementById('adminActions').style.display = 'flex';
+                document.getElementById('actions').style.display = 'flex';
             }
         }
 
-        function showAdmin() { document.getElementById('adminPanel').style.display = 'flex'; }
+        function openAdmin() { document.getElementById('adminPanel').style.display = 'flex'; }
         function closeAdmin() { document.getElementById('adminPanel').style.display = 'none'; }
-        function logout() { location.reload(); }
-
-        fetchLinks();
+        
+        sync();
     </script>
 </body>
 </html>
