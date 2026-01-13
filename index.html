@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FROST | Link Database</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --frost-primary: #00f3ff;
+            --frost-bg: #050510;
+            --frost-card-bg: rgba(16, 16, 37, 0.8);
+            --frost-border: rgba(0, 243, 255, 0.3);
+            --frost-text: #e0e0ff;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
+        body { background-color: var(--frost-bg); color: var(--frost-text); min-height: 100vh; overflow-x: hidden; }
+        #particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; border-bottom: 1px solid var(--frost-border); padding-bottom: 20px; }
+        .logo { font-size: 2rem; font-weight: 800; color: var(--frost-primary); display: flex; align-items: center; gap: 12px; }
+        .card { background: var(--frost-card-bg); border: 1px solid var(--frost-border); border-radius: 16px; padding: 30px; backdrop-filter: blur(10px); text-align: center; max-width: 500px; margin: 0 auto; }
+        .btn-visit { display: block; width: 100%; padding: 15px; background: var(--frost-primary); color: #000; text-decoration: none; border-radius: 8px; font-weight: 700; margin-top: 20px; transition: 0.3s; }
+        .btn-visit:hover { box-shadow: 0 0 20px var(--frost-primary); transform: scale(1.02); }
+    </style>
+</head>
+<body>
+    <canvas id="particles"></canvas>
+    <div class="container">
+        <header><div class="logo"><i class="fas fa-snowflake"></i> FROST DB</div></header>
+        <div class="card">
+            <span style="color:var(--frost-primary); font-size: 0.8rem; letter-spacing: 2px;">SYSTEM ONLINE</span>
+            <h1 style="margin: 15px 0;">Database Initialized</h1>
+            <p style="color: #8a8ab5;">The manual deployment workflow is now managing your site. Any changes you commit to this repository will reflect live within seconds.</p>
+            <a href="https://github.com/FrostBitten404/FrostBitten404.github.io" class="btn-visit">MANAGE FILES</a>
+        </div>
+    </div>
+    <script>
+        const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d');
+        let width, height, particles = [];
+        function init() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            particles = Array.from({length: 40}, () => ({
+                x: Math.random() * width, y: Math.random() * height,
+                vX: (Math.random() - 0.5) * 0.3, vY: (Math.random() - 0.5) * 0.3
+            }));
+        }
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            ctx.fillStyle = '#00f3ff';
+            particles.forEach(p => {
+                p.x += p.vX; p.y += p.vY;
+                if(p.x < 0 || p.x > width) p.vX *= -1;
+                if(p.y < 0 || p.y > height) p.vY *= -1;
+                ctx.beginPath(); ctx.arc(p.x, p.y, 1, 0, Math.PI*2); ctx.fill();
+            });
+            requestAnimationFrame(animate);
+        }
+        window.onresize = init;
+        init(); animate();
+    </script>
+</body>
+</html>
