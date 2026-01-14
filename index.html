@@ -26,6 +26,7 @@
             color: var(--primary); 
             width: 50px; 
             height: 50px; 
+            min-width: 50px; /* Ensures it stays square */
             border-radius: 0px; 
             cursor: pointer; 
             display: flex; 
@@ -214,7 +215,6 @@
                 document.getElementById('pageSettings').innerText = item.settings || "// NO CONFIGURATION";
                 document.getElementById('pageLink').href = item.url;
                 
-                // Try to get icon, fallback to generic if file
                 const iconUrl = item.type === 'file' ? 'https://cdn-icons-png.flaticon.com/512/124/124837.png' : `https://www.google.com/s2/favicons?sz=128&domain=${new URL(item.url).hostname}`;
                 document.getElementById('pageIcon').src = iconUrl;
                 
