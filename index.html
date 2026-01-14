@@ -39,44 +39,47 @@
         .card-title { font-size: 0.85rem; font-weight: 700; margin-bottom: 10px; color: #fff; letter-spacing: 2px; text-transform: uppercase; }
         .card-desc { font-size: 0.7rem; color: rgba(224, 224, 255, 0.4); line-height: 1.8; font-weight: 200; }
 
-        /* Full Page Overlay Restructured */
+        /* Full Screen Overlay */
         #pageOverlay { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(1, 1, 3, 0.98); z-index: 5000; display: none; 
-            overflow-y: auto; padding: 80px 40px; 
-            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
+            background: #010103; z-index: 5000; display: none; 
+            overflow-y: auto; padding: 100px 60px; 
             opacity: 0; transition: opacity 0.6s ease;
         }
         #pageOverlay.active { opacity: 1; display: block; }
         
-        .page-content { max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 40px; }
+        .page-content { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 40px; position: relative; min-height: 80vh; }
 
-        /* Top Left Header Layout */
-        .page-upper { display: flex; gap: 30px; align-items: flex-start; }
-        .page-icon-img { width: 120px; height: 120px; border: 1px solid rgba(0, 243, 255, 0.2); flex-shrink: 0; object-fit: cover; }
+        .page-upper { display: flex; gap: 40px; align-items: flex-start; }
+        .page-icon-img { width: 140px; height: 140px; border: 1px solid rgba(0, 243, 255, 0.2); flex-shrink: 0; object-fit: cover; }
         .page-info-text { flex-grow: 1; }
         
-        #pageTitle { font-size: 2rem; letter-spacing: 10px; text-transform: uppercase; margin-bottom: 15px; color: #fff; }
-        #pageDesc { font-size: 0.9rem; opacity: 0.6; line-height: 1.8; max-width: 700px; }
+        #pageTitle { font-size: 2.2rem; letter-spacing: 12px; text-transform: uppercase; margin-bottom: 15px; color: #fff; }
+        #pageDesc { font-size: 0.95rem; opacity: 0.6; line-height: 2; max-width: 800px; }
 
-        /* Bottom Settings Box */
+        /* Non-Copyable Settings Box */
         .settings-container { width: 100%; margin-top: 20px; }
         .settings-box { 
             background: #08080c; border: 1px solid #15151a; padding: 40px; 
             font-family: monospace; font-size: 0.8rem; color: #00ffcc; 
             white-space: pre-wrap; position: relative; width: 100%;
-            min-height: 200px;
+            min-height: 250px;
+            user-select: none; /* Prevents highlighting */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            pointer-events: none; /* Prevents right-click and interaction */
         }
-        .copy-btn { position: absolute; top: 20px; right: 20px; font-size: 0.6rem; background: rgba(0, 243, 255, 0.1); color: var(--primary); border: 1px solid var(--primary); padding: 8px 15px; cursor: pointer; letter-spacing: 1px; }
 
-        .close-page { position: fixed; top: 30px; left: 40px; color: var(--text); cursor: pointer; font-size: 0.7rem; letter-spacing: 3px; opacity: 0.4; z-index: 5001; }
+        .close-page { position: fixed; top: 30px; left: 60px; color: var(--text); cursor: pointer; font-size: 0.7rem; letter-spacing: 3px; opacity: 0.4; z-index: 5001; }
         .close-page:hover { opacity: 1; color: var(--primary); }
         
-        .visit-btn-wrap { display: flex; justify-content: flex-start; }
-        .btn { background: #fff; color: #000; border: none; padding: 18px 40px; font-weight: 700; cursor: pointer; letter-spacing: 2px; text-transform: uppercase; font-size: 0.7rem; text-decoration: none; display: inline-flex; align-items: center; gap: 10px; }
+        .btn { background: #fff; color: #000; border: none; padding: 20px 50px; font-weight: 700; cursor: pointer; letter-spacing: 2px; text-transform: uppercase; font-size: 0.7rem; text-decoration: none; display: inline-flex; align-items: center; gap: 10px; }
         .btn:hover { background: var(--primary); box-shadow: 0 0 20px rgba(0, 243, 255, 0.4); }
 
-        /* Snow & Admin */
+        /* Credit Tag */
+        .credit-tag { position: fixed; bottom: 30px; left: 60px; font-size: 0.6rem; letter-spacing: 4px; opacity: 0.2; text-transform: uppercase; z-index: 5002; }
+
         #snow-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
         #adminBtn { position: fixed; bottom: 20px; right: 20px; width: 35px; height: 35px; opacity: 0.1; cursor: pointer; z-index: 1000; display: flex; align-items: center; justify-content: center; color: var(--primary); border: 1px solid var(--primary); font-size: 0.8rem; font-weight: 700; }
         #adminPanel { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 6000; display: none; overflow-y: auto; padding: 50px 20px; }
@@ -86,8 +89,9 @@
 
         @media (max-width: 768px) {
             .page-upper { flex-direction: column; align-items: center; text-align: center; }
-            .close-page { top: 20px; left: 20px; }
-            #pageTitle { font-size: 1.4rem; }
+            .close-page, .credit-tag { left: 20px; }
+            #pageTitle { font-size: 1.5rem; }
+            #pageOverlay { padding: 80px 20px; }
         }
     </style>
 </head>
@@ -116,7 +120,7 @@
                     <div id="pageType" class="type-tag">VAULT PAGE</div>
                     <h1 id="pageTitle"></h1>
                     <p id="pageDesc"></p>
-                    <div class="visit-btn-wrap" style="margin-top:25px;">
+                    <div style="margin-top:30px;">
                         <a id="pageLink" href="#" target="_blank" class="btn">VISIT PAGE</a>
                     </div>
                 </div>
@@ -125,32 +129,23 @@
             <div class="settings-container">
                 <div style="font-size: 0.6rem; letter-spacing: 3px; opacity: 0.3; margin-bottom: 15px; text-transform: uppercase;">Configuration & Settings</div>
                 <div class="settings-box">
-                    <button class="copy-btn" onclick="copySettings()">COPY CODE</button>
                     <code id="pageSettings"></code>
                 </div>
             </div>
         </div>
+        <div class="credit-tag">MADE BY BATATES</div>
     </div>
 
     <div id="adminBtn" onclick="toggleAdmin(true)">A</div>
 
     <div id="adminPanel">
         <div class="container" style="max-width:500px;">
-            <div id="loginBox" class="admin-section">
-                <input type="password" id="pass" placeholder="VAULT KEY">
-                <button class="btn" style="width:100%" onclick="checkAuth()">AUTHENTICATE</button>
-            </div>
+            <div id="loginBox" class="admin-section"><input type="password" id="pass" placeholder="VAULT KEY"><button class="btn" style="width:100%" onclick="checkAuth()">AUTHENTICATE</button></div>
             <div id="actions" style="display:none;">
                 <div class="admin-section">
-                    <select id="newType">
-                        <option value="link">DIRECT LINK</option>
-                        <option value="page">VAULT PAGE</option>
-                        <option value="file">FILE / DOWNLOAD</option>
-                    </select>
-                    <input type="text" id="newTitle" placeholder="ITEM NAME">
-                    <input type="text" id="newUrl" placeholder="URL / FILE LINK">
-                    <textarea id="newDesc" placeholder="DESCRIPTION" style="height:80px;"></textarea>
-                    <textarea id="newSettings" placeholder="SETTINGS (PAGE ONLY)" style="height:80px;"></textarea>
+                    <select id="newType"><option value="link">DIRECT LINK</option><option value="page">VAULT PAGE</option><option value="file">FILE / DOWNLOAD</option></select>
+                    <input type="text" id="newTitle" placeholder="ITEM NAME"><input type="text" id="newUrl" placeholder="URL / FILE LINK">
+                    <textarea id="newDesc" placeholder="DESCRIPTION" style="height:80px;"></textarea><textarea id="newSettings" placeholder="SETTINGS (PAGE ONLY)" style="height:80px;"></textarea>
                     <button class="btn" style="width:100%" id="sendBtn" onclick="sendToSheet('add')">SAVE TO VAULT</button>
                 </div>
                 <div class="admin-section" id="manageList"></div>
@@ -161,131 +156,48 @@
 
     <script>
         const API_URL = 'https://script.google.com/macros/s/AKfycbwpmHvmhRlcZq-dhMiZ1xWfuYcZvirp89IKKlqAcWa8FbsYqJK6ruDVY_rk_V17w4rIrA/exec'; 
-        
-        let allLinks = [];
-        let particles = [];
-        let settledSnow = [];
-        const canvas = document.getElementById('snow-canvas');
-        const ctx = canvas.getContext('2d');
+        let allLinks = [], particles = [], settledSnow = [];
+        const canvas = document.getElementById('snow-canvas'), ctx = canvas.getContext('2d');
 
-        function initSnow() {
-            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-            particles = []; for(let i=0; i<100; i++) spawnParticle();
-        }
-        function spawnParticle() {
-            particles.push({ x: Math.random()*canvas.width, y: Math.random()*-canvas.height, r: Math.random()*2+1, d: Math.random()*1+0.5, drift: (Math.random()-0.5)*0.5 });
-        }
+        function initSnow() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; particles = []; for(let i=0; i<100; i++) spawnParticle(); }
+        function spawnParticle() { particles.push({ x: Math.random()*canvas.width, y: Math.random()*-canvas.height, r: Math.random()*2+1, d: Math.random()*1+0.5, drift: (Math.random()-0.5)*0.5 }); }
         function draw() {
             ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle = "rgba(255,255,255,0.4)"; ctx.beginPath();
-            particles.forEach((p, i) => {
-                ctx.moveTo(p.x, p.y); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
-                p.y += p.d; p.x += p.drift;
-                if(p.y >= canvas.height - 2) {
-                    settledSnow.push({ x: p.x, y: canvas.height - Math.random()*3, r: p.r, time: Date.now() });
-                    particles.splice(i, 1); spawnParticle();
-                }
-            });
+            particles.forEach((p, i) => { ctx.moveTo(p.x, p.y); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); p.y += p.d; p.x += p.drift; if(p.y >= canvas.height - 2) { settledSnow.push({ x: p.x, y: canvas.height - Math.random()*3, r: p.r, time: Date.now() }); particles.splice(i, 1); spawnParticle(); } });
             ctx.fill(); const now = Date.now();
-            settledSnow = settledSnow.filter(s => {
-                const age = now - s.time; if(age > 60000) return false;
-                ctx.beginPath(); ctx.fillStyle = `rgba(255,255,255, ${0.3 * (1 - age/60000)})`;
-                ctx.arc(s.x, s.y, s.r, 0, Math.PI*2); ctx.fill(); return true;
-            });
+            settledSnow = settledSnow.filter(s => { const age = now - s.time; if(age > 60000) return false; ctx.beginPath(); ctx.fillStyle = `rgba(255,255,255, ${0.3 * (1 - age/60000)})`; ctx.arc(s.x, s.y, s.r, 0, Math.PI*2); ctx.fill(); return true; });
             requestAnimationFrame(draw);
         }
 
-        async function loadVault() {
-            try {
-                const res = await fetch(API_URL);
-                allLinks = await res.json();
-                document.getElementById('status').style.display = 'none';
-                renderPublic(allLinks);
-                renderManage();
-            } catch (e) { setTimeout(loadVault, 2000); }
-        }
+        async function loadVault() { try { const res = await fetch(API_URL); allLinks = await res.json(); document.getElementById('status').style.display = 'none'; renderPublic(allLinks); renderManage(); } catch (e) { setTimeout(loadVault, 2000); } }
 
-        function renderPublic(links) {
-            document.getElementById('mainGrid').innerHTML = links.map((l, i) => `
-                <div class="card" style="animation-delay:${i*0.05}s" onclick="handleCardClick(${i})">
-                    <span class="type-tag">${l.type}</span>
-                    <div class="card-title">${l.title}</div>
-                    <p class="card-desc">${l.desc || '...'}</p>
-                </div>`).join('');
-        }
+        function renderPublic(links) { document.getElementById('mainGrid').innerHTML = links.map((l, i) => `<div class="card" style="animation-delay:${i*0.05}s" onclick="handleCardClick(${i})"><span class="type-tag">${l.type}</span><div class="card-title">${l.title}</div><p class="card-desc">${l.desc || '...'}</p></div>`).join(''); }
 
         function handleCardClick(index) {
             const item = allLinks[index];
-            if(item.type === 'link' || item.type === 'file') {
-                window.open(item.url, '_blank');
-            } else {
-                const overlay = document.getElementById('pageOverlay');
-                const mainGrid = document.getElementById('mainGrid');
-                
+            if(item.type === 'link' || item.type === 'file') { window.open(item.url, '_blank'); }
+            else {
+                const overlay = document.getElementById('pageOverlay'), mainGrid = document.getElementById('mainUI');
                 document.getElementById('pageTitle').innerText = item.title;
                 document.getElementById('pageDesc').innerText = item.desc;
                 document.getElementById('pageSettings').innerText = item.settings || "// NO CONFIGURATION PROVIDED";
                 document.getElementById('pageLink').href = item.url;
-                
-                const domain = new URL(item.url).hostname;
-                document.getElementById('pageIcon').src = `https://www.google.com/s2/favicons?sz=128&domain=${domain}`;
-                
-                mainGrid.style.filter = "blur(15px)";
-                overlay.style.display = 'block';
-                setTimeout(() => { overlay.classList.add('active'); }, 10);
-                document.body.style.overflow = 'hidden';
+                document.getElementById('pageIcon').src = `https://www.google.com/s2/favicons?sz=128&domain=${new URL(item.url).hostname}`;
+                mainGrid.style.filter = "blur(20px)"; overlay.style.display = 'block'; setTimeout(() => { overlay.classList.add('active'); }, 10); document.body.style.overflow = 'hidden';
             }
         }
 
-        function closePage() { 
-            const overlay = document.getElementById('pageOverlay');
-            const mainGrid = document.getElementById('mainGrid');
-            overlay.classList.remove('active');
-            mainGrid.style.filter = "blur(0px)";
-            setTimeout(() => { overlay.style.display = 'none'; }, 600);
-            document.body.style.overflow = 'auto';
-        }
+        function closePage() { const overlay = document.getElementById('pageOverlay'), mainGrid = document.getElementById('mainUI'); overlay.classList.remove('active'); mainGrid.style.filter = "blur(0px)"; setTimeout(() => { overlay.style.display = 'none'; }, 600); document.body.style.overflow = 'auto'; }
 
-        function renderManage() {
-            document.getElementById('manageList').innerHTML = allLinks.map(l => `
-                <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #1a1a25; font-size:0.7rem;">
-                    <span>${l.title}</span>
-                    <button style="color:red; background:none; border:none; cursor:pointer;" onclick="sendToSheet('delete', '${l.title}', '${l.url}')">DEL</button>
-                </div>`).join('');
-        }
+        function renderManage() { document.getElementById('manageList').innerHTML = allLinks.map(l => `<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #1a1a25; font-size:0.7rem;"><span>${l.title}</span><button style="color:red; background:none; border:none; cursor:pointer;" onclick="sendToSheet('delete', '${l.title}', '${l.url}')">DEL</button></div>`).join(''); }
 
-        async function sendToSheet(action, title, url) {
-            if(action === 'delete' && !confirm('Confirm Delete?')) return;
-            const payload = action === 'add' ? {
-                title: document.getElementById('newTitle').value,
-                url: document.getElementById('newUrl').value,
-                desc: document.getElementById('newDesc').value,
-                type: document.getElementById('newType').value,
-                settings: document.getElementById('newSettings').value,
-                action: 'add'
-            } : { title, url, action: 'delete' };
-            await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-            location.reload();
-        }
+        async function sendToSheet(action, title, url) { if(action === 'delete' && !confirm('Confirm Delete?')) return; const payload = action === 'add' ? { title: document.getElementById('newTitle').value, url: document.getElementById('newUrl').value, desc: document.getElementById('newDesc').value, type: document.getElementById('newType').value, settings: document.getElementById('newSettings').value, action: 'add' } : { title, url, action: 'delete' }; await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) }); location.reload(); }
 
-        function checkAuth() {
-            if(document.getElementById('pass').value === "YM2012") {
-                document.getElementById('loginBox').style.display = 'none';
-                document.getElementById('actions').style.display = 'block';
-            }
-        }
-
-        function copySettings() {
-            navigator.clipboard.writeText(document.getElementById('pageSettings').innerText);
-            alert("SETTINGS COPIED");
-        }
+        function checkAuth() { if(document.getElementById('pass').value === "YM2012") { document.getElementById('loginBox').style.display = 'none'; document.getElementById('actions').style.display = 'block'; } }
 
         function toggleAdmin(s) { document.getElementById('adminPanel').style.display = s ? 'block' : 'none'; }
         function toggleView() { document.getElementById('mainGrid').classList.toggle('list-view'); }
-        function filterLinks() {
-            const query = document.getElementById('vaultSearch').value.toLowerCase();
-            const filtered = allLinks.filter(l => l.title.toLowerCase().includes(query));
-            renderPublic(filtered);
-        }
+        function filterLinks() { const query = document.getElementById('vaultSearch').value.toLowerCase(); const filtered = allLinks.filter(l => l.title.toLowerCase().includes(query)); renderPublic(filtered); }
 
         window.onresize = initSnow; initSnow(); draw(); loadVault();
     </script>
