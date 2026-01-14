@@ -2,514 +2,485 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Power-Chess: Chaos Edition</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore-compat.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FROST | VAULT</title>
+    
+    <link rel="icon" href="https://static.vecteezy.com/system/resources/previews/000/550/805/non_2x/snowflake-vector-icon.jpg">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400;700&display=swap" rel="stylesheet">
+    
     <style>
-        :root {
-            --board-light: #ebecd0;
-            --board-dark: #779556;
+        :root { 
+            --bg: #010103; 
+            --primary: #00f3ff; 
+            --card: rgba(10, 10, 15, 0.7); 
+            --text: #e0e0ff; 
+            --red: #ff4444; 
+            --blue-new: #0077ff; 
         }
 
-        body {
-            overscroll-behavior: none;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background: #0f172a;
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; transition: all 0.3s ease; }
+        
+        body { 
+            background: var(--bg); 
+            color: var(--text); 
+            min-height: 100vh; 
+            padding: 5vh 20px; 
+            overflow-x: hidden; 
+            cursor: default; 
         }
 
-        .chess-board {
-            display: grid;
-            grid-template-columns: repeat(8, 1fr);
-            width: 100%;
-            max-width: 480px;
-            aspect-ratio: 1;
-            border: 4px solid #1e293b;
-            user-select: none;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.5);
+        /* Background Canvas */
+        #snow-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+
+        .container { max-width: 1000px; margin: 0 auto; position: relative; z-index: 2; padding-bottom: 60px; }
+        
+        header { margin-bottom: 40px; text-align: center; }
+        .logo { 
+            font-size: 1.5rem; 
+            font-weight: 700; 
+            letter-spacing: 12px; 
+            text-transform: uppercase; 
+            color: #fff; 
+            text-shadow: 0 0 20px rgba(0, 243, 255, 0.5); 
         }
 
-        .square {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: clamp(1.2rem, 8vw, 2.5rem);
-            cursor: pointer;
-            position: relative;
+        /* Controls */
+        .controls-wrapper { display: flex; flex-direction: column; align-items: center; gap: 25px; margin-bottom: 50px; }
+        
+        .search-container { display: flex; width: 100%; max-width: 500px; gap: 10px; }
+        #vaultSearch { 
+            background: rgba(255, 255, 255, 0.03); 
+            border: 1px solid rgba(0, 243, 255, 0.2); 
+            padding: 15px 20px; 
+            width: 100%; 
+            border-radius: 0px; 
+            color: #fff; 
+            outline: none; 
+            font-size: 0.8rem; 
+            letter-spacing: 2px; 
         }
 
-        .square.light { background-color: var(--board-light); }
-        .square.dark { background-color: var(--board-dark); }
-        .square.selected { background-color: #f5f682 !important; }
-        .square.valid-move::after {
-            content: '';
-            width: 25%;
-            height: 25%;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 50%;
+        .categories { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+        .cat-btn { 
+            background: rgba(255, 255, 255, 0.08); 
+            border: 1px solid rgba(255, 255, 255, 0.2); 
+            padding: 10px 22px; 
+            color: #fff; 
+            font-size: 0.65rem; 
+            font-weight: 700; 
+            letter-spacing: 2px; 
+            cursor: pointer; 
+            text-transform: uppercase; 
+            border-radius: 2px;
+        }
+        .cat-btn.active { 
+            background: #ffffff !important; 
+            color: #000000 !important; 
+            border-color: #ffffff; 
+            box-shadow: 0 0 25px rgba(255,255,255,0.4); 
         }
 
-        .piece {
-            z-index: 10;
-            transition: transform 0.15s ease-out;
-            line-height: 1;
+        /* Loading State */
+        #status { display: flex; flex-direction: column; align-items: center; gap: 15px; margin: 50px 0; }
+        .spinner { 
+            width: 30px; 
+            height: 30px; 
+            border: 2px solid rgba(255, 255, 255, 0.1); 
+            border-top: 2px solid #ffffff; 
+            border-radius: 50%; 
+            animation: spin 1s linear infinite; 
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2); 
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Grid System */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        
+        .card { 
+            background: var(--card); 
+            padding: 40px 30px; 
+            border-radius: 4px; 
+            border: 1px solid rgba(255, 255, 255, 0.05); 
+            text-decoration: none; 
+            color: inherit; 
+            animation: fadeInUp 0.8s ease forwards; 
+            opacity: 0; 
+            display: block; 
+            cursor: pointer; 
+            position: relative; 
+            backdrop-filter: blur(8px);
+        }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .card:hover { 
+            border-color: var(--primary); 
+            box-shadow: 0 0 40px rgba(0, 243, 255, 0.15); 
+            transform: translateY(-5px); 
+            background: rgba(13, 13, 20, 0.8); 
+        }
+        
+        .type-tag { font-size: 0.5rem; letter-spacing: 2px; color: var(--primary); margin-bottom: 10px; display: block; opacity: 0.6; text-transform: uppercase; }
+        
+        .new-tag { 
+            background: var(--blue-new); 
+            color: #fff; 
+            font-size: 0.55rem; 
+            padding: 2px 6px; 
+            border-radius: 2px; 
+            margin-left: 8px; 
+            font-weight: 700;
+            box-shadow: 0 0 12px rgba(0, 119, 255, 0.8); 
+            letter-spacing: 1px;
         }
 
-        .mana-bar {
-            height: 6px;
-            background: #334155;
-            border-radius: 10px;
-            overflow: hidden;
-            width: 100%;
+        .card-title { font-size: 0.85rem; font-weight: 700; margin-bottom: 10px; color: #fff; letter-spacing: 2px; text-transform: uppercase; display: flex; align-items: center; flex-wrap: wrap; }
+        .card-desc { font-size: 0.7rem; color: rgba(224, 224, 255, 0.4); line-height: 1.8; }
+
+        /* Page Overlays */
+        #pageOverlay { 
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
+            background: rgba(1, 1, 3, 0.98); z-index: 5000; display: none; 
+            overflow-y: auto; padding: 100px 20px; opacity: 0; transition: opacity 0.6s ease; backdrop-filter: blur(20px);
+        }
+        #pageOverlay.active { opacity: 1; display: block; }
+        .close-page { position: fixed; top: 30px; left: 30px; color: var(--text); cursor: pointer; font-size: 0.7rem; letter-spacing: 3px; opacity: 0.4; z-index: 5001; }
+
+        .settings-box { 
+            background: rgba(8, 8, 12, 0.8); 
+            border: 1px solid #15151a; 
+            padding: 20px; 
+            font-family: monospace; 
+            font-size: 0.8rem; 
+            color: #00ffcc; 
+            white-space: pre-wrap; 
+            user-select: text; 
+            margin-top: 10px;
+        }
+        
+        .btn { 
+            background: #ffffff; color: #000000; border: none; 
+            padding: 15px 35px; font-weight: 700; cursor: pointer; 
+            letter-spacing: 2px; text-transform: uppercase; font-size: 0.7rem; 
+            display: inline-flex; align-items: center; gap: 10px; border-radius: 2px;
+            box-shadow: 0 0 20px rgba(255,255,255,0.2); text-decoration: none;
         }
 
-        .power-btn {
-            transition: all 0.2s;
-            cursor: pointer;
-            border: 2px solid transparent;
-        }
+        /* Admin UI */
+        #adminBtn { position: fixed; bottom: 20px; right: 20px; width: 35px; height: 35px; opacity: 0.1; cursor: pointer; z-index: 1000; border: 1px solid var(--primary); display: flex; align-items: center; justify-content: center; color: var(--primary); }
+        #adminPanel { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 6000; display: none; padding: 50px 20px; overflow-y: auto; }
+        .admin-section { background: #08080c; padding: 25px; border: 1px solid #15151a; margin-bottom: 20px; max-width: 500px; margin-left: auto; margin-right: auto; }
+        input, select, textarea { background: #0c0c12; border: 1px solid #1a1a25; padding: 15px; color: #fff; width: 100%; margin-bottom: 10px; outline: none; font-size: 0.8rem; }
+        
+        .icon-preview-wrap { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; }
+        #adminIconPreview { width: 45px; height: 45px; border: 1px solid #1a1a25; object-fit: cover; background: #000; }
 
-        .power-btn:active { transform: scale(0.95); }
-        .power-btn.active { border-color: #fbbf24; background: #334155; }
-        .power-btn.disabled { opacity: 0.3; filter: grayscale(1); cursor: not-allowed; }
+        #toast { position: fixed; top: 20px; right: 20px; background: #fff; color: #000; padding: 15px 30px; font-size: 0.7rem; font-weight: 700; letter-spacing: 2px; transform: translateX(200%); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 9999; }
+        #toast.show { transform: translateX(0); }
 
-        #toast {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 100;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.3s;
+        .credit-tag { position: fixed; bottom: 20px; left: 20px; font-size: 0.6rem; letter-spacing: 4px; opacity: 0.2; text-transform: uppercase; z-index: 1; }
+
+        @media (max-width: 600px) {
+            .logo { font-size: 1rem; letter-spacing: 6px; }
+            #pageOverlay { padding: 80px 20px; }
+            .close-page { left: 20px; }
         }
     </style>
 </head>
-<body class="text-white min-h-screen flex flex-col items-center">
+<body>
 
-    <div id="toast" class="bg-blue-600 px-6 py-3 rounded-full shadow-2xl font-bold text-sm"></div>
+    <canvas id="snow-canvas"></canvas>
+    <div id="toast">ACTION COMPLETE</div>
 
-    <div class="w-full max-w-lg flex flex-col items-center p-4 gap-4">
-        
-        <!-- Header & Mode Selection -->
-        <div class="w-full flex justify-between items-center mb-2">
-            <h1 class="text-xl font-black tracking-tighter text-blue-400">POWER-CHESS</h1>
-            <div class="flex gap-2">
-                <button id="mode-ai" onclick="setMode('ai')" class="px-3 py-1 text-[10px] font-bold bg-purple-600 rounded uppercase">AI Mode</button>
-                <button id="mode-pvp" onclick="setMode('pvp')" class="px-3 py-1 text-[10px] font-bold bg-blue-600 rounded uppercase">Multiplayer</button>
+    <div id="mainUI" class="container">
+        <header><div class="logo">Frost Vault</div></header>
+
+        <div class="controls-wrapper">
+            <div class="search-container">
+                <input type="text" id="vaultSearch" placeholder="SEARCH VAULT..." onkeyup="filterVault()">
+            </div>
+            <div class="categories">
+                <button class="cat-btn active" data-cat="all" onclick="setCategory('all', this)">All Items</button>
+                <button class="cat-btn" data-cat="link" onclick="setCategory('link', this)">Direct</button>
+                <button class="cat-btn" data-cat="page" onclick="setCategory('page', this)">Pages</button>
+                <button class="cat-btn" data-cat="file" onclick="setCategory('file', this)">Files</button>
             </div>
         </div>
 
-        <!-- Opponent Status -->
-        <div class="w-full flex items-center justify-between bg-gray-800/50 p-3 rounded-xl border border-white/5">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center text-xl" id="opp-icon">👤</div>
+        <div id="status">
+            <div class="spinner"></div>
+            <div style="font-size:0.6rem; letter-spacing:4px; opacity:0.4; color:#fff;">SYNCING WITH DATABASE...</div>
+        </div>
+
+        <div id="mainGrid" class="grid"></div>
+    </div>
+
+    <div class="credit-tag">MADE BY BATATES</div>
+
+    <!-- Details Overlay -->
+    <div id="pageOverlay">
+        <div class="close-page" onclick="closePage()">← BACK TO VAULT</div>
+        <div class="page-content" style="max-width:1000px; margin:0 auto;">
+            <div style="display:flex; gap:20px; align-items:center; margin-bottom:40px; flex-wrap: wrap;">
+                <img id="pageIcon" style="width:80px; height:80px; border:1px solid rgba(0,243,255,0.2); object-fit: cover;" src="" alt="">
                 <div>
-                    <p id="opp-name" class="text-xs font-bold text-gray-400">Opponent</p>
-                    <div class="mana-bar mt-1 w-32"><div id="mana-black-fill" class="h-full bg-red-500 w-1/2 transition-all"></div></div>
+                    <div id="pageType" class="type-tag"></div>
+                    <h1 id="pageTitle" style="letter-spacing:5px; text-transform:uppercase; font-size: 1.2rem;"></h1>
                 </div>
             </div>
-            <div id="opp-mana-text" class="text-xs font-mono">25 MP</div>
-        </div>
-
-        <!-- Game Board -->
-        <div id="turn-indicator" class="text-[10px] font-black uppercase tracking-[0.2em] py-1 px-4 bg-white text-black rounded-full">
-            White's Turn
-        </div>
-        <div id="board" class="chess-board"></div>
-
-        <!-- Player Status -->
-        <div class="w-full flex items-center justify-between bg-gray-800/50 p-3 rounded-xl border border-white/5">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-xl">👤</div>
-                <div>
-                    <p class="text-xs font-bold text-gray-400">You (White)</p>
-                    <div class="mana-bar mt-1 w-32"><div id="mana-white-fill" class="h-full bg-blue-500 w-1/2 transition-all"></div></div>
-                </div>
+            <p id="pageDesc" style="opacity:0.6; line-height:2; margin-bottom:40px; font-size: 0.9rem;"></p>
+            <a id="pageLink" href="#" target="_blank" class="btn">VISIT WEBSITE</a>
+            
+            <div id="settingsArea" style="margin-top:50px;">
+                <div style="font-size:0.6rem; opacity:0.3; margin-bottom:10px; letter-spacing: 2px;">CONFIGURATION SETTINGS</div>
+                <div class="settings-box"><code id="pageSettings"></code></div>
             </div>
-            <div id="player-mana-text" class="text-xs font-mono">25 MP</div>
         </div>
+    </div>
 
-        <!-- Power Bar -->
-        <div class="w-full grid grid-cols-3 gap-2 mt-2">
-            <button onclick="activatePower('teleport')" id="btn-teleport" class="power-btn bg-gray-800 p-2 rounded-lg flex flex-col items-center">
-                <span class="text-lg">🌀</span>
-                <span class="text-[9px] font-bold">TELEPORT (20)</span>
-            </button>
-            <button onclick="activatePower('freeze')" id="btn-freeze" class="power-btn bg-gray-800 p-2 rounded-lg flex flex-col items-center">
-                <span class="text-lg">❄️</span>
-                <span class="text-[9px] font-bold">FREEZE (15)</span>
-            </button>
-            <button onclick="activatePower('spawn')" id="btn-spawn" class="power-btn bg-gray-800 p-2 rounded-lg flex flex-col items-center">
-                <span class="text-lg">🛡️</span>
-                <span class="text-[9px] font-bold">QUEEN (40)</span>
-            </button>
+    <div id="adminBtn" onclick="toggleAdmin(true)">A</div>
+
+    <!-- Admin Panel -->
+    <div id="adminPanel">
+        <div class="container" style="max-width:500px;">
+            <div id="loginBox" class="admin-section">
+                <h2 style="font-size:0.8rem; letter-spacing:4px; margin-bottom:20px; text-align:center;">ADMIN ACCESS</h2>
+                <input type="password" id="pass" placeholder="VAULT KEY">
+                <button class="btn" style="width:100%; justify-content:center;" onclick="checkAuth()">AUTHENTICATE</button>
+                <button class="btn" style="width:100%; background:none; color:white; border:1px solid #333; margin-top:10px; justify-content:center;" onclick="toggleAdmin(false)">CLOSE</button>
+            </div>
+            
+            <div id="actions" style="display:none;">
+                <div class="admin-section">
+                    <h3 style="font-size:0.6rem; letter-spacing:2px; margin-bottom:15px; opacity:0.5;">ADD NEW ENTRY</h3>
+                    <select id="newType">
+                        <option value="link">DIRECT LINK</option>
+                        <option value="page">VAULT PAGE</option>
+                        <option value="file">FILE / DOWNLOAD</option>
+                    </select>
+                    <input type="text" id="newTitle" placeholder="ITEM NAME">
+                    <input type="text" id="newUrl" placeholder="URL (HTTPS://...)">
+                    
+                    <div class="icon-preview-wrap">
+                        <input type="text" id="newIcon" placeholder="CUSTOM ICON URL" style="margin-bottom:0;" oninput="updateAdminPreview(this.value)">
+                        <img id="adminIconPreview" src="https://www.google.com/s2/favicons?sz=128&domain=google.com" alt="">
+                    </div>
+
+                    <textarea id="newDesc" placeholder="DESCRIPTION" style="height:80px;"></textarea>
+                    <textarea id="newSettings" placeholder="CONFIG / SETTINGS (OPTIONAL)" style="height:80px;"></textarea>
+                    <button class="btn" style="width:100%; justify-content:center;" onclick="sendToSheet('add')">SAVE TO VAULT</button>
+                </div>
+                <div class="admin-section" id="manageList"></div>
+                <button class="btn" style="background:var(--red); color:#fff; width:100%; justify-content:center;" onclick="location.reload()">LOGOUT</button>
+            </div>
         </div>
-
-        <div id="multiplayer-controls" class="hidden w-full bg-blue-900/20 p-3 rounded-lg border border-blue-500/30 text-center">
-            <p class="text-[10px] mb-2 uppercase font-bold text-blue-300">Share this link to play:</p>
-            <input id="game-url" readonly class="w-full bg-black/40 text-[10px] p-2 rounded mb-2 text-blue-200 outline-none" type="text">
-            <button onclick="copyURL()" class="text-[10px] font-bold bg-blue-600 px-4 py-1 rounded">COPY LINK</button>
-        </div>
-
     </div>
 
     <script>
-        const apiKey = ""; // Provided by env
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'power-chess-v2';
-        const firebaseConfig = JSON.parse(__firebase_config);
+        // Replace with your actual Google Apps Script URL
+        const API_URL = 'https://script.google.com/macros/s/AKfycbxfuZSmIsEmP5rcj8XrQcdagyCP4j0BvHynZi6mZEs9MvnbroUBClsYHIt_-XPKMvE26w/exec'; 
         
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-        const auth = firebase.auth();
+        let allLinks = [], particles = [], staticSnow = [];
+        let currentCategory = 'all';
+        let mouse = { x: -1000, y: -1000, lastX: 0, lastY: 0, vx: 0, vy: 0 };
+        const canvas = document.getElementById('snow-canvas'), ctx = canvas.getContext('2d');
 
-        const PIECES = {
-            'white': { 'p': '♙', 'r': '♖', 'n': '♘', 'b': '♗', 'q': '♕', 'k': '♔' },
-            'black': { 'p': '♟', 'r': '♜', 'n': '♞', 'b': '♝', 'q': '♛', 'k': '♚' }
-        };
+        // Snowflake Logic
+        window.addEventListener('mousemove', e => {
+            mouse.vx = e.clientX - mouse.lastX; mouse.vy = e.clientY - mouse.lastY;
+            mouse.lastX = e.clientX; mouse.lastY = e.clientY;
+            mouse.x = e.clientX; mouse.y = e.clientY;
+        });
 
-        let state = {
-            gameId: new URLSearchParams(window.location.search).get('game') || 'local',
-            mode: 'ai', // 'ai' or 'pvp'
-            myColor: 'white',
-            board: Array(8).fill(null).map(() => Array(8).fill(null)),
-            turn: 'white',
-            mana: { white: 30, black: 30 },
-            selected: null,
-            validMoves: [],
-            activePower: null,
-            isAILoading: false
-        };
-
-        async function init() {
-            const user = await signIn();
-            if (state.gameId !== 'local') {
-                state.mode = 'pvp';
-                setupMultiplayerListener();
-            } else {
-                resetBoard();
-                render();
-            }
+        function initSnow() {
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            particles = [];
+            for(let i=0; i<100; i++) { let p = new Snow(); p.y = Math.random() * canvas.height; particles.push(p); }
         }
 
-        async function signIn() {
-            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                return (await auth.signInWithCustomToken(__initial_auth_token)).user;
-            } else {
-                return (await auth.signInAnonymously()).user;
+        class Snow {
+            constructor() { this.reset(); }
+            reset() { this.x = Math.random() * canvas.width; this.y = -10; this.r = Math.random() * 2 + 1; this.sx = (Math.random() - 0.5) * 1; this.sy = Math.random() * 1 + 0.5; }
+            update() {
+                let dx = this.x - mouse.x, dy = this.y - mouse.y, dist = Math.sqrt(dx*dx + dy*dy);
+                if(dist < 100) { let force = (100 - dist) / 100; this.x += (dx/dist) * force * 2 + (mouse.vx * 0.05); this.y += (dy/dist) * force * 2 + (mouse.vy * 0.05); }
+                this.x += this.sx; this.y += this.sy;
+                if(this.y > canvas.height - 2) { staticSnow.push({ x: this.x, y: canvas.height - Math.random()*3, r: this.r, time: Date.now() }); this.reset(); }
             }
+            draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.r, 0, Math.PI*2); ctx.fill(); }
         }
 
-        function setMode(mode) {
-            if (mode === 'ai') {
-                window.location.href = window.location.pathname;
-            } else {
-                const newId = Math.random().toString(36).substring(7);
-                window.location.href = `${window.location.pathname}?game=${newId}`;
-            }
+        function animate() {
+            ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle = "rgba(255,255,255,0.4)";
+            particles.forEach(p => { p.update(); p.draw(); });
+            const now = Date.now(); staticSnow = staticSnow.filter(p => now - p.time < 30000);
+            staticSnow.forEach(p => { ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); ctx.fill(); });
+            requestAnimationFrame(animate);
         }
 
-        function resetBoard() {
-            state.board = Array(8).fill(null).map(() => Array(8).fill(null));
-            for (let i = 0; i < 8; i++) {
-                state.board[1][i] = { type: 'p', color: 'black' };
-                state.board[6][i] = { type: 'p', color: 'white' };
-            }
-            const layout = ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'];
-            for (let i = 0; i < 8; i++) {
-                state.board[0][i] = { type: layout[i], color: 'black' };
-                state.board[7][i] = { type: layout[i], color: 'white' };
-            }
-        }
-
-        function setupMultiplayerListener() {
-            document.getElementById('multiplayer-controls').classList.remove('hidden');
-            document.getElementById('game-url').value = window.location.href;
-            document.getElementById('mode-pvp').classList.add('bg-blue-800');
-            document.getElementById('opp-name').textContent = "Awaiting Friend...";
-            
-            const docRef = db.doc(`artifacts/${appId}/public/data/games/${state.gameId}`);
-            
-            docRef.onSnapshot((doc) => {
-                if (!doc.exists()) {
-                    docRef.set({
-                        board: JSON.stringify(state.board),
-                        turn: 'white',
-                        mana: state.mana,
-                        players: [auth.currentUser.uid]
-                    });
-                    state.myColor = 'white';
-                } else {
-                    const data = doc.data();
-                    state.board = JSON.parse(data.board);
-                    state.turn = data.turn;
-                    state.mana = data.mana;
-                    
-                    if (!data.players.includes(auth.currentUser.uid) && data.players.length < 2) {
-                        data.players.push(auth.currentUser.uid);
-                        docRef.update({ players: data.players });
-                    }
-                    
-                    state.myColor = data.players[0] === auth.currentUser.uid ? 'white' : 'black';
-                    document.getElementById('opp-name').textContent = data.players.length > 1 ? "Friend Online" : "Awaiting Friend...";
-                }
-                render();
-            }, (err) => console.error(err));
-        }
-
-        function render() {
-            const boardEl = document.getElementById('board');
-            boardEl.innerHTML = '';
-            
-            for (let r = 0; r < 8; r++) {
-                for (let c = 0; c < 8; c++) {
-                    const square = document.createElement('div');
-                    square.className = `square ${(r + c) % 2 === 0 ? 'light' : 'dark'}`;
-                    
-                    if (state.selected && state.selected.r === r && state.selected.c === c) square.classList.add('selected');
-                    if (state.validMoves.some(m => m.r === r && m.c === c)) square.classList.add('valid-move');
-
-                    const piece = state.board[r][c];
-                    if (piece) {
-                        const el = document.createElement('span');
-                        el.className = 'piece';
-                        el.textContent = PIECES[piece.color][piece.type];
-                        el.style.color = piece.color === 'white' ? '#fff' : '#000';
-                        if (piece.color === 'white') el.style.filter = 'drop-shadow(0 2px 2px rgba(0,0,0,0.3))';
-                        square.appendChild(el);
-                    }
-
-                    square.onclick = () => handleSquareClick(r, c);
-                    boardEl.appendChild(square);
-                }
-            }
-
-            // Stats Update
-            document.getElementById('mana-white-fill').style.width = state.mana.white + '%';
-            document.getElementById('mana-black-fill').style.width = state.mana.black + '%';
-            document.getElementById('player-mana-text').textContent = state.mana.white + ' MP';
-            document.getElementById('opp-mana-text').textContent = state.mana.black + ' MP';
-            
-            const turnInd = document.getElementById('turn-indicator');
-            turnInd.textContent = state.turn === 'white' ? "White's Turn" : "Black's Turn";
-            turnInd.style.background = state.turn === 'white' ? '#fff' : '#ef4444';
-            turnInd.style.color = state.turn === 'white' ? '#000' : '#fff';
-
-            // Power button logic
-            const currentMana = state.mana[state.myColor];
-            document.getElementById('btn-teleport').classList.toggle('disabled', currentMana < 20);
-            document.getElementById('btn-freeze').classList.toggle('disabled', currentMana < 15);
-            document.getElementById('btn-spawn').classList.toggle('disabled', currentMana < 40);
-        }
-
-        async function handleSquareClick(r, c) {
-            if (state.mode === 'pvp' && state.turn !== state.myColor) return;
-            if (state.mode === 'ai' && state.turn === 'black') return;
-
-            const piece = state.board[r][c];
-
-            if (state.activePower) {
-                applyPower(r, c);
-                return;
-            }
-
-            if (piece && piece.color === state.turn) {
-                state.selected = { r, c };
-                state.validMoves = getValidMoves(r, c);
-                render();
-            } else {
-                const move = state.validMoves.find(m => m.r === r && m.c === c);
-                if (move) {
-                    executeMove(state.selected.r, state.selected.c, r, c);
-                    state.selected = null;
-                    state.validMoves = [];
-                    state.turn = state.turn === 'white' ? 'black' : 'white';
-                    state.mana[state.turn] = Math.min(100, state.mana[state.turn] + 5);
-                    
-                    syncGame();
-                    
-                    if (state.mode === 'ai' && state.turn === 'black') {
-                        setTimeout(runAIMove, 1000);
-                    }
-                } else {
-                    state.selected = null;
-                    state.validMoves = [];
-                    render();
-                }
-            }
-        }
-
-        function executeMove(fR, fC, tR, tC) {
-            const moving = state.board[fR][fC];
-            const target = state.board[tR][tC];
-            if (target) {
-                state.mana[state.turn] = Math.min(100, state.mana[state.turn] + 15);
-                showToast(`Captured ${target.type}! +15 Mana`);
-            }
-            state.board[tR][tC] = moving;
-            state.board[fR][fC] = null;
-            if (moving.type === 'p' && (tR === 0 || tR === 7)) moving.type = 'q';
-        }
-
-        async function runAIMove() {
-            if (state.isAILoading) return;
-            state.isAILoading = true;
-            
-            const prompt = `You are a Chaos Chess AI. Here is the current board: ${JSON.stringify(state.board)}. 
-            You are playing BLACK. You have ${state.mana.black} Mana. 
-            Choose a move or a Power (teleport: 20, freeze: 15, queen: 40).
-            Respond ONLY with a JSON object: {"type": "move", "from": [r,c], "to": [r,c]} OR {"type": "power", "name": "teleport", "target": [r,c], "dest": [r,c]}.`;
-
+        // Vault Logic
+        async function loadVault() {
             try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-                });
-                const res = await response.json();
-                const aiAction = JSON.parse(res.candidates[0].content.parts[0].text);
+                const res = await fetch(API_URL); 
+                allLinks = await res.json();
+                document.getElementById('status').style.display = 'none';
+                filterVault(); 
+                renderManage();
+            } catch (e) { 
+                console.error("Connection failed, retrying...", e);
+                setTimeout(loadVault, 3000); 
+            }
+        }
+
+        function isNew(ts) {
+            if (!ts) return false;
+            try {
+                const itemDate = new Date(ts);
+                const diff = (new Date() - itemDate) / (1000 * 60 * 60);
+                return diff <= 24 && diff >= 0; 
+            } catch(e) { return false; }
+        }
+
+        function renderItems(links) {
+            document.getElementById('mainGrid').innerHTML = links.map((l) => {
+                const safeUrl = encodeURIComponent(l.url);
+                const showNew = isNew(l.timestamp) ? `<span class="new-tag">NEW</span>` : '';
+                return `
+                    <div class="card" onclick="handleCardClick('${safeUrl}')">
+                        <span class="type-tag">${l.type}</span>
+                        <div class="card-title">
+                            ${l.title} ${showNew}
+                        </div>
+                        <p class="card-desc">${l.desc || '...'}</p>
+                    </div>`;
+            }).join('');
+        }
+
+        function filterVault() {
+            const query = document.getElementById('vaultSearch').value.toLowerCase();
+            const filtered = allLinks.filter(item => {
+                const matchesCategory = (currentCategory === 'all' || item.type === currentCategory);
+                const matchesSearch = item.title.toLowerCase().includes(query);
+                return matchesCategory && matchesSearch;
+            });
+            renderItems(filtered);
+        }
+
+        function setCategory(type, btn) {
+            currentCategory = type;
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            filterVault();
+        }
+
+        function handleCardClick(urlParam) {
+            const targetUrl = decodeURIComponent(urlParam);
+            const item = allLinks.find(l => l.url === targetUrl);
+            if(!item) return;
+
+            if(item.type === 'link') { 
+                window.open(item.url, '_blank'); 
+            } else {
+                const overlay = document.getElementById('pageOverlay'), mainUI = document.getElementById('mainUI');
+                document.getElementById('pageTitle').innerText = item.title;
+                document.getElementById('pageDesc').innerText = item.desc;
+                document.getElementById('pageType').innerText = item.type.toUpperCase();
+                document.getElementById('pageLink').href = item.url;
+                document.getElementById('pageLink').innerText = (item.type === 'file') ? 'DOWNLOAD' : 'VISIT WEBSITE';
+
+                const sArea = document.getElementById('settingsArea');
+                if (item.settings && item.settings.trim() !== "") { 
+                    document.getElementById('pageSettings').innerText = item.settings; 
+                    sArea.style.display = 'block'; 
+                } else { 
+                    sArea.style.display = 'none'; 
+                }
                 
-                if (aiAction.type === 'move') {
-                    executeMove(aiAction.from[0], aiAction.from[1], aiAction.to[0], aiAction.to[1]);
+                if (item.icon && item.icon.trim() !== "") {
+                    document.getElementById('pageIcon').src = item.icon;
                 } else {
-                    showToast("AI Used " + aiAction.name);
-                    // Simplify: AI just moves or captures
-                    executeMove(aiAction.target[0], aiAction.target[1], aiAction.dest[0], aiAction.dest[1]);
+                    try {
+                        const domain = new URL(item.url).hostname;
+                        document.getElementById('pageIcon').src = `https://www.google.com/s2/favicons?sz=128&domain=${domain}`;
+                    } catch(e) { document.getElementById('pageIcon').src = 'https://www.google.com/s2/favicons?sz=128&domain=google.com'; }
                 }
-                
-                state.turn = 'white';
-                state.mana.white = Math.min(100, state.mana.white + 5);
-                state.isAILoading = false;
-                render();
-            } catch (e) {
-                // Fallback: Random move if AI fails
-                const blackPieces = [];
-                state.board.forEach((row, r) => row.forEach((p, c) => { if(p && p.color === 'black') blackPieces.push({r,c}) }));
-                const p = blackPieces[Math.floor(Math.random()*blackPieces.length)];
-                const moves = getValidMoves(p.r, p.c);
-                if (moves.length > 0) {
-                    const m = moves[Math.floor(Math.random()*moves.length)];
-                    executeMove(p.r, p.c, m.r, m.c);
-                }
-                state.turn = 'white';
-                state.mana.white = Math.min(100, state.mana.white + 5);
-                state.isAILoading = false;
-                render();
+
+                mainUI.style.filter = "blur(20px)"; 
+                overlay.style.display = 'block';
+                setTimeout(() => overlay.classList.add('active'), 10);
+                document.body.style.overflow = 'hidden';
             }
         }
 
-        function getValidMoves(r, c) {
-            const p = state.board[r][c];
-            if (!p) return [];
-            const moves = [];
-            const d = {
-                'p': p.color === 'white' ? [[-1, 0]] : [[1, 0]],
-                'r': [[1,0],[-1,0],[0,1],[0,-1]],
-                'n': [[2,1],[2,-1],[-2,1],[-2,-1],[1,2],[1,-2],[-1,2],[-1,-2]],
-                'b': [[1,1],[1,-1],[-1,1],[-1,-1]],
-                'q': [[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]],
-                'k': [[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]]
-            };
-            
-            if (p.type === 'p') {
-                d.p.forEach(dir => { if (isValid(r+dir[0], c+dir[1]) && !state.board[r+dir[0]][c+dir[1]]) moves.push({r: r+dir[0], c: c+dir[1]}) });
-                const cap = p.color === 'white' ? [[-1,-1],[-1,1]] : [[1,-1],[1,1]];
-                cap.forEach(dir => { 
-                    const nr=r+dir[0], nc=c+dir[1];
-                    if (isValid(nr, nc) && state.board[nr][nc] && state.board[nr][nc].color !== p.color) moves.push({r: nr, c: nc});
-                });
-            } else if (['n','k'].includes(p.type)) {
-                d[p.type].forEach(dir => {
-                    const nr=r+dir[0], nc=c+dir[1];
-                    if (isValid(nr, nc) && (!state.board[nr][nc] || state.board[nr][nc].color !== p.color)) moves.push({r: nr, c: nc});
-                });
+        function closePage() {
+            const overlay = document.getElementById('pageOverlay'), mainUI = document.getElementById('mainUI');
+            overlay.classList.remove('active'); 
+            mainUI.style.filter = "blur(0px)";
+            setTimeout(() => { overlay.style.display = 'none'; }, 600);
+            document.body.style.overflow = 'auto';
+        }
+
+        // Admin Auth
+        function toggleAdmin(s) { document.getElementById('adminPanel').style.display = s ? 'block' : 'none'; }
+        function checkAuth() { 
+            if(document.getElementById('pass').value === "YM2012") { 
+                document.getElementById('loginBox').style.display = 'none'; 
+                document.getElementById('actions').style.display = 'block'; 
             } else {
-                d[p.type].forEach(dir => {
-                    for(let i=1; i<8; i++){
-                        const nr=r+dir[0]*i, nc=c+dir[1]*i;
-                        if (!isValid(nr, nc)) break;
-                        const target = state.board[nr][nc];
-                        if (!target) moves.push({r: nr, c: nc});
-                        else { if(target.color !== p.color) moves.push({r: nr, c: nc}); break; }
-                    }
-                });
-            }
-            return moves;
-        }
-
-        function isValid(r, c) { return r>=0 && r<8 && c>=0 && c<8; }
-
-        function activatePower(type) {
-            const cost = { teleport: 20, freeze: 15, spawn: 40 }[type];
-            if (state.mana[state.myColor] < cost) return;
-            state.activePower = state.activePower === type ? null : type;
-            showToast(state.activePower ? `Select Target for ${type}` : "Canceled Power");
-            render();
-        }
-
-        function applyPower(r, c) {
-            const p = state.activePower;
-            const piece = state.board[r][c];
-            if (p === 'teleport') {
-                if (!state.selected) {
-                    if (piece && piece.color === state.myColor) state.selected = {r, c};
-                } else if (!piece) {
-                    state.board[r][c] = state.board[state.selected.r][state.selected.c];
-                    state.board[state.selected.r][state.selected.c] = null;
-                    completePower(20);
-                }
-            } else if (p === 'freeze') {
-                if (piece && piece.color !== state.myColor) {
-                    showToast("Piece Frozen!"); // In this simple version, freeze just consumes mana for now
-                    completePower(15);
-                }
-            } else if (p === 'spawn') {
-                if (piece && piece.color === state.myColor && piece.type === 'p') {
-                    piece.type = 'q';
-                    completePower(40);
-                }
+                showToast("INVALID KEY");
             }
         }
+        function updateAdminPreview(val) { document.getElementById('adminIconPreview').src = (val.trim() === "") ? "https://www.google.com/s2/favicons?sz=128&domain=google.com" : val; }
 
-        function completePower(cost) {
-            state.mana[state.myColor] -= cost;
-            state.activePower = null;
-            state.selected = null;
-            syncGame();
-            render();
-        }
-
-        function syncGame() {
-            if (state.mode === 'pvp') {
-                db.doc(`artifacts/${appId}/public/data/games/${state.gameId}`).update({
-                    board: JSON.stringify(state.board),
-                    turn: state.turn,
-                    mana: state.mana
-                });
-            } else {
-                render();
-            }
+        function renderManage() { 
+            const list = document.getElementById('manageList');
+            list.innerHTML = '<h3 style="font-size:0.6rem; letter-spacing:2px; margin-bottom:15px; opacity:0.5;">MANAGE ITEMS</h3>' + 
+            allLinks.map(l => `
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #1a1a25; font-size:0.7rem;">
+                    <span>${l.title}</span>
+                    <button style="color:red; background:none; border:none; cursor:pointer;" onclick="sendToSheet('delete', '${l.title}', '${l.url}')">DEL</button>
+                </div>`).join(''); 
         }
 
         function showToast(msg) {
             const t = document.getElementById('toast');
-            t.textContent = msg;
-            t.style.opacity = '1';
-            setTimeout(() => t.style.opacity = '0', 2000);
+            t.innerText = msg; t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
         }
 
-        function copyURL() {
-            const el = document.getElementById('game-url');
-            el.select();
-            document.execCommand('copy');
-            showToast("Link Copied!");
+        async function sendToSheet(action, title, url) { 
+            showToast(action === 'add' ? "SYNCING ITEM..." : "REMOVING ITEM...");
+            
+            const payload = action === 'add' ? { 
+                title: document.getElementById('newTitle').value, 
+                url: document.getElementById('newUrl').value, 
+                icon: document.getElementById('newIcon').value, 
+                desc: document.getElementById('newDesc').value, 
+                type: document.getElementById('newType').value, 
+                settings: document.getElementById('newSettings').value, 
+                timestamp: new Date().toISOString(), 
+                action: 'add' 
+            } : { title, url, action: 'delete' }; 
+
+            try {
+                await fetch(API_URL, { 
+                    method: 'POST', 
+                    mode: 'no-cors', 
+                    cache: 'no-cache',
+                    body: JSON.stringify(payload) 
+                }); 
+                showToast("VAULT UPDATED");
+                setTimeout(() => location.reload(), 1500);
+            } catch (e) {
+                showToast("SYNC ERROR");
+                console.error(e);
+            }
         }
 
-        window.onload = init;
+        // Initialization
+        window.onresize = initSnow; 
+        initSnow(); 
+        animate(); 
+        loadVault();
     </script>
 </body>
 </html>
