@@ -15,17 +15,14 @@
         header { margin-bottom: 40px; text-align: center; }
         .logo { font-size: 1.2rem; font-weight: 700; letter-spacing: 12px; text-transform: uppercase; color: #fff; text-shadow: 0 0 20px rgba(0, 243, 255, 0.5); }
 
-        /* Controls Section */
         .controls { display: flex; justify-content: center; align-items: stretch; gap: 10px; margin-bottom: 50px; }
         #vaultSearch { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(0, 243, 255, 0.2); padding: 15px 20px; width: 100%; max-width: 400px; border-radius: 0px; color: #fff; outline: none; font-size: 0.8rem; letter-spacing: 2px; }
-        #vaultSearch:focus { border-color: var(--primary); background: rgba(0, 243, 255, 0.05); }
+        
+        /* Square Grid Icon */
+        .view-toggle { background: none; border: 1px solid rgba(0, 243, 255, 0.3); color: var(--primary); width: 50px; border-radius: 0px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .icon-square { width: 16px; height: 16px; border: 2px solid currentColor; }
 
-        .view-toggle { background: none; border: 1px solid rgba(0, 243, 255, 0.3); color: var(--primary); padding: 0 15px; border-radius: 0px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .icon-grid { width: 18px; height: 18px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; }
-        .icon-grid div { background: currentColor; }
-
-        /* Grid Layouts */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; transition: filter 0.5s ease; }
         .grid.list-view { grid-template-columns: 1fr; max-width: 700px; margin: 0 auto; }
         
         .card { background: var(--card); padding: 40px 30px; border-radius: 4px; border: 1px solid rgba(255, 255, 255, 0.05); text-decoration: none; color: inherit; animation: fadeInUp 0.8s ease forwards; opacity: 0; display: block; cursor: pointer; }
@@ -36,32 +33,37 @@
         .card-title { font-size: 0.85rem; font-weight: 700; margin-bottom: 10px; color: #fff; letter-spacing: 2px; text-transform: uppercase; }
         .card-desc { font-size: 0.7rem; color: rgba(224, 224, 255, 0.4); line-height: 1.8; font-weight: 200; }
 
-        /* Full Screen Immersive Page Overlay */
-        #pageOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 5000; display: none; overflow-y: auto; padding: 10vh 20px; }
-        .page-content { max-width: 800px; margin: 0 auto; animation: fadeInUp 0.6s ease; }
+        /* Full Screen Immersive Page with Blur Transition */
+        #pageOverlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(1, 1, 3, 0.95); z-index: 5000; display: none; 
+            overflow-y: auto; padding: 10vh 20px; 
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            opacity: 0; transition: opacity 0.5s ease;
+        }
+        #pageOverlay.active { opacity: 1; display: block; }
+        
+        .page-content { max-width: 800px; margin: 0 auto; transform: scale(0.95); transition: transform 0.5s ease; }
+        #pageOverlay.active .page-content { transform: scale(1); }
+
         .close-page { position: fixed; top: 30px; left: 30px; color: var(--text); cursor: pointer; font-size: 0.7rem; letter-spacing: 3px; opacity: 0.4; z-index: 5001; }
-        .close-page:hover { opacity: 1; color: var(--primary); }
-        
         .page-header { border-bottom: 1px solid rgba(0, 243, 255, 0.1); padding-bottom: 30px; margin-bottom: 40px; text-align: center; }
-        .page-icon-img { width: 64px; height: 64px; border-radius: 12px; margin-bottom: 20px; border: 1px solid rgba(0, 243, 255, 0.2); }
+        .page-icon-img { width: 64px; height: 64px; border-radius: 0px; margin-bottom: 20px; border: 1px solid rgba(0, 243, 255, 0.2); }
         
-        .settings-box { background: #08080c; border: 1px solid #15151a; padding: 30px; margin-top: 40px; font-family: monospace; font-size: 0.75rem; color: #00ffcc; white-space: pre-wrap; position: relative; border-radius: 4px; }
+        .settings-box { background: #08080c; border: 1px solid #15151a; padding: 30px; margin-top: 40px; font-family: monospace; font-size: 0.75rem; color: #00ffcc; white-space: pre-wrap; position: relative; }
         .copy-btn { position: absolute; top: 15px; right: 15px; font-size: 0.6rem; background: rgba(0, 243, 255, 0.1); color: var(--primary); border: 1px solid var(--primary); padding: 5px 10px; cursor: pointer; }
 
-        /* Snow Overlay */
+        /* Snow */
         #snow-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
 
         /* Admin Trigger */
-        #adminBtn { position: fixed; bottom: 20px; right: 20px; width: 35px; height: 35px; opacity: 0.1; cursor: pointer; z-index: 1000; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: var(--primary); border: 1px solid var(--primary); font-size: 0.8rem; font-weight: 700; }
-        #adminBtn:hover { opacity: 1; }
+        #adminBtn { position: fixed; bottom: 20px; right: 20px; width: 35px; height: 35px; opacity: 0.1; cursor: pointer; z-index: 1000; border-radius: 0px; display: flex; align-items: center; justify-content: center; color: var(--primary); border: 1px solid var(--primary); font-size: 0.8rem; font-weight: 700; }
         
-        /* Admin Panel */
         #adminPanel { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 6000; display: none; overflow-y: auto; padding: 50px 20px; }
-        .admin-section { background: #08080c; padding: 25px; border: 1px solid #15151a; border-radius: 4px; margin-bottom: 20px; }
+        .admin-section { background: #08080c; padding: 25px; border: 1px solid #15151a; border-radius: 0px; margin-bottom: 20px; }
         input, select, textarea { background: #0c0c12; border: 1px solid #1a1a25; padding: 15px; border-radius: 0px; color: #fff; width: 100%; margin-bottom: 10px; outline: none; }
         .btn { background: var(--primary); color: #000; border: none; padding: 18px; border-radius: 0px; font-weight: 700; cursor: pointer; width: 100%; letter-spacing: 2px; text-transform: uppercase; font-size: 0.7rem; text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px; }
         
-        .manage-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #1a1a25; font-size: 0.7rem; }
         #status { text-align: center; font-size: 0.6rem; letter-spacing: 4px; margin-bottom: 20px; opacity: 0.4; }
     </style>
 </head>
@@ -73,35 +75,28 @@
         <header><div class="logo">Frost Vault</div></header>
         <div class="controls">
             <input type="text" id="vaultSearch" placeholder="SEARCH VAULT..." onkeyup="filterLinks()">
-            <button class="view-toggle" onclick="toggleView()" title="Toggle Grid/List">
-                <div class="icon-grid"><div></div><div></div><div></div><div></div></div>
+            <button class="view-toggle" onclick="toggleView()">
+                <div class="icon-square"></div>
             </button>
         </div>
-        <div id="status">INITIALIZING...</div>
+        <div id="status">ESTABLISHING CONNECTION...</div>
         <div class="grid" id="mainGrid"></div>
     </div>
 
     <div id="pageOverlay">
-        <div class="close-page" onclick="closePage()">← BACK TO VAULT</div>
+        <div class="close-page" onclick="closePage()">← BACK</div>
         <div class="page-content">
             <div class="page-header">
                 <img id="pageIcon" class="page-icon-img" src="" alt="">
                 <div id="pageType" class="type-tag">VAULT PAGE</div>
-                <h1 id="pageTitle" style="font-size: 1.5rem; letter-spacing:8px; text-transform:uppercase;"></h1>
+                <h1 id="pageTitle" style="letter-spacing:8px; text-transform:uppercase;"></h1>
             </div>
-            
             <p id="pageDesc" style="font-size:0.9rem; opacity:0.5; line-height:2; text-align:center; margin-bottom:40px;"></p>
-            
             <div class="settings-box">
-                <div style="font-size:0.5rem; letter-spacing:2px; margin-bottom:15px; opacity:0.4;">CONFIGURATION & SETTINGS</div>
                 <button class="copy-btn" onclick="copySettings()">COPY</button>
                 <code id="pageSettings"></code>
             </div>
-
-            <a id="pageLink" href="#" target="_blank" class="btn" style="margin-top:50px; background: #fff;">
-                <img id="btnIcon" src="" style="width:16px; height:16px; display:none;">
-                VISIT PAGE
-            </a>
+            <a id="pageLink" href="#" target="_blank" class="btn" style="margin-top:50px; background: #fff;">VISIT PAGE</a>
         </div>
     </div>
 
@@ -113,25 +108,20 @@
                 <input type="password" id="pass" placeholder="PASSKEY">
                 <button class="btn" onclick="checkAuth()">SIGN IN</button>
             </div>
-
             <div id="actions" style="display:none;">
                 <div class="admin-section">
-                    <h2 style="font-size:0.7rem; letter-spacing:3px; margin-bottom:15px;">+ ADD DATA</h2>
                     <select id="newType">
                         <option value="link">DIRECT LINK</option>
                         <option value="page">VAULT PAGE</option>
                     </select>
                     <input type="text" id="newTitle" placeholder="TITLE">
                     <input type="text" id="newUrl" placeholder="URL">
-                    <textarea id="newDesc" placeholder="DESCRIPTION" style="height:80px;"></textarea>
-                    <textarea id="newSettings" placeholder="SETTINGS (PAGE ONLY)" style="height:80px;"></textarea>
-                    <button class="btn" id="sendBtn" onclick="sendToSheet('add')">SAVE TO VAULT</button>
+                    <textarea id="newDesc" placeholder="DESCRIPTION"></textarea>
+                    <textarea id="newSettings" placeholder="SETTINGS (PAGE ONLY)"></textarea>
+                    <button class="btn" id="sendBtn" onclick="sendToSheet('add')">SAVE</button>
                 </div>
-                <div class="admin-section">
-                    <h2 style="font-size:0.7rem; letter-spacing:3px; margin-bottom:15px;">MANAGE</h2>
-                    <div id="manageList"></div>
-                </div>
-                <button class="btn" style="background:var(--red); color:#fff;" onclick="location.reload()">TERMINATE SESSION</button>
+                <div id="manageList" class="admin-section"></div>
+                <button class="btn" style="background:var(--red); color:#fff;" onclick="location.reload()">EXIT</button>
             </div>
         </div>
     </div>
@@ -205,42 +195,43 @@
             if(item.type === 'link') {
                 window.open(item.url, '_blank');
             } else {
-                // Prepare Full Page View
-                const iconUrl = `https://www.google.com/s2/favicons?sz=128&domain=${new URL(item.url).hostname}`;
+                const overlay = document.getElementById('pageOverlay');
+                const main = document.getElementById('mainGrid');
+                
+                // Set Content
                 document.getElementById('pageTitle').innerText = item.title;
                 document.getElementById('pageDesc').innerText = item.desc;
-                document.getElementById('pageSettings').innerText = item.settings || "// NO CONFIGURATION DETECTED";
+                document.getElementById('pageSettings').innerText = item.settings || "// NO CONFIG";
                 document.getElementById('pageLink').href = item.url;
-                document.getElementById('pageIcon').src = iconUrl;
-                document.getElementById('btnIcon').src = iconUrl;
-                document.getElementById('btnIcon').style.display = 'inline-block';
+                document.getElementById('pageIcon').src = `https://www.google.com/s2/favicons?sz=128&domain=${new URL(item.url).hostname}`;
                 
-                document.getElementById('mainUI').style.display = 'none';
-                document.getElementById('pageOverlay').style.display = 'block';
-                window.scrollTo(0,0);
+                // Transition
+                main.style.filter = "blur(20px)";
+                overlay.style.display = 'block';
+                setTimeout(() => { overlay.classList.add('active'); }, 10);
+                document.body.style.overflow = 'hidden';
             }
         }
 
-        function copySettings() {
-            navigator.clipboard.writeText(document.getElementById('pageSettings').innerText);
-            alert("CONFIG COPIED");
-        }
-
         function closePage() { 
-            document.getElementById('pageOverlay').style.display = 'none'; 
-            document.getElementById('mainUI').style.display = 'block';
+            const overlay = document.getElementById('pageOverlay');
+            const main = document.getElementById('mainGrid');
+            overlay.classList.remove('active');
+            main.style.filter = "blur(0px)";
+            setTimeout(() => { overlay.style.display = 'none'; }, 500);
+            document.body.style.overflow = 'auto';
         }
 
         function renderManage() {
             document.getElementById('manageList').innerHTML = allLinks.map(l => `
-                <div class="manage-row">
+                <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #1a1a25; font-size:0.7rem;">
                     <span>${l.title}</span>
                     <button style="color:red; background:none; border:none; cursor:pointer;" onclick="sendToSheet('delete', '${l.title}', '${l.url}')">DEL</button>
                 </div>`).join('');
         }
 
         async function sendToSheet(action, title, url) {
-            if(action === 'delete' && !confirm('Delete Item?')) return;
+            if(action === 'delete' && !confirm('Delete?')) return;
             const payload = action === 'add' ? {
                 title: document.getElementById('newTitle').value,
                 url: document.getElementById('newUrl').value,
@@ -249,8 +240,6 @@
                 settings: document.getElementById('newSettings').value,
                 action: 'add'
             } : { title, url, action: 'delete' };
-
-            document.getElementById('sendBtn').innerText = "SYNCING...";
             await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
             location.reload();
         }
@@ -268,6 +257,11 @@
             const query = document.getElementById('vaultSearch').value.toLowerCase();
             const filtered = allLinks.filter(l => l.title.toLowerCase().includes(query));
             renderPublic(filtered);
+        }
+
+        function copySettings() {
+            navigator.clipboard.writeText(document.getElementById('pageSettings').innerText);
+            alert("COPIED");
         }
 
         window.onresize = initSnow;
