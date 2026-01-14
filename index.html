@@ -168,7 +168,6 @@
     </div>
 
     <script>
-        // UPDATED API URL
         const API_URL = 'https://script.google.com/macros/s/AKfycbxfuZSmIsEmP5rcj8XrQcdagyCP4j0BvHynZi6mZEs9MvnbroUBClsYHIt_-XPKMvE26w/exec'; 
         
         let allLinks = [], particles = [], staticSnow = [];
@@ -215,9 +214,11 @@
             } catch (e) { setTimeout(loadVault, 2000); }
         }
 
+        // FIXED: Uses the unique URL to find the item instead of list position
         function renderItems(links) {
-            document.getElementById('mainGrid').innerHTML = links.map((l, i) => {
-                return `<div class="card" onclick="handleCardClick(${i})"><span class="type-tag">${l.type}</span><div class="card-title">${l.title}</div><p class="card-desc">${l.desc || '...'}</p></div>`;
+            document.getElementById('mainGrid').innerHTML = links.map((l) => {
+                const safeUrl = encodeURIComponent(l.url);
+                return `<div class="card" onclick="handleCardClick('${safeUrl}')"><span class="type-tag">${l.type}</span><div class="card-title">${l.title}</div><p class="card-desc">${l.desc || '...'}</p></div>`;
             }).join('');
         }
 
@@ -231,8 +232,13 @@
             renderItems(allLinks.filter(l => l.title.toLowerCase().includes(q)));
         }
 
-        function handleCardClick(index) {
-            const item = allLinks[index];
+        // FIXED: Now correctly identifies the item by its URL
+        function handleCardClick(urlParam) {
+            const targetUrl = decodeURIComponent(urlParam);
+            const item = allLinks.find(l => l.url === targetUrl);
+            
+            if(!item) return;
+
             if(item.type === 'link') { window.open(item.url, '_blank'); }
             else {
                 const overlay = document.getElementById('pageOverlay'), mainUI = document.getElementById('mainUI');
@@ -246,7 +252,6 @@
                 if (item.settings) { document.getElementById('pageSettings').innerText = item.settings; sArea.style.display = 'block'; }
                 else { sArea.style.display = 'none'; }
                 
-                // ICON LOGIC: Use custom icon from sheet, else fallback to favicon
                 if (item.icon && item.icon.trim() !== "") {
                     document.getElementById('pageIcon').src = item.icon;
                 } else {
