@@ -24,8 +24,8 @@
             background: none; 
             border: 1px solid rgba(0, 243, 255, 0.2); 
             color: var(--primary); 
-            width: 50px; /* Fixed width to make it a square frame */
-            height: 50px; /* Matching height for a perfect square */
+            width: 50px; 
+            height: 50px; 
             border-radius: 0px; 
             cursor: pointer; 
             display: flex; 
@@ -45,7 +45,7 @@
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         .card:hover { border-color: var(--primary); box-shadow: 0 0 40px rgba(0, 243, 255, 0.15); transform: translateY(-5px); background: #0d0d14; }
         
-        .type-tag { font-size: 0.5rem; letter-spacing: 2px; color: var(--primary); margin-bottom: 10px; display: block; opacity: 0.6; }
+        .type-tag { font-size: 0.5rem; letter-spacing: 2px; color: var(--primary); margin-bottom: 10px; display: block; opacity: 0.6; text-transform: uppercase; }
         .card-title { font-size: 0.85rem; font-weight: 700; margin-bottom: 10px; color: #fff; letter-spacing: 2px; text-transform: uppercase; }
         .card-desc { font-size: 0.7rem; color: rgba(224, 224, 255, 0.4); line-height: 1.8; font-weight: 200; }
 
@@ -133,6 +133,7 @@
                     <select id="newType">
                         <option value="link">DIRECT LINK</option>
                         <option value="page">VAULT PAGE</option>
+                        <option value="file">FILE / DOWNLOAD</option>
                     </select>
                     <input type="text" id="newTitle" placeholder="ITEM NAME">
                     <input type="text" id="newUrl" placeholder="URL / FILE LINK">
@@ -194,7 +195,7 @@
         function renderPublic(links) {
             document.getElementById('mainGrid').innerHTML = links.map((l, i) => `
                 <div class="card" style="animation-delay:${i*0.05}s" onclick="handleCardClick(${i})">
-                    <span class="type-tag">${l.type === 'page' ? 'VAULT PAGE' : 'DIRECT LINK'}</span>
+                    <span class="type-tag">${l.type}</span>
                     <div class="card-title">${l.title}</div>
                     <p class="card-desc">${l.desc || '...'}</p>
                 </div>`).join('');
@@ -202,7 +203,7 @@
 
         function handleCardClick(index) {
             const item = allLinks[index];
-            if(item.type === 'link') {
+            if(item.type === 'link' || item.type === 'file') {
                 window.open(item.url, '_blank');
             } else {
                 const overlay = document.getElementById('pageOverlay');
@@ -212,9 +213,11 @@
                 document.getElementById('pageDesc').innerText = item.desc;
                 document.getElementById('pageSettings').innerText = item.settings || "// NO CONFIGURATION";
                 document.getElementById('pageLink').href = item.url;
-                document.getElementById('pageIcon').src = `https://www.google.com/s2/favicons?sz=128&domain=${new URL(item.url).hostname}`;
                 
-                // Transition: Blur background grid, Fade in Overlay
+                // Try to get icon, fallback to generic if file
+                const iconUrl = item.type === 'file' ? 'https://cdn-icons-png.flaticon.com/512/124/124837.png' : `https://www.google.com/s2/favicons?sz=128&domain=${new URL(item.url).hostname}`;
+                document.getElementById('pageIcon').src = iconUrl;
+                
                 mainGrid.style.filter = "blur(15px)";
                 overlay.style.display = 'block';
                 setTimeout(() => { overlay.classList.add('active'); }, 10);
