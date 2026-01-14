@@ -12,7 +12,16 @@
         :root { --bg: #010103; --primary: #00f3ff; --card: rgba(10, 10, 15, 0.7); --text: #e0e0ff; --red: #ff4444; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; transition: all 0.3s ease; }
         
-        body { background: var(--bg); color: var(--text); min-height: 100vh; padding: 5vh 20px; overflow-x: hidden; cursor: crosshair; }
+        /* Changed cursor to a Snowflake */
+        body { 
+            background: var(--bg); 
+            color: var(--text); 
+            min-height: 100vh; 
+            padding: 5vh 20px; 
+            overflow-x: hidden; 
+            cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'  width='40' height='48' style='font-size:24px;'><text y='1.1em'>❄️</text></svg>"), auto;
+        }
+
         .container { max-width: 1000px; margin: 0 auto; position: relative; z-index: 2; padding-bottom: 60px; }
         
         header { margin-bottom: 40px; text-align: center; }
@@ -29,7 +38,6 @@
             padding: 6px 15px; color: rgba(255,255,255,0.4); font-size: 0.55rem; letter-spacing: 2px; 
             cursor: pointer; text-transform: uppercase; border-radius: 0px;
         }
-        /* Selected tab is now solid White */
         .cat-btn.active { background: #ffffff; color: #000; border-color: #ffffff; box-shadow: 0 0 15px rgba(255,255,255,0.3); }
 
         #mainGrid { transition: filter 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
@@ -38,7 +46,7 @@
         .card { 
             background: var(--card); padding: 40px 30px; border-radius: 4px; border: 1px solid rgba(255, 255, 255, 0.05); 
             text-decoration: none; color: inherit; animation: fadeInUp 0.8s ease forwards; opacity: 0; 
-            display: block; cursor: pointer; position: relative; backdrop-filter: blur(8px);
+            display: block; cursor: inherit; position: relative; backdrop-filter: blur(8px);
         }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         .card:hover { border-color: var(--primary); box-shadow: 0 0 40px rgba(0, 243, 255, 0.15); transform: translateY(-5px); background: rgba(13, 13, 20, 0.8); }
@@ -54,14 +62,14 @@
             overflow-y: auto; padding: 100px 60px; opacity: 0; transition: opacity 0.6s ease; backdrop-filter: blur(20px);
         }
         #pageOverlay.active { opacity: 1; display: block; }
-        .close-page { position: fixed; top: 30px; left: 60px; color: var(--text); cursor: pointer; font-size: 0.7rem; letter-spacing: 3px; opacity: 0.4; z-index: 5001; }
+        .close-page { position: fixed; top: 30px; left: 60px; color: var(--text); cursor: inherit; font-size: 0.7rem; letter-spacing: 3px; opacity: 0.4; z-index: 5001; }
 
         .settings-box { background: rgba(8, 8, 12, 0.8); border: 1px solid #15151a; padding: 40px; font-family: monospace; font-size: 0.8rem; color: #00ffcc; white-space: pre-wrap; user-select: text; }
-        .btn { background: #fff; color: #000; border: none; padding: 20px 50px; font-weight: 700; cursor: pointer; letter-spacing: 2px; text-transform: uppercase; font-size: 0.7rem; display: inline-flex; align-items: center; gap: 10px; }
+        .btn { background: #fff; color: #000; border: none; padding: 20px 50px; font-weight: 700; cursor: inherit; letter-spacing: 2px; text-transform: uppercase; font-size: 0.7rem; display: inline-flex; align-items: center; gap: 10px; }
         .credit-tag { position: fixed; bottom: 20px; left: 20px; font-size: 0.6rem; letter-spacing: 4px; opacity: 0.2; text-transform: uppercase; z-index: 1; }
 
         #snow-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
-        #adminBtn { position: fixed; bottom: 20px; right: 20px; width: 35px; height: 35px; opacity: 0.1; cursor: pointer; z-index: 1000; border: 1px solid var(--primary); display: flex; align-items: center; justify-content: center; color: var(--primary); }
+        #adminBtn { position: fixed; bottom: 20px; right: 20px; width: 35px; height: 35px; opacity: 0.1; cursor: inherit; z-index: 1000; border: 1px solid var(--primary); display: flex; align-items: center; justify-content: center; color: var(--primary); }
         #adminPanel { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 6000; display: none; padding: 50px 20px; overflow-y: auto; }
     </style>
 </head>
@@ -109,7 +117,7 @@
     </div>
 
     <div id="adminBtn" onclick="toggleAdmin(true)">A</div>
-    <div id="adminPanel">... (Admin content here) ...</div>
+    <div id="adminPanel">...</div>
 
     <script>
         const API_URL = 'https://script.google.com/macros/s/AKfycbwpmHvmhRlcZq-dhMiZ1xWfuYcZvirp89IKKlqAcWa8FbsYqJK6ruDVY_rk_V17w4rIrA/exec'; 
@@ -151,24 +159,23 @@
                 this.sy = Math.random() * 1 + 0.5;
             }
             update() {
-                // Smooth Mouse Drift
                 let dx = this.x - mouse.x;
                 let dy = this.y - mouse.y;
                 let dist = Math.sqrt(dx*dx + dy*dy);
-                if(dist < 120) {
-                    let force = (120 - dist) / 120;
-                    this.x += (dx/dist) * force * 3 + (mouse.vx * 0.1);
-                    this.y += (dy/dist) * force * 3 + (mouse.vy * 0.1);
+                if(dist < 100) {
+                    let force = (100 - dist) / 100;
+                    this.x += (dx/dist) * force * 2 + (mouse.vx * 0.05);
+                    this.y += (dy/dist) * force * 2 + (mouse.vy * 0.05);
                 }
 
-                // Shockwave logic
                 if(shockwave.active) {
                     let sdx = this.x - shockwave.x;
                     let sdy = this.y - shockwave.y;
                     let sdist = Math.sqrt(sdx*sdx + sdy*sdy);
-                    if(sdist < shockwave.r && sdist > shockwave.r - 50) {
-                        this.x += (sdx/sdist) * 15;
-                        this.y += (sdy/sdist) * 15;
+                    // SMALLER, SNAPPY SHOCKWAVE: only affects particles in a 150px range
+                    if(sdist < shockwave.r && sdist > shockwave.r - 30) {
+                        this.x += (sdx/sdist) * 10;
+                        this.y += (sdy/sdist) * 10;
                     }
                 }
 
@@ -187,8 +194,8 @@
             ctx.clearRect(0,0,canvas.width,canvas.height);
             ctx.fillStyle = "rgba(255,255,255,0.4)";
             if(shockwave.active) {
-                shockwave.r += 20;
-                if(shockwave.r > 1000) shockwave.active = false;
+                shockwave.r += 12; // Slower expansion for smaller feel
+                if(shockwave.r > 250) shockwave.active = false; // Ends quickly
             }
             particles.forEach(p => { p.update(); p.draw(); });
             requestAnimationFrame(animate);
@@ -206,7 +213,7 @@
             const now = new Date();
             document.getElementById('mainGrid').innerHTML = links.map((l, i) => {
                 const isNew = l.timestamp && (now - new Date(l.timestamp)) < (48 * 60 * 60 * 1000);
-                return `<div class="card" style="animation-delay:${i*0.05}s" onclick="handleCardClick(${i})">${isNew ? '<div class="new-badge">NEW</div>' : ''}<span class="type-tag">${l.type}</span><div class="card-title">${l.title}</div><p class="card-desc">${l.desc || '...'}</p></div>`;
+                return `<div class="card" onclick="handleCardClick(${i})">${isNew ? '<div class="new-badge">NEW</div>' : ''}<span class="type-tag">${l.type}</span><div class="card-title">${l.title}</div><p class="card-desc">${l.desc || '...'}</p></div>`;
             }).join('');
         }
 
