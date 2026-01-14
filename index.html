@@ -23,24 +23,19 @@
         .search-container { display: flex; width: 100%; max-width: 500px; gap: 10px; }
         #vaultSearch { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(0, 243, 255, 0.2); padding: 15px 20px; width: 100%; border-radius: 0px; color: #fff; outline: none; font-size: 0.8rem; letter-spacing: 2px; }
 
-        /* High Visibility Categories */
         .categories { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
         .cat-btn { 
             background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2); 
             padding: 10px 22px; color: #fff; font-size: 0.65rem; font-weight: 700; 
             letter-spacing: 2px; cursor: pointer; text-transform: uppercase; border-radius: 2px;
         }
-        .cat-btn:hover { background: rgba(255, 255, 255, 0.15); border-color: #fff; }
-        
-        /* Active State: White Background / Black Text */
-        .cat-btn.active { 
-            background: #ffffff !important; 
-            color: #000000 !important; 
-            border-color: #ffffff; 
-            box-shadow: 0 0 25px rgba(255,255,255,0.4); 
-        }
+        .cat-btn.active { background: #ffffff !important; color: #000000 !important; border-color: #ffffff; box-shadow: 0 0 25px rgba(255,255,255,0.4); }
 
-        #mainGrid { transition: filter 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+        /* Sync Loading Spinner */
+        #status { display: flex; flex-direction: column; align-items: center; gap: 15px; margin: 50px 0; }
+        .spinner { width: 30px; height: 30px; border: 2px solid rgba(0, 243, 255, 0.1); border-top: 2px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; box-shadow: 0 0 15px rgba(0, 243, 255, 0.2); }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
         
         .card { 
@@ -63,10 +58,19 @@
         }
         #pageOverlay.active { opacity: 1; display: block; }
         .close-page { position: fixed; top: 30px; left: 60px; color: var(--text); cursor: pointer; font-size: 0.7rem; letter-spacing: 3px; opacity: 0.4; z-index: 5001; }
-        .close-page:hover { opacity: 1; color: var(--primary); }
 
         .settings-box { background: rgba(8, 8, 12, 0.8); border: 1px solid #15151a; padding: 40px; font-family: monospace; font-size: 0.8rem; color: #00ffcc; white-space: pre-wrap; user-select: text; }
-        .btn { background: #fff; color: #000; border: none; padding: 20px 50px; font-weight: 700; cursor: pointer; letter-spacing: 2px; text-transform: uppercase; font-size: 0.7rem; display: inline-flex; align-items: center; gap: 10px; }
+        
+        /* Updated VISIT WEBSITE Button Style */
+        .btn { 
+            background: #ffffff; color: #000000; border: none; 
+            padding: 15px 35px; font-weight: 700; cursor: pointer; 
+            letter-spacing: 2px; text-transform: uppercase; font-size: 0.7rem; 
+            display: inline-flex; align-items: center; gap: 10px; border-radius: 2px;
+            box-shadow: 0 0 20px rgba(255,255,255,0.2); text-decoration: none;
+        }
+        .btn:hover { box-shadow: 0 0 30px rgba(255,255,255,0.4); transform: translateY(-2px); }
+
         .credit-tag { position: fixed; bottom: 20px; left: 20px; font-size: 0.6rem; letter-spacing: 4px; opacity: 0.2; text-transform: uppercase; z-index: 1; }
 
         #snow-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
@@ -93,6 +97,11 @@
             </div>
         </div>
 
+        <div id="status">
+            <div class="spinner"></div>
+            <div style="font-size:0.6rem; letter-spacing:4px; opacity:0.4;">SYNCING WITH DATABASE...</div>
+        </div>
+
         <div id="mainGrid" class="grid"></div>
     </div>
 
@@ -109,7 +118,9 @@
                 </div>
             </div>
             <p id="pageDesc" style="opacity:0.6; line-height:2; margin-bottom:40px;"></p>
-            <a id="pageLink" href="#" target="_blank" class="btn">ACCESS CONTENT</a>
+            
+            <a id="pageLink" href="#" target="_blank" class="btn">VISIT WEBSITE</a>
+
             <div id="settingsArea" style="margin-top:50px;">
                 <div style="font-size:0.6rem; opacity:0.3; margin-bottom:10px;">CONFIGURATION SETTINGS</div>
                 <div class="settings-box"><code id="pageSettings"></code></div>
@@ -160,16 +171,13 @@
                     this.x += (dx/dist) * force * 2 + (mouse.vx * 0.05);
                     this.y += (dy/dist) * force * 2 + (mouse.vy * 0.05);
                 }
-
                 this.x += this.sx;
                 this.y += this.sy;
                 if(this.y > canvas.height) this.y = -10;
                 if(this.x > canvas.width) this.x = 0;
                 if(this.x < 0) this.x = canvas.width;
             }
-            draw() {
-                ctx.beginPath(); ctx.arc(this.x, this.y, this.r, 0, Math.PI*2); ctx.fill();
-            }
+            draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.r, 0, Math.PI*2); ctx.fill(); }
         }
 
         function animate() {
@@ -183,6 +191,7 @@
             try {
                 const res = await fetch(API_URL);
                 allLinks = await res.json();
+                document.getElementById('status').style.display = 'none';
                 renderItems(allLinks);
             } catch (e) { setTimeout(loadVault, 2000); }
         }
@@ -229,14 +238,13 @@
                 mainUI.style.filter = "blur(20px)"; overlay.style.display = 'block';
                 setTimeout(() => overlay.classList.add('active'), 10);
                 document.body.style.overflow = 'hidden';
-                document.querySelector('.credit-tag').style.display = 'none';
             }
         }
 
         function closePage() {
             const overlay = document.getElementById('pageOverlay'), mainUI = document.getElementById('mainUI');
             overlay.classList.remove('active'); mainUI.style.filter = "blur(0px)";
-            setTimeout(() => { overlay.style.display = 'none'; document.querySelector('.credit-tag').style.display = 'block'; }, 600);
+            setTimeout(() => { overlay.style.display = 'none'; }, 600);
             document.body.style.overflow = 'auto';
         }
 
