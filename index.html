@@ -45,7 +45,6 @@
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         .card:hover { border-color: var(--primary); box-shadow: 0 0 40px rgba(0, 243, 255, 0.15); transform: translateY(-5px); background: rgba(13, 13, 20, 0.8); }
         
-        .new-badge { position: absolute; top: 15px; right: 15px; background: var(--primary); color: #000; font-size: 0.5rem; font-weight: 700; padding: 2px 8px; box-shadow: 0 0 10px var(--primary); }
         .type-tag { font-size: 0.5rem; letter-spacing: 2px; color: var(--primary); margin-bottom: 10px; display: block; opacity: 0.6; text-transform: uppercase; }
         .card-title { font-size: 0.85rem; font-weight: 700; margin-bottom: 10px; color: #fff; letter-spacing: 2px; text-transform: uppercase; }
         .card-desc { font-size: 0.7rem; color: rgba(224, 224, 255, 0.4); line-height: 1.8; }
@@ -71,10 +70,14 @@
         .credit-tag { position: fixed; bottom: 20px; left: 20px; font-size: 0.6rem; letter-spacing: 4px; opacity: 0.2; text-transform: uppercase; z-index: 1; }
         #snow-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
         
+        /* Admin UI Extensions */
         #adminBtn { position: fixed; bottom: 20px; right: 20px; width: 35px; height: 35px; opacity: 0.1; cursor: pointer; z-index: 1000; border: 1px solid var(--primary); display: flex; align-items: center; justify-content: center; color: var(--primary); }
         #adminPanel { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 6000; display: none; padding: 50px 20px; overflow-y: auto; }
         .admin-section { background: #08080c; padding: 25px; border: 1px solid #15151a; margin-bottom: 20px; max-width: 500px; margin-left: auto; margin-right: auto; }
         input, select, textarea { background: #0c0c12; border: 1px solid #1a1a25; padding: 15px; color: #fff; width: 100%; margin-bottom: 10px; outline: none; font-size: 0.8rem; }
+        
+        .icon-preview-wrap { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; }
+        #adminIconPreview { width: 45px; height: 45px; border: 1px solid #1a1a25; object-fit: cover; background: #000; }
 
         #toast { position: fixed; top: 20px; right: 20px; background: #fff; color: #000; padding: 15px 30px; font-size: 0.7rem; font-weight: 700; letter-spacing: 2px; transform: translateX(200%); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 9999; }
         #toast.show { transform: translateX(0); }
@@ -121,9 +124,7 @@
                 </div>
             </div>
             <p id="pageDesc" style="opacity:0.6; line-height:2; margin-bottom:40px;"></p>
-            
             <a id="pageLink" href="#" target="_blank" class="btn">VISIT WEBSITE</a>
-
             <div id="settingsArea" style="margin-top:50px;">
                 <div style="font-size:0.6rem; opacity:0.3; margin-bottom:10px;">CONFIGURATION SETTINGS</div>
                 <div class="settings-box"><code id="pageSettings"></code></div>
@@ -151,6 +152,12 @@
                     </select>
                     <input type="text" id="newTitle" placeholder="ITEM NAME">
                     <input type="text" id="newUrl" placeholder="URL (HTTPS://...)">
+                    
+                    <div class="icon-preview-wrap">
+                        <input type="text" id="newIcon" placeholder="CUSTOM ICON URL" style="margin-bottom:0;" oninput="updateAdminPreview(this.value)">
+                        <img id="adminIconPreview" src="https://www.google.com/s2/favicons?sz=128&domain=google.com" alt="">
+                    </div>
+
                     <textarea id="newDesc" placeholder="DESCRIPTION" style="height:80px;"></textarea>
                     <textarea id="newSettings" placeholder="CONFIG / SETTINGS (OPTIONAL)" style="height:80px;"></textarea>
                     <button class="btn" style="width:100%; justify-content:center;" onclick="sendToSheet('add')">SAVE TO VAULT</button>
@@ -261,20 +268,23 @@
                 document.getElementById('pageDesc').innerText = item.desc;
                 document.getElementById('pageType').innerText = item.type.toUpperCase();
                 document.getElementById('pageLink').href = item.url;
-                
-                // Set Button Text based on type
                 document.getElementById('pageLink').innerText = (item.type === 'file') ? 'DOWNLOAD' : 'VISIT WEBSITE';
 
                 const sArea = document.getElementById('settingsArea');
                 if (item.settings) { document.getElementById('pageSettings').innerText = item.settings; sArea.style.display = 'block'; }
                 else { sArea.style.display = 'none'; }
                 
-                try {
-                    const domain = new URL(item.url).hostname;
-                    document.getElementById('pageIcon').src = `https://www.google.com/s2/favicons?sz=128&domain=${domain}`;
-                } catch(e) {
-                    document.getElementById('pageIcon').src = 'https://www.google.com/s2/favicons?sz=128&domain=google.com';
+                if (item.icon && item.icon.trim() !== "") {
+                    document.getElementById('pageIcon').src = item.icon;
+                } else {
+                    try {
+                        const domain = new URL(item.url).hostname;
+                        document.getElementById('pageIcon').src = `https://www.google.com/s2/favicons?sz=128&domain=${domain}`;
+                    } catch(e) {
+                        document.getElementById('pageIcon').src = 'https://www.google.com/s2/favicons?sz=128&domain=google.com';
+                    }
                 }
+
                 mainUI.style.filter = "blur(20px)"; overlay.style.display = 'block';
                 setTimeout(() => overlay.classList.add('active'), 10);
                 document.body.style.overflow = 'hidden';
@@ -297,6 +307,11 @@
             } 
         }
 
+        function updateAdminPreview(val) {
+            const preview = document.getElementById('adminIconPreview');
+            preview.src = (val.trim() === "") ? "https://www.google.com/s2/favicons?sz=128&domain=google.com" : val;
+        }
+
         function renderManage() { 
             document.getElementById('manageList').innerHTML = '<h3 style="font-size:0.6rem; letter-spacing:2px; margin-bottom:15px; opacity:0.5;">MANAGE ITEMS</h3>' + allLinks.map(l => `<div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #1a1a25; font-size:0.7rem;"><span>${l.title}</span><button style="color:red; background:none; border:none; cursor:pointer;" onclick="sendToSheet('delete', '${l.title}', '${l.url}')">DEL</button></div>`).join(''); 
         }
@@ -312,6 +327,7 @@
             const payload = action === 'add' ? { 
                 title: document.getElementById('newTitle').value, 
                 url: document.getElementById('newUrl').value, 
+                icon: document.getElementById('newIcon').value, 
                 desc: document.getElementById('newDesc').value, 
                 type: document.getElementById('newType').value, 
                 settings: document.getElementById('newSettings').value, 
