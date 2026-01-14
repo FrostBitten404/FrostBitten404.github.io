@@ -121,7 +121,9 @@
                 </div>
             </div>
             <p id="pageDesc" style="opacity:0.6; line-height:2; margin-bottom:40px;"></p>
+            
             <a id="pageLink" href="#" target="_blank" class="btn">VISIT WEBSITE</a>
+
             <div id="settingsArea" style="margin-top:50px;">
                 <div style="font-size:0.6rem; opacity:0.3; margin-bottom:10px;">CONFIGURATION SETTINGS</div>
                 <div class="settings-box"><code id="pageSettings"></code></div>
@@ -179,7 +181,6 @@
             canvas.width = window.innerWidth; canvas.height = window.innerHeight;
             particles = [];
             for(let i=0; i<150; i++) {
-                // Initial spread so they don't all start at top together
                 let p = new Snow();
                 p.y = Math.random() * canvas.height;
                 particles.push(p);
@@ -206,14 +207,8 @@
                 }
                 this.x += this.sx;
                 this.y += this.sy;
-
                 if(this.y > canvas.height - 2) {
-                    staticSnow.push({
-                        x: this.x, 
-                        y: canvas.height - Math.random()*3, 
-                        r: this.r, 
-                        time: Date.now() 
-                    });
+                    staticSnow.push({ x: this.x, y: canvas.height - Math.random()*3, r: this.r, time: Date.now() });
                     this.reset();
                 }
             }
@@ -223,16 +218,10 @@
         function animate() {
             ctx.clearRect(0,0,canvas.width,canvas.height);
             ctx.fillStyle = "rgba(255,255,255,0.4)";
-            
             particles.forEach(p => { p.update(); p.draw(); });
-
-            // Disappear snow after 60 seconds (1 minute)
             const now = Date.now();
             staticSnow = staticSnow.filter(p => now - p.time < 60000);
-
-            staticSnow.forEach(p => {
-                ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); ctx.fill();
-            });
+            staticSnow.forEach(p => { ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); ctx.fill(); });
             requestAnimationFrame(animate);
         }
 
@@ -272,6 +261,10 @@
                 document.getElementById('pageDesc').innerText = item.desc;
                 document.getElementById('pageType').innerText = item.type.toUpperCase();
                 document.getElementById('pageLink').href = item.url;
+                
+                // Set Button Text based on type
+                document.getElementById('pageLink').innerText = (item.type === 'file') ? 'DOWNLOAD' : 'VISIT WEBSITE';
+
                 const sArea = document.getElementById('settingsArea');
                 if (item.settings) { document.getElementById('pageSettings').innerText = item.settings; sArea.style.display = 'block'; }
                 else { sArea.style.display = 'none'; }
