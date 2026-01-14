@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FROST | VAULT</title>
+    
+    <link rel="icon" href="YOUR_IMAGE_URL_HERE">
+
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;700&display=swap" rel="stylesheet">
     <style>
         :root { --bg: #010103; --primary: #00f3ff; --card: #0a0a0f; --text: #e0e0ff; --red: #ff4444; }
@@ -39,7 +42,6 @@
         .card-title { font-size: 0.85rem; font-weight: 700; margin-bottom: 10px; color: #fff; letter-spacing: 2px; text-transform: uppercase; }
         .card-desc { font-size: 0.7rem; color: rgba(224, 224, 255, 0.4); line-height: 1.8; font-weight: 200; }
 
-        /* Full Screen Overlay */
         #pageOverlay { 
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
             background: #010103; z-index: 5000; display: none; 
@@ -169,7 +171,6 @@
 
         function handleCardClick(index) {
             const item = allLinks[index];
-            // Only Direct Link opens immediately now
             if(item.type === 'link') { 
                 window.open(item.url, '_blank'); 
             } else {
@@ -180,7 +181,6 @@
                 document.getElementById('pageLink').innerText = item.type === 'file' ? 'DOWNLOAD FILE' : 'VISIT PAGE';
                 document.getElementById('pageLink').href = item.url;
                 
-                // Show/Hide settings area based on if content exists
                 const settingsArea = document.getElementById('settingsArea');
                 if (item.settings && item.settings.trim() !== "") {
                     document.getElementById('pageSettings').innerText = item.settings;
@@ -196,8 +196,7 @@
                     document.getElementById('pageIcon').src = 'https://www.google.com/s2/favicons?sz=128&domain=google.com';
                 }
 
-                mainUI.style.filter = "blur(20px)"; 
-                overlay.style.display = 'block'; 
+                mainUI.style.filter = "blur(20px)"; overlay.style.display = 'block'; 
                 setTimeout(() => { overlay.classList.add('active'); }, 10); 
                 document.body.style.overflow = 'hidden';
                 document.querySelector('.credit-tag').style.display = 'none';
@@ -206,8 +205,7 @@
 
         function closePage() { 
             const overlay = document.getElementById('pageOverlay'), mainUI = document.getElementById('mainUI'); 
-            overlay.classList.remove('active'); 
-            mainUI.style.filter = "blur(0px)"; 
+            overlay.classList.remove('active'); mainUI.style.filter = "blur(0px)"; 
             setTimeout(() => { 
                 overlay.style.display = 'none'; 
                 document.querySelector('.credit-tag').style.display = 'block';
@@ -220,7 +218,6 @@
         async function sendToSheet(action, title, url) { if(action === 'delete' && !confirm('Confirm Delete?')) return; const payload = action === 'add' ? { title: document.getElementById('newTitle').value, url: document.getElementById('newUrl').value, desc: document.getElementById('newDesc').value, type: document.getElementById('newType').value, settings: document.getElementById('newSettings').value, action: 'add' } : { title, url, action: 'delete' }; await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) }); location.reload(); }
 
         function checkAuth() { if(document.getElementById('pass').value === "YM2012") { document.getElementById('loginBox').style.display = 'none'; document.getElementById('actions').style.display = 'block'; } }
-
         function toggleAdmin(s) { document.getElementById('adminPanel').style.display = s ? 'block' : 'none'; }
         function toggleView() { document.getElementById('mainGrid').classList.toggle('list-view'); }
         function filterLinks() { const query = document.getElementById('vaultSearch').value.toLowerCase(); const filtered = allLinks.filter(l => l.title.toLowerCase().includes(query)); renderPublic(filtered); }
