@@ -6,55 +6,54 @@
     <title>FROST | VAULT</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;700&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #010103; --primary: #00f3ff; --card: #0a0a0f; --text: #e0e0ff; --red: #ff4444; }
+        :root { --bg: #010103; --primary: #00f3ff; --card: #0a0a0f; --text: #e0e0ff; --red: #ff4444; --accent: #1a1a25; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; transition: all 0.3s ease; }
         
-        body { background: var(--bg); color: var(--text); min-height: 100vh; padding: 5vh 20px; overflow-x: hidden; cursor: none; }
+        body { background: var(--bg); color: var(--text); min-height: 100vh; padding: 5vh 20px; overflow-x: hidden; }
         .container { max-width: 1000px; margin: 0 auto; position: relative; z-index: 2; }
         
         header { margin-bottom: 40px; text-align: center; }
         .logo { font-size: 1.2rem; font-weight: 700; letter-spacing: 12px; text-transform: uppercase; color: #fff; text-shadow: 0 0 20px rgba(0, 243, 255, 0.5); }
 
-        /* Controls Area */
         .controls { display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 50px; }
         #vaultSearch { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(0, 243, 255, 0.2); padding: 15px 25px; width: 100%; max-width: 400px; border-radius: 50px; color: #fff; outline: none; font-size: 0.8rem; letter-spacing: 2px; text-align: center; }
-        
-        .view-toggle { background: none; border: 1px solid rgba(0, 243, 255, 0.3); color: var(--primary); padding: 10px 15px; border-radius: 4px; cursor: pointer; font-size: 0.6rem; letter-spacing: 1px; text-transform: uppercase; }
-        .view-toggle:hover { background: rgba(0, 243, 255, 0.1); }
+        .view-toggle { background: none; border: 1px solid rgba(0, 243, 255, 0.3); color: var(--primary); padding: 10px 15px; border-radius: 4px; cursor: pointer; font-size: 0.6rem; text-transform: uppercase; }
 
-        /* Grid Layout */
+        /* Grid Layouts */
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-        
-        /* List Layout Mode */
         .grid.list-view { grid-template-columns: 1fr; max-width: 700px; margin: 0 auto; }
-        .grid.list-view .card { padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; }
-
-        /* Card Styling - Removed Blur from Siblings */
-        .card { background: var(--card); padding: 40px 30px; border-radius: 4px; border: 1px solid rgba(255, 255, 255, 0.05); text-decoration: none; color: inherit; animation: fadeInUp 0.8s ease forwards; opacity: 0; display: block; position: relative; overflow: hidden; }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         
-        .card:hover { border-color: var(--primary); box-shadow: 0 0 40px rgba(0, 243, 255, 0.15); transform: translateY(-5px); background: #0d0d14; z-index: 10; }
+        .card { background: var(--card); padding: 40px 30px; border-radius: 4px; border: 1px solid rgba(255, 255, 255, 0.05); text-decoration: none; color: inherit; animation: fadeInUp 0.8s ease forwards; opacity: 0; display: block; cursor: pointer; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .card:hover { border-color: var(--primary); box-shadow: 0 0 40px rgba(0, 243, 255, 0.15); transform: translateY(-5px); background: #0d0d14; }
+        
+        .type-tag { font-size: 0.5rem; letter-spacing: 2px; color: var(--primary); margin-bottom: 10px; display: block; opacity: 0.6; }
         .card-title { font-size: 0.85rem; font-weight: 700; margin-bottom: 10px; color: #fff; letter-spacing: 2px; text-transform: uppercase; }
         .card-desc { font-size: 0.7rem; color: rgba(224, 224, 255, 0.4); line-height: 1.8; font-weight: 200; }
 
-        /* Canvas */
+        /* Page/Settings Modal */
+        #pageOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(1,1,3,0.98); z-index: 3000; display: none; align-items: center; justify-content: center; padding: 20px; }
+        .page-window { background: var(--card); border: 1px solid var(--primary); width: 100%; max-width: 600px; padding: 40px; border-radius: 4px; position: relative; }
+        .close-page { position: absolute; top: 20px; right: 20px; color: var(--red); cursor: pointer; font-size: 0.7rem; letter-spacing: 2px; }
+        .settings-box { background: #000; border-left: 2px solid var(--primary); padding: 20px; margin-top: 20px; font-family: monospace; font-size: 0.7rem; color: #00ffcc; white-space: pre-wrap; position: relative; }
+        .copy-btn { position: absolute; top: 10px; right: 10px; font-size: 0.5rem; background: var(--primary); color: #000; border: none; padding: 5px; cursor: pointer; font-weight: bold; border-radius: 2px; }
+
+        /* Snow Overlay */
         #snow-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
 
-        /* Admin UI */
-        #adminBtn { position: fixed; bottom: 20px; right: 20px; width: 50px; height: 50px; opacity: 0.05; cursor: pointer; z-index: 1000; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary); border: 1px solid var(--primary); font-size: 0.6rem; }
-        #adminBtn:hover { opacity: 1; }
+        /* Minimal Admin "A" Button */
+        #adminBtn { position: fixed; bottom: 20px; right: 20px; width: 35px; height: 35px; opacity: 0.1; cursor: pointer; z-index: 1000; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: var(--primary); border: 1px solid var(--primary); font-size: 0.8rem; font-weight: 700; }
+        #adminBtn:hover { opacity: 1; background: rgba(0, 243, 255, 0.1); }
         
-        #adminPanel { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 2000; display: none; overflow-y: auto; padding: 50px 20px; cursor: default; }
-        .admin-content { max-width: 500px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
-        .admin-section { background: #08080c; padding: 25px; border: 1px solid #15151a; border-radius: 4px; }
+        /* Admin Panel */
+        #adminPanel { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 4000; display: none; overflow-y: auto; padding: 50px 20px; }
+        .admin-section { background: #08080c; padding: 25px; border: 1px solid #15151a; border-radius: 4px; margin-bottom: 20px; }
+        input, select, textarea { background: #0c0c12; border: 1px solid #1a1a25; padding: 15px; border-radius: 4px; color: #fff; width: 100%; margin-bottom: 10px; outline: none; font-size: 0.8rem; }
+        textarea { height: 100px; resize: none; }
+        .btn { background: var(--primary); color: #000; border: none; padding: 15px; border-radius: 4px; font-weight: 700; cursor: pointer; width: 100%; letter-spacing: 2px; text-transform: uppercase; font-size: 0.7rem; text-align: center; text-decoration: none; }
         
-        input { background: #0c0c12; border: 1px solid #1a1a25; padding: 15px; border-radius: 4px; color: #fff; width: 100%; margin-bottom: 10px; outline: none; }
-        .btn { background: var(--primary); color: #000; border: none; padding: 15px; border-radius: 4px; font-weight: 700; cursor: pointer; width: 100%; letter-spacing: 2px; text-transform: uppercase; font-size: 0.7rem; }
-        
-        .manage-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #1a1a25; font-size: 0.75rem; }
-        .del-btn { color: var(--red); background: none; border: 1px solid var(--red); padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.6rem; }
-
-        #status { text-align: center; font-size: 0.65rem; letter-spacing: 3px; margin-bottom: 30px; opacity: 0.5; color: var(--text); }
+        .manage-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #1a1a25; font-size: 0.7rem; }
+        #status { text-align: center; font-size: 0.6rem; letter-spacing: 4px; margin-bottom: 20px; opacity: 0.4; }
     </style>
 </head>
 <body>
@@ -63,126 +62,104 @@
 
     <div class="container">
         <header><div class="logo">Frost Vault</div></header>
-        
         <div class="controls">
             <input type="text" id="vaultSearch" placeholder="SEARCH VAULT..." onkeyup="filterLinks()">
-            <button class="view-toggle" onclick="toggleView()">GRID/LIST</button>
+            <button class="view-toggle" onclick="toggleView()">UI TOGGLE</button>
         </div>
-
-        <div id="status">SYNCHRONIZING WITH VAULT...</div>
+        <div id="status">BYPASSING CACHE...</div>
         <div class="grid" id="mainGrid"></div>
     </div>
 
-    <div id="adminBtn" onclick="toggleAdmin(true)">ADMIN</div>
+    <div id="pageOverlay">
+        <div class="page-window">
+            <div class="close-page" onclick="closePage()">[ CLOSE ]</div>
+            <div id="pageType" class="type-tag">VAULT PAGE</div>
+            <h1 id="pageTitle" style="letter-spacing:5px; margin-bottom:15px;">APP NAME</h1>
+            <p id="pageDesc" style="font-size:0.8rem; opacity:0.6; line-height:1.6;"></p>
+            <div class="settings-box">
+                <button class="copy-btn" onclick="copySettings()">COPY</button>
+                <code id="pageSettings"></code>
+            </div>
+            <a id="pageLink" href="#" target="_blank" class="btn" style="margin-top:30px; display:block; padding:20px;">LAUNCH APPLICATION</a>
+        </div>
+    </div>
+
+    <div id="adminBtn" onclick="toggleAdmin(true)">A</div>
 
     <div id="adminPanel">
-        <div class="admin-content">
+        <div class="container" style="max-width:500px;">
             <div id="loginBox" class="admin-section">
-                <h2 style="font-size:0.8rem; letter-spacing:5px; margin-bottom:20px; text-align:center;">VAULT AUTH</h2>
-                <input type="text" id="user" placeholder="USER ID">
-                <input type="password" id="pass" placeholder="PASSKEY">
-                <button class="btn" onclick="checkAuth()">SIGN IN</button>
+                <h2 style="font-size:0.7rem; letter-spacing:3px; margin-bottom:15px; text-align:center;">VAULT ACCESS</h2>
+                <input type="password" id="pass" placeholder="VAULT PASSKEY">
+                <button class="btn" onclick="checkAuth()">AUTHENTICATE</button>
                 <button onclick="toggleAdmin(false)" style="background:none; border:none; color:#333; margin-top:15px; cursor:pointer; width:100%; font-size:0.6rem;">EXIT</button>
             </div>
 
-            <div id="actions" style="display:none;" class="admin-content">
+            <div id="actions" style="display:none;">
                 <div class="admin-section">
-                    <h2 style="font-size:0.7rem; letter-spacing:3px; margin-bottom:15px; color:var(--primary);">+ ADD LIVE ITEM</h2>
-                    <input type="text" id="newTitle" placeholder="NAME">
-                    <input type="text" id="newUrl" placeholder="URL">
-                    <input type="text" id="newDesc" placeholder="INFO">
-                    <button class="btn" id="sendBtn" onclick="sendToSheet('add')">PUSH TO CLOUD</button>
+                    <h2 style="font-size:0.7rem; letter-spacing:3px; margin-bottom:15px; color:var(--primary);">+ NEW ENTRY</h2>
+                    <select id="newType">
+                        <option value="link">DIRECT LINK</option>
+                        <option value="page">VAULT PAGE (with Settings)</option>
+                    </select>
+                    <input type="text" id="newTitle" placeholder="ITEM NAME">
+                    <input type="text" id="newUrl" placeholder="LINK URL">
+                    <textarea id="newDesc" placeholder="DESCRIPTION"></textarea>
+                    <textarea id="newSettings" placeholder="APP SETTINGS (Page Only)"></textarea>
+                    <button class="btn" id="sendBtn" onclick="sendToSheet('add')">PUSH TO VAULT</button>
                 </div>
                 <div class="admin-section">
                     <h2 style="font-size:0.7rem; letter-spacing:3px; margin-bottom:15px; color:var(--primary);">MANAGE</h2>
                     <div id="manageList"></div>
                 </div>
-                <button onclick="location.reload()" style="background:none; border:none; color:var(--red); cursor:pointer; font-size:0.6rem;">LOGOUT</button>
+                <button class="btn" style="background:var(--red); color:#fff;" onclick="location.reload()">TERMINATE SESSION</button>
             </div>
         </div>
     </div>
 
     <script>
-        const API_URL = 'https://script.google.com/macros/s/AKfycbyi1cyUgjYsS5lrpqiXK4XMcCDn5D-I-e7cvi0mkMtBKKKXSd68nyBZemrzXhpFRYPdtg/exec'; 
+        const API_URL = 'https://script.google.com/macros/s/AKfycbwpmHvmhRlcZq-dhMiZ1xWfuYcZvirp89IKKlqAcWa8FbsYqJK6ruDVY_rk_V17w4rIrA/exec'; 
         
         let allLinks = [];
-        let mouse = { x: -100, y: -100 };
-        let trail = [];
         let particles = [];
         let settledSnow = [];
-
-        // --- Physics & Canvas Logic ---
         const canvas = document.getElementById('snow-canvas');
         const ctx = canvas.getContext('2d');
 
-        window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
-
+        // --- Snow Engine (Physically Settles & Melts after 1m) ---
         function initSnow() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
             particles = [];
             for(let i=0; i<100; i++) spawnParticle();
         }
-
         function spawnParticle() {
-            particles.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * -canvas.height,
-                r: Math.random() * 2 + 1,
-                d: Math.random() * 1 + 0.5,
-                drift: (Math.random() - 0.5) * 0.5
-            });
+            particles.push({ x: Math.random()*canvas.width, y: Math.random()*-canvas.height, r: Math.random()*2+1, d: Math.random()*1+0.5, drift: (Math.random()-0.5)*0.5 });
         }
-
         function draw() {
             ctx.clearRect(0,0,canvas.width,canvas.height);
-            
-            // 1. Mouse Trail
-            trail.push({ x: mouse.x, y: mouse.y, age: 0 });
-            ctx.strokeStyle = "rgba(255,255,255,0.4)";
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            for(let i=0; i<trail.length; i++) {
-                const p = trail[i];
-                p.age += 1;
-                ctx.lineTo(p.x, p.y);
-                if(p.age > 20) trail.splice(i, 1);
-            }
-            ctx.stroke();
-
-            // 2. Falling Snow
-            ctx.fillStyle = "rgba(255,255,255,0.5)";
+            ctx.fillStyle = "rgba(255,255,255,0.4)";
             ctx.beginPath();
             particles.forEach((p, i) => {
                 ctx.moveTo(p.x, p.y);
                 ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
-                p.y += p.d;
-                p.x += p.drift;
-
-                // If it hits the bottom
+                p.y += p.d; p.x += p.drift;
                 if(p.y >= canvas.height - 2) {
                     settledSnow.push({ x: p.x, y: canvas.height - Math.random()*3, r: p.r, time: Date.now() });
-                    particles.splice(i, 1);
-                    spawnParticle();
+                    particles.splice(i, 1); spawnParticle();
                 }
             });
             ctx.fill();
-
-            // 3. Settled Snow (Melts after 1m)
             const now = Date.now();
-            ctx.beginPath();
             settledSnow = settledSnow.filter(s => {
                 const age = now - s.time;
-                if(age > 60000) return false; // 1 minute
-                
-                // Fade out as it melts
-                ctx.fillStyle = `rgba(255,255,255, ${0.4 * (1 - age/60000)})`;
-                ctx.moveTo(s.x, s.y);
+                if(age > 60000) return false; // Melt after 1 minute
+                ctx.beginPath();
+                ctx.fillStyle = `rgba(255,255,255, ${0.3 * (1 - age/60000)})`;
                 ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+                ctx.fill();
                 return true;
             });
-            ctx.fill();
-
             requestAnimationFrame(draw);
         }
 
@@ -199,57 +176,77 @@
 
         function renderPublic(links) {
             document.getElementById('mainGrid').innerHTML = links.map((l, i) => `
-                <a href="${l.url}" class="card" target="_blank" style="animation-delay:${i*0.05}s">
+                <div class="card" style="animation-delay:${i*0.05}s" onclick="handleCardClick(${i})">
+                    <span class="type-tag">${l.type === 'page' ? 'VAULT PAGE' : 'DIRECT LINK'}</span>
                     <div class="card-title">${l.title}</div>
                     <p class="card-desc">${l.desc || '...'}</p>
-                </a>`).join('');
+                </div>`).join('');
+        }
+
+        function handleCardClick(index) {
+            const item = allLinks[index];
+            if(item.type === 'link') {
+                window.open(item.url, '_blank');
+            } else {
+                document.getElementById('pageTitle').innerText = item.title;
+                document.getElementById('pageDesc').innerText = item.desc;
+                document.getElementById('pageSettings').innerText = item.settings || "No config available.";
+                document.getElementById('pageLink').href = item.url;
+                document.getElementById('pageOverlay').style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function copySettings() {
+            navigator.clipboard.writeText(document.getElementById('pageSettings').innerText);
+            alert("Settings Copied");
+        }
+
+        function closePage() { 
+            document.getElementById('pageOverlay').style.display = 'none'; 
+            document.body.style.overflow = 'auto';
         }
 
         function renderManage() {
             document.getElementById('manageList').innerHTML = allLinks.map(l => `
                 <div class="manage-row">
-                    <span style="font-weight:700;">${l.title}</span>
-                    <button class="del-btn" onclick="sendToSheet('delete', '${l.title}', '${l.url}')">DELETE</button>
+                    <span>${l.title}</span>
+                    <button style="color:red; background:none; border:none; cursor:pointer;" onclick="sendToSheet('delete', '${l.title}', '${l.url}')">DEL</button>
                 </div>`).join('');
         }
 
-        function toggleView() {
-            document.getElementById('mainGrid').classList.toggle('list-view');
-        }
-
-        function filterLinks() {
-            const query = document.getElementById('vaultSearch').value.toLowerCase();
-            const filtered = allLinks.filter(l => l.title.toLowerCase().includes(query));
-            renderPublic(filtered);
-        }
-
         async function sendToSheet(action, title, url) {
-            if(action === 'delete' && !confirm(`Delete "${title}"?`)) return;
+            if(action === 'delete' && !confirm('Confirm Delete?')) return;
             const payload = action === 'add' ? {
                 title: document.getElementById('newTitle').value,
                 url: document.getElementById('newUrl').value,
                 desc: document.getElementById('newDesc').value,
+                type: document.getElementById('newType').value,
+                settings: document.getElementById('newSettings').value,
                 action: 'add'
             } : { title, url, action: 'delete' };
 
-            const btn = action === 'add' ? document.getElementById('sendBtn') : event.target;
-            btn.innerText = "...";
-
-            try {
-                await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-                location.reload();
-            } catch (e) { alert("Sync Error"); }
+            const btn = document.getElementById('sendBtn');
+            btn.innerText = "WAITING...";
+            await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+            location.reload();
         }
 
         function checkAuth() {
-            if(document.getElementById('user').value === "Admin" && document.getElementById('pass').value === "YM2012") {
+            if(document.getElementById('pass').value === "YM2012") {
                 document.getElementById('loginBox').style.display = 'none';
                 document.getElementById('actions').style.display = 'block';
             }
         }
 
         function toggleAdmin(s) { document.getElementById('adminPanel').style.display = s ? 'block' : 'none'; }
-        
+        function toggleView() { document.getElementById('mainGrid').classList.toggle('list-view'); }
+        function filterLinks() {
+            const query = document.getElementById('vaultSearch').value.toLowerCase();
+            const filtered = allLinks.filter(l => l.title.toLowerCase().includes(query));
+            renderPublic(filtered);
+        }
+
         window.onresize = initSnow;
         initSnow(); draw(); loadVault();
     </script>
