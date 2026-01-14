@@ -6,7 +6,7 @@
     <title>FROST | VAULT</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;700&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #010103; --primary: #00f3ff; --card: #0a0a0f; --text: #e0e0ff; }
+        :root { --bg: #010103; --primary: #00f3ff; --card: #0a0a0f; --text: #e0e0ff; --red: #ff4444; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; transition: all 0.4s ease; }
         
         body { background: var(--bg); color: var(--text); min-height: 100vh; padding: 5vh 20px; overflow-x: hidden; }
@@ -26,26 +26,31 @@
 
         .card { background: var(--card); padding: 40px 30px; border-radius: 4px; border: 1px solid rgba(255, 255, 255, 0.05); text-decoration: none; color: inherit; animation: fadeInUp 0.8s ease forwards; opacity: 0; display: block; }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
         .card:hover { border-color: var(--primary); box-shadow: 0 0 40px rgba(0, 243, 255, 0.15); transform: translateY(-5px); background: #0d0d14; }
         .card-title { font-size: 0.85rem; font-weight: 700; margin-bottom: 10px; color: #fff; letter-spacing: 2px; text-transform: uppercase; }
         .card-desc { font-size: 0.7rem; color: rgba(224, 224, 255, 0.4); line-height: 1.8; font-weight: 200; }
 
-        /* Falling Snow Background */
+        /* Snow */
         #snow-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
 
-        /* Admin Dashboard Overlay */
-        #adminBtn { position: fixed; bottom: 20px; right: 20px; width: 50px; height: 50px; opacity: 0.05; cursor: pointer; z-index: 1000; color: var(--primary); font-size: 0.6rem; display: flex; align-items: center; justify-content: center; border: 1px solid var(--primary); border-radius: 50%; }
+        /* Admin UI */
+        #adminBtn { position: fixed; bottom: 20px; right: 20px; width: 50px; height: 50px; opacity: 0.05; cursor: pointer; z-index: 1000; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary); border: 1px solid var(--primary); font-size: 0.6rem; }
         #adminBtn:hover { opacity: 1; background: rgba(0, 243, 255, 0.1); }
         #adminPanel { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 2000; display: none; overflow-y: auto; padding: 50px 20px; }
-        .admin-content { max-width: 450px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+        .admin-content { max-width: 500px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
         .admin-section { background: #08080c; padding: 25px; border: 1px solid #15151a; border-radius: 4px; }
-        input { background: #0c0c12; border: 1px solid #1a1a25; padding: 15px; border-radius: 4px; color: #fff; width: 100%; margin-bottom: 10px; font-size: 0.8rem; outline: none; }
+        input { background: #0c0c12; border: 1px solid #1a1a25; padding: 15px; border-radius: 4px; color: #fff; width: 100%; margin-bottom: 10px; outline: none; }
         input:focus { border-color: var(--primary); }
-        .btn { background: var(--primary); color: #000; border: none; padding: 15px; border-radius: 4px; font-weight: 700; cursor: pointer; width: 100%; letter-spacing: 2px; text-transform: uppercase; font-size: 0.7rem; }
+        .btn { background: var(--primary); color: #000; border: none; padding: 15px; border-radius: 4px; font-weight: 700; cursor: pointer; width: 100%; letter-spacing: 2px; text-transform: uppercase; }
         
-        #status { text-align: center; font-size: 0.65rem; letter-spacing: 3px; margin-bottom: 30px; line-height: 2; color: var(--text); }
-        .error-msg { color: #ff4444; margin-top: 10px; font-weight: bold; }
+        /* Manage List */
+        .manage-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #1a1a25; font-size: 0.75rem; }
+        .manage-info { display: flex; flex-direction: column; }
+        .manage-title { font-weight: 700; color: #fff; }
+        .del-btn { color: var(--red); background: none; border: 1px solid var(--red); padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.6rem; font-weight: bold; }
+        .del-btn:hover { background: var(--red); color: #fff; }
+
+        #status { text-align: center; font-size: 0.65rem; letter-spacing: 3px; margin-bottom: 30px; opacity: 0.5; color: var(--text); }
     </style>
 </head>
 <body>
@@ -54,12 +59,10 @@
 
     <div class="container">
         <header><div class="logo">Frost Vault</div></header>
-        
         <div class="search-container">
             <input type="text" id="vaultSearch" placeholder="SEARCH VAULT..." onkeyup="filterLinks()">
         </div>
-
-        <div id="status">ESTABLISHING ENCRYPTED LINK...</div>
+        <div id="status">ESTABLISHING CONNECTION...</div>
         <div class="grid" id="mainGrid"></div>
     </div>
 
@@ -68,39 +71,40 @@
     <div id="adminPanel">
         <div class="admin-content">
             <div id="loginBox" class="admin-section">
-                <h2 style="font-size:0.7rem; letter-spacing:5px; margin-bottom:20px; text-align:center;">VAULT ACCESS</h2>
+                <h2 style="font-size:0.8rem; letter-spacing:5px; margin-bottom:20px; text-align:center;">VAULT AUTH</h2>
                 <input type="text" id="user" placeholder="USER ID">
                 <input type="password" id="pass" placeholder="PASSKEY">
-                <button class="btn" onclick="checkAuth()">AUTHENTICATE</button>
-                <button onclick="toggleAdmin(false)" style="background:none; border:none; color:#333; margin-top:15px; width:100%; cursor:pointer; font-size:0.6rem;">ABORT SESSION</button>
+                <button class="btn" onclick="checkAuth()">SIGN IN</button>
+                <button onclick="toggleAdmin(false)" style="background:none; border:none; color:#333; margin-top:15px; cursor:pointer; width:100%; font-size:0.6rem;">CLOSE</button>
             </div>
 
             <div id="actions" style="display:none;" class="admin-content">
                 <div class="admin-section">
-                    <h2 style="font-size:0.7rem; letter-spacing:5px; margin-bottom:15px; color:var(--primary);">+ NEW ENTRY</h2>
+                    <h2 style="font-size:0.7rem; letter-spacing:3px; margin-bottom:15px; color:var(--primary);">+ ADD NEW ITEM</h2>
                     <input type="text" id="newTitle" placeholder="TITLE">
-                    <input type="text" id="newUrl" placeholder="URL">
+                    <input type="text" id="newUrl" placeholder="URL (https://...)">
                     <input type="text" id="newDesc" placeholder="DESCRIPTION">
-                    <button class="btn" id="sendBtn" onclick="sendToSheet()">PUSH TO CLOUD</button>
+                    <button class="btn" id="sendBtn" onclick="sendToSheet('add')">PUSH TO CLOUD</button>
                 </div>
+
                 <div class="admin-section">
-                    <h2 style="font-size:0.7rem; letter-spacing:5px; margin-bottom:15px; color:var(--primary);">DATABASE CONTROL</h2>
-                    <p style="font-size:0.6rem; opacity:0.5; margin-bottom:15px;">To delete or modify existing items, use the Master Sheet:</p>
-                    <a href="https://docs.google.com/spreadsheets/d/1yV-oa3hUrgLo-VdHevshU88R_P1_hB-Ssnf4mUv-L2w/edit" target="_blank" class="btn" style="background:transparent; border:1px solid var(--primary); color:var(--primary); text-decoration:none; display:flex; align-items:center; justify-content:center;">OPEN SHEET</a>
+                    <h2 style="font-size:0.7rem; letter-spacing:3px; margin-bottom:15px; color:var(--primary);">MANAGE VAULT</h2>
+                    <div id="manageList">
+                        </div>
                 </div>
-                <button onclick="location.reload()" style="background:none; border:none; color:red; cursor:pointer; font-size:0.6rem;">TERMINATE SESSION</button>
+                
+                <button onclick="location.reload()" style="background:none; border:none; color:var(--red); cursor:pointer; font-size:0.6rem;">LOGOUT / TERMINATE SESSION</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Your Verified Database Link
         const READ_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSCBkJ3EwbUyQfCSdGnzvUTFaMCRN6jNIy93gXjTL3AUADmYSdIobZriPzcircltYH3LhJfofIVtrtN/pub?output=csv';
-        const WRITE_URL = 'https://script.google.com/macros/s/AKfycbxGOsVbFFWu4D3BEOJ42SQpEyxtiWn33D6Fmva6mg8PFZev1dn1ACMVPGu_zqDx8nLoBg/exec';
+        const WRITE_URL = 'https://script.google.com/macros/s/AKfycbxuKDrHXKAsZJmTEAvmibjBFOuQRrhDjVXUXGkkiDndIGVRwVePkgtL796L1MKIAh24XA/exec'; 
         
         let allLinks = [];
 
-        // Snowfall Canvas Logic
+        // Snow Animation
         const canvas = document.getElementById('snow-canvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -124,90 +128,93 @@
             requestAnimationFrame(drawSnow);
         }
 
-        // Fetch Data from Google Sheets
         async function loadVault() {
-            const status = document.getElementById('status');
             try {
-                // We add a timestamp to prevent the browser from caching old data
                 const res = await fetch(`${READ_URL}&t=${Date.now()}`);
-                if (!res.ok) throw new Error();
                 const data = await res.text();
-                
-                // Parse CSV rows safely
                 const rows = data.split('\n').slice(1).map(r => r.split(','));
                 allLinks = rows.map(c => ({ 
-                    title: c[0]?.replace(/"/g, '').trim(), 
-                    url: c[1]?.replace(/"/g, '').trim(), 
-                    desc: c[2]?.replace(/"/g, '').trim() 
+                    title: (c[0] || '').replace(/"/g, '').trim(), 
+                    url: (c[1] || '').replace(/"/g, '').trim(), 
+                    desc: (c[2] || '').replace(/"/g, '').trim() 
                 })).filter(l => l.title && l.url);
                 
-                if(allLinks.length === 0) {
-                    status.innerHTML = 'VAULT IS EMPTY <br> <span style="opacity:0.3">PLEASE ADD DATA IN ADMIN PANEL</span>';
-                } else {
-                    status.style.display = 'none';
-                    render(allLinks);
-                }
+                document.getElementById('status').style.display = 'none';
+                renderPublic(allLinks);
+                renderManage();
             } catch (e) { 
-                status.innerHTML = `
-                    <div class="error-msg">CONNECTION FAILED</div>
-                    <div style="opacity:0.5; font-size:0.5rem; margin-top:10px;">
-                        Ensure "Publish to Web" is active and <br> "Require sign-in" is UNCHECKED.
-                    </div>
-                `;
+                document.getElementById('status').innerText = 'ERROR: CHECK PUBLISH SETTINGS'; 
             }
         }
 
-        function render(links) {
+        function renderPublic(links) {
             document.getElementById('mainGrid').innerHTML = links.map((l, i) => `
                 <a href="${l.url}" class="card" target="_blank" style="animation-delay:${i*0.05}s">
                     <div class="card-title">${l.title}</div>
-                    <p class="card-desc">${l.desc || 'No additional data found.'}</p>
+                    <p class="card-desc">${l.desc || '...'}</p>
                 </a>`).join('');
+        }
+
+        function renderManage() {
+            document.getElementById('manageList').innerHTML = allLinks.map(l => `
+                <div class="manage-row">
+                    <div class="manage-info">
+                        <span class="manage-title">${l.title}</span>
+                    </div>
+                    <button class="del-btn" onclick="sendToSheet('delete', '${l.title}', '${l.url}')">DELETE</button>
+                </div>
+            `).join('');
         }
 
         function filterLinks() {
             const query = document.getElementById('vaultSearch').value.toLowerCase();
-            const filtered = allLinks.filter(l => 
-                l.title.toLowerCase().includes(query) || 
-                (l.desc && l.desc.toLowerCase().includes(query))
-            );
-            render(filtered);
+            const filtered = allLinks.filter(l => l.title.toLowerCase().includes(query) || (l.desc && l.desc.toLowerCase().includes(query)));
+            renderPublic(filtered);
         }
 
-        // Send Data to Google Sheet via App Script
-        async function sendToSheet() {
-            const btn = document.getElementById('sendBtn');
-            const p = { 
-                title: document.getElementById('newTitle').value, 
-                url: document.getElementById('newUrl').value, 
-                desc: document.getElementById('newDesc').value 
+        async function sendToSheet(action, title, url) {
+            if(action === 'delete' && !confirm(`Permanently remove "${title}"?`)) return;
+
+            const payload = action === 'add' ? {
+                title: document.getElementById('newTitle').value,
+                url: document.getElementById('newUrl').value,
+                desc: document.getElementById('newDesc').value,
+                action: 'add'
+            } : { 
+                title: title, 
+                url: url, 
+                action: 'delete' 
             };
-            
-            if(!p.title || !p.url) return alert("Title and URL are required.");
-            
-            btn.disabled = true; 
-            btn.innerText = "UPLOADING...";
+
+            if(action === 'add' && (!payload.title || !payload.url)) return alert("Title and URL required");
+
+            const btn = action === 'add' ? document.getElementById('sendBtn') : event.target;
+            const originalText = btn.innerText;
+            btn.disabled = true;
+            btn.innerText = "WAIT...";
+
             try {
                 await fetch(WRITE_URL, { 
                     method: 'POST', 
                     mode: 'no-cors', 
-                    body: JSON.stringify(p) 
+                    body: JSON.stringify(payload) 
                 });
-                alert("Cloud Sync Successful! Please refresh in 5 minutes.");
+                alert(action === 'add' ? "Entry Added!" : "Entry Deleted!");
                 location.reload();
             } catch (e) { 
-                alert("Sync Error"); 
+                alert("Cloud Sync Failed"); 
                 btn.disabled = false; 
-                btn.innerText = "PUSH TO CLOUD"; 
+                btn.innerText = originalText;
             }
         }
 
-        // Admin Auth
         function checkAuth() {
             if(document.getElementById('user').value === "Admin" && document.getElementById('pass').value === "YM2012") {
                 document.getElementById('loginBox').style.display = 'none';
                 document.getElementById('actions').style.display = 'block';
-            } else { alert("ACCESS DENIED"); }
+            } else {
+                alert("INVALID PASSKEY");
+            }
         }
 
         function toggleAdmin(s) { 
@@ -215,11 +222,8 @@
             document.body.style.overflow = s ? 'hidden' : 'auto';
         }
 
-        // Start everything
         window.onresize = initSnow;
-        initSnow(); 
-        drawSnow(); 
-        loadVault();
+        initSnow(); drawSnow(); loadVault();
     </script>
 </body>
 </html>
