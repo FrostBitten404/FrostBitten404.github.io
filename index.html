@@ -47,15 +47,14 @@
         
         .type-tag { font-size: 0.5rem; letter-spacing: 2px; color: var(--primary); margin-bottom: 10px; display: block; opacity: 0.6; text-transform: uppercase; }
         
-        /* NEW TAG STYLE */
         .new-tag { 
-            display: inline-block; background: var(--blue-new); color: #fff; 
-            font-size: 0.5rem; padding: 2px 8px; border-radius: 2px; 
-            margin-left: 10px; vertical-align: middle; font-weight: 700;
-            box-shadow: 0 0 10px rgba(0, 119, 255, 0.6); letter-spacing: 1px;
+            background: var(--blue-new); color: #fff; 
+            font-size: 0.55rem; padding: 2px 6px; border-radius: 2px; 
+            margin-left: 8px; font-weight: 700;
+            box-shadow: 0 0 12px rgba(0, 119, 255, 0.8); letter-spacing: 1px;
         }
 
-        .card-title { font-size: 0.85rem; font-weight: 700; margin-bottom: 10px; color: #fff; letter-spacing: 2px; text-transform: uppercase; display: flex; align-items: center; justify-content: space-between; }
+        .card-title { font-size: 0.85rem; font-weight: 700; margin-bottom: 10px; color: #fff; letter-spacing: 2px; text-transform: uppercase; display: flex; align-items: center; flex-wrap: wrap; }
         .card-desc { font-size: 0.7rem; color: rgba(224, 224, 255, 0.4); line-height: 1.8; }
 
         #pageOverlay { 
@@ -225,40 +224,39 @@
             } catch (e) { setTimeout(loadVault, 2000); }
         }
 
-        function isNew(timestamp) {
-            if (!timestamp) return false;
-            const itemDate = new Date(timestamp);
-            const now = new Date();
-            const diffHours = (now - itemDate) / (1000 * 60 * 60);
-            return diffHours <= 24;
+        // IMPROVED DATE CHECKING
+        function isNew(ts) {
+            if (!ts) return false;
+            try {
+                const itemDate = new Date(ts);
+                if (isNaN(itemDate.getTime())) return false; // Invalid date in sheet
+                const diff = (new Date() - itemDate) / (1000 * 60 * 60);
+                return diff <= 24 && diff >= 0; 
+            } catch(e) { return false; }
         }
 
         function renderItems(links) {
             document.getElementById('mainGrid').innerHTML = links.map((l) => {
                 const safeUrl = encodeURIComponent(l.url);
-                const newBadge = isNew(l.timestamp) ? `<span class="new-tag">NEW</span>` : '';
+                const showNew = isNew(l.timestamp) ? `<span class="new-tag">NEW</span>` : '';
                 return `
                     <div class="card" onclick="handleCardClick('${safeUrl}')">
                         <span class="type-tag">${l.type}</span>
                         <div class="card-title">
-                            ${l.title}
-                            ${newBadge}
+                            ${l.title} ${showNew}
                         </div>
                         <p class="card-desc">${l.desc || '...'}</p>
                     </div>`;
             }).join('');
         }
 
-        // Combined filtering logic for Search + Category
         function filterVault() {
             const query = document.getElementById('vaultSearch').value.toLowerCase();
-            
             const filtered = allLinks.filter(item => {
                 const matchesCategory = (currentCategory === 'all' || item.type === currentCategory);
                 const matchesSearch = item.title.toLowerCase().includes(query);
                 return matchesCategory && matchesSearch;
             });
-
             renderItems(filtered);
         }
 
