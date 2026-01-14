@@ -9,7 +9,7 @@
         :root { --bg: #010103; --primary: #00f3ff; --card: #0a0a0f; --text: #e0e0ff; --red: #ff4444; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; transition: all 0.3s ease; }
         
-        body { background: var(--bg); color: var(--text); min-height: 100vh; padding: 5vh 20px; overflow-x: hidden; position: relative; }
+        body { background: var(--bg); color: var(--text); min-height: 100vh; padding: 5vh 20px; overflow-x: hidden; }
         .container { max-width: 1000px; margin: 0 auto; position: relative; z-index: 2; padding-bottom: 60px; }
         
         header { margin-bottom: 40px; text-align: center; }
@@ -57,14 +57,12 @@
         #pageTitle { font-size: 2.2rem; letter-spacing: 12px; text-transform: uppercase; margin-bottom: 15px; color: #fff; }
         #pageDesc { font-size: 0.95rem; opacity: 0.6; line-height: 2; max-width: 800px; }
 
-        /* Selectable but no button Settings Box */
         .settings-container { width: 100%; margin-top: 20px; }
         .settings-box { 
             background: #08080c; border: 1px solid #15151a; padding: 40px; 
             font-family: monospace; font-size: 0.8rem; color: #00ffcc; 
             white-space: pre-wrap; width: 100%; min-height: 250px;
-            user-select: text; /* Allows selection as requested */
-            -webkit-user-select: text;
+            user-select: text; -webkit-user-select: text;
         }
 
         .close-page { position: fixed; top: 30px; left: 60px; color: var(--text); cursor: pointer; font-size: 0.7rem; letter-spacing: 3px; opacity: 0.4; z-index: 5001; }
@@ -73,8 +71,17 @@
         .btn { background: #fff; color: #000; border: none; padding: 20px 50px; font-weight: 700; cursor: pointer; letter-spacing: 2px; text-transform: uppercase; font-size: 0.7rem; text-decoration: none; display: inline-flex; align-items: center; gap: 10px; }
         .btn:hover { background: var(--primary); box-shadow: 0 0 20px rgba(0, 243, 255, 0.4); }
 
-        /* Credit Tag - Main Screen Only */
-        .credit-tag { position: fixed; bottom: 20px; left: 20px; font-size: 0.6rem; letter-spacing: 4px; opacity: 0.2; text-transform: uppercase; z-index: 5; }
+        /* Fixed Credit Tag - Main Screen Only */
+        .credit-tag { 
+            position: fixed; 
+            bottom: 20px; 
+            left: 20px; 
+            font-size: 0.6rem; 
+            letter-spacing: 4px; 
+            opacity: 0.2; 
+            text-transform: uppercase; 
+            z-index: 1; /* Behind overlay but above background */
+        }
 
         #snow-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
         #adminBtn { position: fixed; bottom: 20px; right: 20px; width: 35px; height: 35px; opacity: 0.1; cursor: pointer; z-index: 1000; display: flex; align-items: center; justify-content: center; color: var(--primary); border: 1px solid var(--primary); font-size: 0.8rem; font-weight: 700; }
@@ -105,8 +112,9 @@
         </div>
         <div id="status">SYNCING WITH DATABASE...</div>
         <div id="mainGrid" class="grid"></div>
-        <div class="credit-tag">MADE BY BATATES</div>
     </div>
+
+    <div class="credit-tag">MADE BY BATATES</div>
 
     <div id="pageOverlay">
         <div class="close-page" onclick="closePage()">← BACK TO VAULT</div>
@@ -179,11 +187,25 @@
                 document.getElementById('pageSettings').innerText = item.settings || "// NO CONFIGURATION PROVIDED";
                 document.getElementById('pageLink').href = item.url;
                 document.getElementById('pageIcon').src = `https://www.google.com/s2/favicons?sz=128&domain=${new URL(item.url).hostname}`;
-                mainUI.style.filter = "blur(20px)"; overlay.style.display = 'block'; setTimeout(() => { overlay.classList.add('active'); }, 10); document.body.style.overflow = 'hidden';
+                mainUI.style.filter = "blur(20px)"; 
+                overlay.style.display = 'block'; 
+                setTimeout(() => { overlay.classList.add('active'); }, 10); 
+                document.body.style.overflow = 'hidden';
+                // Hide credit when overlay is open
+                document.querySelector('.credit-tag').style.display = 'none';
             }
         }
 
-        function closePage() { const overlay = document.getElementById('pageOverlay'), mainUI = document.getElementById('mainUI'); overlay.classList.remove('active'); mainUI.style.filter = "blur(0px)"; setTimeout(() => { overlay.style.display = 'none'; }, 600); document.body.style.overflow = 'auto'; }
+        function closePage() { 
+            const overlay = document.getElementById('pageOverlay'), mainUI = document.getElementById('mainUI'); 
+            overlay.classList.remove('active'); 
+            mainUI.style.filter = "blur(0px)"; 
+            setTimeout(() => { 
+                overlay.style.display = 'none'; 
+                document.querySelector('.credit-tag').style.display = 'block';
+            }, 600); 
+            document.body.style.overflow = 'auto'; 
+        }
 
         function renderManage() { document.getElementById('manageList').innerHTML = allLinks.map(l => `<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #1a1a25; font-size:0.7rem;"><span>${l.title}</span><button style="color:red; background:none; border:none; cursor:pointer;" onclick="sendToSheet('delete', '${l.title}', '${l.url}')">DEL</button></div>`).join(''); }
 
