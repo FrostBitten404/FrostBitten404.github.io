@@ -15,14 +15,30 @@
         header { margin-bottom: 40px; text-align: center; }
         .logo { font-size: 1.2rem; font-weight: 700; letter-spacing: 12px; text-transform: uppercase; color: #fff; text-shadow: 0 0 20px rgba(0, 243, 255, 0.5); }
 
+        /* Controls Section */
         .controls { display: flex; justify-content: center; align-items: stretch; gap: 10px; margin-bottom: 50px; }
         #vaultSearch { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(0, 243, 255, 0.2); padding: 15px 20px; width: 100%; max-width: 400px; border-radius: 0px; color: #fff; outline: none; font-size: 0.8rem; letter-spacing: 2px; }
         
-        /* Square Grid Icon */
-        .view-toggle { background: none; border: 1px solid rgba(0, 243, 255, 0.3); color: var(--primary); width: 50px; border-radius: 0px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .icon-square { width: 16px; height: 16px; border: 2px solid currentColor; }
+        /* Square Frame Grid Icon */
+        .view-toggle { 
+            background: none; 
+            border: 1px solid rgba(0, 243, 255, 0.2); 
+            color: var(--primary); 
+            width: 50px; /* Fixed width to make it a square frame */
+            height: 50px; /* Matching height for a perfect square */
+            border-radius: 0px; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+        }
+        .view-toggle:hover { border-color: var(--primary); background: rgba(0, 243, 255, 0.05); }
+        .icon-grid { width: 16px; height: 16px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; }
+        .icon-grid div { background: currentColor; }
 
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; transition: filter 0.5s ease; }
+        /* Grid transition blur */
+        #mainGrid { transition: filter 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s ease; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
         .grid.list-view { grid-template-columns: 1fr; max-width: 700px; margin: 0 auto; }
         
         .card { background: var(--card); padding: 40px 30px; border-radius: 4px; border: 1px solid rgba(255, 255, 255, 0.05); text-decoration: none; color: inherit; animation: fadeInUp 0.8s ease forwards; opacity: 0; display: block; cursor: pointer; }
@@ -36,29 +52,33 @@
         /* Full Screen Immersive Page with Blur Transition */
         #pageOverlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(1, 1, 3, 0.95); z-index: 5000; display: none; 
+            background: rgba(1, 1, 3, 0.9); z-index: 5000; display: none; 
             overflow-y: auto; padding: 10vh 20px; 
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            opacity: 0; transition: opacity 0.5s ease;
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            opacity: 0; transition: opacity 0.6s ease;
         }
         #pageOverlay.active { opacity: 1; display: block; }
         
-        .page-content { max-width: 800px; margin: 0 auto; transform: scale(0.95); transition: transform 0.5s ease; }
-        #pageOverlay.active .page-content { transform: scale(1); }
+        .page-content { max-width: 800px; margin: 0 auto; transform: translateY(30px); transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+        #pageOverlay.active .page-content { transform: translateY(0); }
 
         .close-page { position: fixed; top: 30px; left: 30px; color: var(--text); cursor: pointer; font-size: 0.7rem; letter-spacing: 3px; opacity: 0.4; z-index: 5001; }
+        .close-page:hover { opacity: 1; color: var(--primary); }
+        
         .page-header { border-bottom: 1px solid rgba(0, 243, 255, 0.1); padding-bottom: 30px; margin-bottom: 40px; text-align: center; }
         .page-icon-img { width: 64px; height: 64px; border-radius: 0px; margin-bottom: 20px; border: 1px solid rgba(0, 243, 255, 0.2); }
         
         .settings-box { background: #08080c; border: 1px solid #15151a; padding: 30px; margin-top: 40px; font-family: monospace; font-size: 0.75rem; color: #00ffcc; white-space: pre-wrap; position: relative; }
         .copy-btn { position: absolute; top: 15px; right: 15px; font-size: 0.6rem; background: rgba(0, 243, 255, 0.1); color: var(--primary); border: 1px solid var(--primary); padding: 5px 10px; cursor: pointer; }
 
-        /* Snow */
+        /* Snow Overlay */
         #snow-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
 
         /* Admin Trigger */
         #adminBtn { position: fixed; bottom: 20px; right: 20px; width: 35px; height: 35px; opacity: 0.1; cursor: pointer; z-index: 1000; border-radius: 0px; display: flex; align-items: center; justify-content: center; color: var(--primary); border: 1px solid var(--primary); font-size: 0.8rem; font-weight: 700; }
+        #adminBtn:hover { opacity: 1; }
         
+        /* Admin Panel */
         #adminPanel { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 6000; display: none; overflow-y: auto; padding: 50px 20px; }
         .admin-section { background: #08080c; padding: 25px; border: 1px solid #15151a; border-radius: 0px; margin-bottom: 20px; }
         input, select, textarea { background: #0c0c12; border: 1px solid #1a1a25; padding: 15px; border-radius: 0px; color: #fff; width: 100%; margin-bottom: 10px; outline: none; }
@@ -75,16 +95,16 @@
         <header><div class="logo">Frost Vault</div></header>
         <div class="controls">
             <input type="text" id="vaultSearch" placeholder="SEARCH VAULT..." onkeyup="filterLinks()">
-            <button class="view-toggle" onclick="toggleView()">
-                <div class="icon-square"></div>
+            <button class="view-toggle" onclick="toggleView()" title="Toggle Grid/List">
+                <div class="icon-grid"><div></div><div></div><div></div><div></div></div>
             </button>
         </div>
-        <div id="status">ESTABLISHING CONNECTION...</div>
-        <div class="grid" id="mainGrid"></div>
+        <div id="status">SYNCING WITH DATABASE...</div>
+        <div id="mainGrid" class="grid"></div>
     </div>
 
     <div id="pageOverlay">
-        <div class="close-page" onclick="closePage()">← BACK</div>
+        <div class="close-page" onclick="closePage()">← BACK TO VAULT</div>
         <div class="page-content">
             <div class="page-header">
                 <img id="pageIcon" class="page-icon-img" src="" alt="">
@@ -105,8 +125,8 @@
     <div id="adminPanel">
         <div class="container" style="max-width:500px;">
             <div id="loginBox" class="admin-section">
-                <input type="password" id="pass" placeholder="PASSKEY">
-                <button class="btn" onclick="checkAuth()">SIGN IN</button>
+                <input type="password" id="pass" placeholder="VAULT KEY">
+                <button class="btn" onclick="checkAuth()">AUTHENTICATE</button>
             </div>
             <div id="actions" style="display:none;">
                 <div class="admin-section">
@@ -114,14 +134,14 @@
                         <option value="link">DIRECT LINK</option>
                         <option value="page">VAULT PAGE</option>
                     </select>
-                    <input type="text" id="newTitle" placeholder="TITLE">
-                    <input type="text" id="newUrl" placeholder="URL">
-                    <textarea id="newDesc" placeholder="DESCRIPTION"></textarea>
-                    <textarea id="newSettings" placeholder="SETTINGS (PAGE ONLY)"></textarea>
-                    <button class="btn" id="sendBtn" onclick="sendToSheet('add')">SAVE</button>
+                    <input type="text" id="newTitle" placeholder="ITEM NAME">
+                    <input type="text" id="newUrl" placeholder="URL / FILE LINK">
+                    <textarea id="newDesc" placeholder="DESCRIPTION" style="height:80px;"></textarea>
+                    <textarea id="newSettings" placeholder="SETTINGS (PAGE ONLY)" style="height:80px;"></textarea>
+                    <button class="btn" id="sendBtn" onclick="sendToSheet('add')">SAVE TO VAULT</button>
                 </div>
-                <div id="manageList" class="admin-section"></div>
-                <button class="btn" style="background:var(--red); color:#fff;" onclick="location.reload()">EXIT</button>
+                <div class="admin-section" id="manageList"></div>
+                <button class="btn" style="background:var(--red); color:#fff;" onclick="location.reload()">LOGOUT</button>
             </div>
         </div>
     </div>
@@ -136,37 +156,27 @@
         const ctx = canvas.getContext('2d');
 
         function initSnow() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            particles = [];
-            for(let i=0; i<100; i++) spawnParticle();
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            particles = []; for(let i=0; i<100; i++) spawnParticle();
         }
         function spawnParticle() {
             particles.push({ x: Math.random()*canvas.width, y: Math.random()*-canvas.height, r: Math.random()*2+1, d: Math.random()*1+0.5, drift: (Math.random()-0.5)*0.5 });
         }
         function draw() {
-            ctx.clearRect(0,0,canvas.width,canvas.height);
-            ctx.fillStyle = "rgba(255,255,255,0.4)";
-            ctx.beginPath();
+            ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle = "rgba(255,255,255,0.4)"; ctx.beginPath();
             particles.forEach((p, i) => {
-                ctx.moveTo(p.x, p.y);
-                ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+                ctx.moveTo(p.x, p.y); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
                 p.y += p.d; p.x += p.drift;
                 if(p.y >= canvas.height - 2) {
                     settledSnow.push({ x: p.x, y: canvas.height - Math.random()*3, r: p.r, time: Date.now() });
                     particles.splice(i, 1); spawnParticle();
                 }
             });
-            ctx.fill();
-            const now = Date.now();
+            ctx.fill(); const now = Date.now();
             settledSnow = settledSnow.filter(s => {
-                const age = now - s.time;
-                if(age > 60000) return false;
-                ctx.beginPath();
-                ctx.fillStyle = `rgba(255,255,255, ${0.3 * (1 - age/60000)})`;
-                ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
-                ctx.fill();
-                return true;
+                const age = now - s.time; if(age > 60000) return false;
+                ctx.beginPath(); ctx.fillStyle = `rgba(255,255,255, ${0.3 * (1 - age/60000)})`;
+                ctx.arc(s.x, s.y, s.r, 0, Math.PI*2); ctx.fill(); return true;
             });
             requestAnimationFrame(draw);
         }
@@ -196,17 +206,16 @@
                 window.open(item.url, '_blank');
             } else {
                 const overlay = document.getElementById('pageOverlay');
-                const main = document.getElementById('mainGrid');
+                const mainGrid = document.getElementById('mainGrid');
                 
-                // Set Content
                 document.getElementById('pageTitle').innerText = item.title;
                 document.getElementById('pageDesc').innerText = item.desc;
-                document.getElementById('pageSettings').innerText = item.settings || "// NO CONFIG";
+                document.getElementById('pageSettings').innerText = item.settings || "// NO CONFIGURATION";
                 document.getElementById('pageLink').href = item.url;
                 document.getElementById('pageIcon').src = `https://www.google.com/s2/favicons?sz=128&domain=${new URL(item.url).hostname}`;
                 
-                // Transition
-                main.style.filter = "blur(20px)";
+                // Transition: Blur background grid, Fade in Overlay
+                mainGrid.style.filter = "blur(15px)";
                 overlay.style.display = 'block';
                 setTimeout(() => { overlay.classList.add('active'); }, 10);
                 document.body.style.overflow = 'hidden';
@@ -215,10 +224,10 @@
 
         function closePage() { 
             const overlay = document.getElementById('pageOverlay');
-            const main = document.getElementById('mainGrid');
+            const mainGrid = document.getElementById('mainGrid');
             overlay.classList.remove('active');
-            main.style.filter = "blur(0px)";
-            setTimeout(() => { overlay.style.display = 'none'; }, 500);
+            mainGrid.style.filter = "blur(0px)";
+            setTimeout(() => { overlay.style.display = 'none'; }, 600);
             document.body.style.overflow = 'auto';
         }
 
@@ -231,7 +240,7 @@
         }
 
         async function sendToSheet(action, title, url) {
-            if(action === 'delete' && !confirm('Delete?')) return;
+            if(action === 'delete' && !confirm('Confirm Delete?')) return;
             const payload = action === 'add' ? {
                 title: document.getElementById('newTitle').value,
                 url: document.getElementById('newUrl').value,
@@ -251,6 +260,11 @@
             }
         }
 
+        function copySettings() {
+            navigator.clipboard.writeText(document.getElementById('pageSettings').innerText);
+            alert("SETTINGS COPIED");
+        }
+
         function toggleAdmin(s) { document.getElementById('adminPanel').style.display = s ? 'block' : 'none'; }
         function toggleView() { document.getElementById('mainGrid').classList.toggle('list-view'); }
         function filterLinks() {
@@ -259,13 +273,7 @@
             renderPublic(filtered);
         }
 
-        function copySettings() {
-            navigator.clipboard.writeText(document.getElementById('pageSettings').innerText);
-            alert("COPIED");
-        }
-
-        window.onresize = initSnow;
-        initSnow(); draw(); loadVault();
+        window.onresize = initSnow; initSnow(); draw(); loadVault();
     </script>
 </body>
 </html>
