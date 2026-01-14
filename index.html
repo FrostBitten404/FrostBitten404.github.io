@@ -31,8 +31,9 @@
         }
         .cat-btn.active { background: #ffffff !important; color: #000000 !important; border-color: #ffffff; box-shadow: 0 0 25px rgba(255,255,255,0.4); }
 
+        /* White Loading Spinner */
         #status { display: flex; flex-direction: column; align-items: center; gap: 15px; margin: 50px 0; }
-        .spinner { width: 30px; height: 30px; border: 2px solid rgba(0, 243, 255, 0.1); border-top: 2px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; box-shadow: 0 0 15px rgba(0, 243, 255, 0.2); }
+        .spinner { width: 30px; height: 30px; border: 2px solid rgba(255, 255, 255, 0.1); border-top: 2px solid #ffffff; border-radius: 50%; animation: spin 1s linear infinite; box-shadow: 0 0 15px rgba(255, 255, 255, 0.2); }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
@@ -69,19 +70,23 @@
         }
 
         .credit-tag { position: fixed; bottom: 20px; left: 20px; font-size: 0.6rem; letter-spacing: 4px; opacity: 0.2; text-transform: uppercase; z-index: 1; }
-
         #snow-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
         
-        /* ADMIN UI STYLES */
+        /* ADMIN UI */
         #adminBtn { position: fixed; bottom: 20px; right: 20px; width: 35px; height: 35px; opacity: 0.1; cursor: pointer; z-index: 1000; border: 1px solid var(--primary); display: flex; align-items: center; justify-content: center; color: var(--primary); }
         #adminPanel { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 6000; display: none; padding: 50px 20px; overflow-y: auto; }
         .admin-section { background: #08080c; padding: 25px; border: 1px solid #15151a; margin-bottom: 20px; max-width: 500px; margin-left: auto; margin-right: auto; }
         input, select, textarea { background: #0c0c12; border: 1px solid #1a1a25; padding: 15px; color: #fff; width: 100%; margin-bottom: 10px; outline: none; font-size: 0.8rem; }
+
+        /* Notification Toast */
+        #toast { position: fixed; top: 20px; right: 20px; background: #fff; color: #000; padding: 15px 30px; font-size: 0.7rem; font-weight: 700; letter-spacing: 2px; transform: translateX(200%); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 9999; }
+        #toast.show { transform: translateX(0); }
     </style>
 </head>
 <body>
 
     <canvas id="snow-canvas"></canvas>
+    <div id="toast">ACTION COMPLETE</div>
 
     <div id="mainUI" class="container">
         <header><div class="logo">Frost Vault</div></header>
@@ -100,7 +105,7 @@
 
         <div id="status">
             <div class="spinner"></div>
-            <div style="font-size:0.6rem; letter-spacing:4px; opacity:0.4;">SYNCING WITH DATABASE...</div>
+            <div style="font-size:0.6rem; letter-spacing:4px; opacity:0.4; color:#fff;">SYNCING WITH DATABASE...</div>
         </div>
 
         <div id="mainGrid" class="grid"></div>
@@ -152,9 +157,7 @@
                     <textarea id="newSettings" placeholder="CONFIG / SETTINGS (OPTIONAL)" style="height:80px;"></textarea>
                     <button class="btn" style="width:100%; justify-content:center;" onclick="sendToSheet('add')">SAVE TO VAULT</button>
                 </div>
-                <div class="admin-section" id="manageList">
-                    <h3 style="font-size:0.6rem; letter-spacing:2px; margin-bottom:15px; opacity:0.5;">MANAGE ITEMS</h3>
-                    </div>
+                <div class="admin-section" id="manageList"></div>
                 <button class="btn" style="background:var(--red); color:#fff; width:100%; justify-content:center;" onclick="location.reload()">LOGOUT</button>
             </div>
         </div>
@@ -162,7 +165,7 @@
 
     <script>
         const API_URL = 'https://script.google.com/macros/s/AKfycbwpmHvmhRlcZq-dhMiZ1xWfuYcZvirp89IKKlqAcWa8FbsYqJK6ruDVY_rk_V17w4rIrA/exec'; 
-        let allLinks = [], particles = [];
+        let allLinks = [], particles = [], staticSnow = [];
         let mouse = { x: -1000, y: -1000, lastX: 0, lastY: 0, vx: 0, vy: 0 };
 
         const canvas = document.getElementById('snow-canvas'), ctx = canvas.getContext('2d');
@@ -186,7 +189,7 @@
             constructor() { this.reset(); }
             reset() {
                 this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
+                this.y = -10;
                 this.r = Math.random() * 2 + 1;
                 this.sx = (Math.random() - 0.5) * 1;
                 this.sy = Math.random() * 1 + 0.5;
@@ -202,9 +205,13 @@
                 }
                 this.x += this.sx;
                 this.y += this.sy;
-                if(this.y > canvas.height) this.y = -10;
-                if(this.x > canvas.width) this.x = 0;
-                if(this.x < 0) this.x = canvas.width;
+
+                // Snow Stays logic
+                if(this.y > canvas.height - 5) {
+                    staticSnow.push({x: this.x, y: canvas.height - Math.random()*5, r: this.r});
+                    if(staticSnow.length > 500) staticSnow.shift(); // Prevent lag
+                    this.reset();
+                }
             }
             draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.r, 0, Math.PI*2); ctx.fill(); }
         }
@@ -212,7 +219,12 @@
         function animate() {
             ctx.clearRect(0,0,canvas.width,canvas.height);
             ctx.fillStyle = "rgba(255,255,255,0.4)";
+            // Draw falling snow
             particles.forEach(p => { p.update(); p.draw(); });
+            // Draw staying snow
+            staticSnow.forEach(p => {
+                ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); ctx.fill();
+            });
             requestAnimationFrame(animate);
         }
 
@@ -227,10 +239,8 @@
         }
 
         function renderItems(links) {
-            const now = new Date();
             document.getElementById('mainGrid').innerHTML = links.map((l, i) => {
-                const isNew = l.timestamp && (now - new Date(l.timestamp)) < (48 * 60 * 60 * 1000);
-                return `<div class="card" onclick="handleCardClick(${i})">${isNew ? '<div class="new-badge">NEW</div>' : ''}<span class="type-tag">${l.type}</span><div class="card-title">${l.title}</div><p class="card-desc">${l.desc || '...'}</p></div>`;
+                return `<div class="card" onclick="handleCardClick(${i})"><span class="type-tag">${l.type}</span><div class="card-title">${l.title}</div><p class="card-desc">${l.desc || '...'}</p></div>`;
             }).join('');
         }
 
@@ -277,7 +287,6 @@
             document.body.style.overflow = 'auto';
         }
 
-        /* ADMIN FUNCTIONS */
         function toggleAdmin(s) { document.getElementById('adminPanel').style.display = s ? 'block' : 'none'; }
         
         function checkAuth() { 
@@ -291,7 +300,14 @@
             document.getElementById('manageList').innerHTML = '<h3 style="font-size:0.6rem; letter-spacing:2px; margin-bottom:15px; opacity:0.5;">MANAGE ITEMS</h3>' + allLinks.map(l => `<div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #1a1a25; font-size:0.7rem;"><span>${l.title}</span><button style="color:red; background:none; border:none; cursor:pointer;" onclick="sendToSheet('delete', '${l.title}', '${l.url}')">DEL</button></div>`).join(''); 
         }
 
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.innerText = msg; t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
         async function sendToSheet(action, title, url) { 
+            showToast(action === 'add' ? "SYNCING ITEM..." : "REMOVING ITEM...");
             const payload = action === 'add' ? { 
                 title: document.getElementById('newTitle').value, 
                 url: document.getElementById('newUrl').value, 
@@ -303,7 +319,7 @@
             } : { title, url, action: 'delete' }; 
 
             await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) }); 
-            location.reload(); 
+            setTimeout(() => location.reload(), 1500);
         }
 
         window.onresize = initSnow; initSnow(); animate(); loadVault();
