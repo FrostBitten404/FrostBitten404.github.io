@@ -20,7 +20,7 @@
         #vaultSearch { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(0, 243, 255, 0.2); padding: 15px 25px; width: 100%; max-width: 400px; border-radius: 50px; color: #fff; outline: none; font-size: 0.8rem; letter-spacing: 2px; text-align: center; }
         #vaultSearch:focus { border-color: var(--primary); box-shadow: 0 0 20px rgba(0, 243, 255, 0.1); }
 
-        /* Grid Layout */
+        /* Main Grid */
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
         .grid:hover .card:not(:hover) { opacity: 0.2; filter: blur(8px); transform: scale(0.98); }
 
@@ -30,22 +30,24 @@
         .card-title { font-size: 0.85rem; font-weight: 700; margin-bottom: 10px; color: #fff; letter-spacing: 2px; text-transform: uppercase; }
         .card-desc { font-size: 0.7rem; color: rgba(224, 224, 255, 0.4); line-height: 1.8; font-weight: 200; }
 
-        /* Snow */
+        /* Snow Effect */
         #snow-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
 
         /* Admin UI */
         #adminBtn { position: fixed; bottom: 20px; right: 20px; width: 50px; height: 50px; opacity: 0.05; cursor: pointer; z-index: 1000; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary); border: 1px solid var(--primary); font-size: 0.6rem; }
         #adminBtn:hover { opacity: 1; background: rgba(0, 243, 255, 0.1); }
+        
         #adminPanel { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 2000; display: none; overflow-y: auto; padding: 50px 20px; }
         .admin-content { max-width: 500px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
         .admin-section { background: #08080c; padding: 25px; border: 1px solid #15151a; border-radius: 4px; }
+        
         input { background: #0c0c12; border: 1px solid #1a1a25; padding: 15px; border-radius: 4px; color: #fff; width: 100%; margin-bottom: 10px; outline: none; }
         input:focus { border-color: var(--primary); }
-        .btn { background: var(--primary); color: #000; border: none; padding: 15px; border-radius: 4px; font-weight: 700; cursor: pointer; width: 100%; letter-spacing: 2px; text-transform: uppercase; }
+        
+        .btn { background: var(--primary); color: #000; border: none; padding: 15px; border-radius: 4px; font-weight: 700; cursor: pointer; width: 100%; letter-spacing: 2px; text-transform: uppercase; font-size: 0.7rem; }
         
         /* Manage List */
         .manage-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #1a1a25; font-size: 0.75rem; }
-        .manage-info { display: flex; flex-direction: column; }
         .manage-title { font-weight: 700; color: #fff; }
         .del-btn { color: var(--red); background: none; border: 1px solid var(--red); padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.6rem; font-weight: bold; }
         .del-btn:hover { background: var(--red); color: #fff; }
@@ -62,7 +64,7 @@
         <div class="search-container">
             <input type="text" id="vaultSearch" placeholder="SEARCH VAULT..." onkeyup="filterLinks()">
         </div>
-        <div id="status">ESTABLISHING CONNECTION...</div>
+        <div id="status">INITIATING LIVE FEED...</div>
         <div class="grid" id="mainGrid"></div>
     </div>
 
@@ -75,16 +77,16 @@
                 <input type="text" id="user" placeholder="USER ID">
                 <input type="password" id="pass" placeholder="PASSKEY">
                 <button class="btn" onclick="checkAuth()">SIGN IN</button>
-                <button onclick="toggleAdmin(false)" style="background:none; border:none; color:#333; margin-top:15px; cursor:pointer; width:100%; font-size:0.6rem;">CLOSE</button>
+                <button onclick="toggleAdmin(false)" style="background:none; border:none; color:#333; margin-top:15px; cursor:pointer; width:100%; font-size:0.6rem;">EXIT</button>
             </div>
 
             <div id="actions" style="display:none;" class="admin-content">
                 <div class="admin-section">
-                    <h2 style="font-size:0.7rem; letter-spacing:3px; margin-bottom:15px; color:var(--primary);">+ ADD NEW ITEM</h2>
-                    <input type="text" id="newTitle" placeholder="TITLE">
+                    <h2 style="font-size:0.7rem; letter-spacing:3px; margin-bottom:15px; color:var(--primary);">+ ADD NEW ENTRY</h2>
+                    <input type="text" id="newTitle" placeholder="NAME">
                     <input type="text" id="newUrl" placeholder="URL (https://...)">
-                    <input type="text" id="newDesc" placeholder="DESCRIPTION">
-                    <button class="btn" id="sendBtn" onclick="sendToSheet('add')">PUSH TO CLOUD</button>
+                    <input type="text" id="newDesc" placeholder="DESCRIPTION / INFO">
+                    <button class="btn" id="sendBtn" onclick="sendToSheet('add')">PUSH TO LIVE SITE</button>
                 </div>
 
                 <div class="admin-section">
@@ -93,14 +95,14 @@
                         </div>
                 </div>
                 
-                <button onclick="location.reload()" style="background:none; border:none; color:var(--red); cursor:pointer; font-size:0.6rem;">LOGOUT / TERMINATE SESSION</button>
+                <button onclick="location.reload()" style="background:none; border:none; color:var(--red); cursor:pointer; font-size:0.6rem;">TERMINATE SESSION</button>
             </div>
         </div>
     </div>
 
     <script>
-        const READ_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSCBkJ3EwbUyQfCSdGnzvUTFaMCRN6jNIy93gXjTL3AUADmYSdIobZriPzcircltYH3LhJfofIVtrtN/pub?output=csv';
-        const WRITE_URL = 'https://script.google.com/macros/s/AKfycbxuKDrHXKAsZJmTEAvmibjBFOuQRrhDjVXUXGkkiDndIGVRwVePkgtL796L1MKIAh24XA/exec'; 
+        // Your Verified Script URL
+        const API_URL = 'https://script.google.com/macros/s/AKfycbyi1cyUgjYsS5lrpqiXK4XMcCDn5D-I-e7cvi0mkMtBKKKXSd68nyBZemrzXhpFRYPdtg/exec'; 
         
         let allLinks = [];
 
@@ -128,22 +130,18 @@
             requestAnimationFrame(drawSnow);
         }
 
+        // Live Fetch Data
         async function loadVault() {
             try {
-                const res = await fetch(`${READ_URL}&t=${Date.now()}`);
-                const data = await res.text();
-                const rows = data.split('\n').slice(1).map(r => r.split(','));
-                allLinks = rows.map(c => ({ 
-                    title: (c[0] || '').replace(/"/g, '').trim(), 
-                    url: (c[1] || '').replace(/"/g, '').trim(), 
-                    desc: (c[2] || '').replace(/"/g, '').trim() 
-                })).filter(l => l.title && l.url);
-                
+                const res = await fetch(API_URL);
+                allLinks = await res.json();
                 document.getElementById('status').style.display = 'none';
                 renderPublic(allLinks);
                 renderManage();
             } catch (e) { 
-                document.getElementById('status').innerText = 'ERROR: CHECK PUBLISH SETTINGS'; 
+                document.getElementById('status').innerText = 'CONNECTING TO CLOUD...'; 
+                // Retry if the script hasn't woken up yet
+                setTimeout(loadVault, 3000);
             }
         }
 
@@ -158,9 +156,7 @@
         function renderManage() {
             document.getElementById('manageList').innerHTML = allLinks.map(l => `
                 <div class="manage-row">
-                    <div class="manage-info">
-                        <span class="manage-title">${l.title}</span>
-                    </div>
+                    <span class="manage-title">${l.title}</span>
                     <button class="del-btn" onclick="sendToSheet('delete', '${l.title}', '${l.url}')">DELETE</button>
                 </div>
             `).join('');
@@ -168,12 +164,15 @@
 
         function filterLinks() {
             const query = document.getElementById('vaultSearch').value.toLowerCase();
-            const filtered = allLinks.filter(l => l.title.toLowerCase().includes(query) || (l.desc && l.desc.toLowerCase().includes(query)));
+            const filtered = allLinks.filter(l => 
+                l.title.toLowerCase().includes(query) || 
+                (l.desc && l.desc.toLowerCase().includes(query))
+            );
             renderPublic(filtered);
         }
 
         async function sendToSheet(action, title, url) {
-            if(action === 'delete' && !confirm(`Permanently remove "${title}"?`)) return;
+            if(action === 'delete' && !confirm(`Confirm removal of "${title}"?`)) return;
 
             const payload = action === 'add' ? {
                 title: document.getElementById('newTitle').value,
@@ -186,23 +185,26 @@
                 action: 'delete' 
             };
 
-            if(action === 'add' && (!payload.title || !payload.url)) return alert("Title and URL required");
+            if(action === 'add' && (!payload.title || !payload.url)) return alert("Data missing.");
 
             const btn = action === 'add' ? document.getElementById('sendBtn') : event.target;
             const originalText = btn.innerText;
             btn.disabled = true;
-            btn.innerText = "WAIT...";
+            btn.innerText = "SYNCING...";
 
             try {
-                await fetch(WRITE_URL, { 
+                // Post to the script
+                await fetch(API_URL, { 
                     method: 'POST', 
                     mode: 'no-cors', 
                     body: JSON.stringify(payload) 
                 });
-                alert(action === 'add' ? "Entry Added!" : "Entry Deleted!");
+                
+                // Success message and instant refresh
+                alert(action === 'add' ? "Successfully Added!" : "Successfully Deleted!");
                 location.reload();
             } catch (e) { 
-                alert("Cloud Sync Failed"); 
+                alert("Cloud connection error."); 
                 btn.disabled = false; 
                 btn.innerText = originalText;
             }
@@ -213,7 +215,7 @@
                 document.getElementById('loginBox').style.display = 'none';
                 document.getElementById('actions').style.display = 'block';
             } else {
-                alert("INVALID PASSKEY");
+                alert("ACCESS DENIED");
             }
         }
 
@@ -223,7 +225,9 @@
         }
 
         window.onresize = initSnow;
-        initSnow(); drawSnow(); loadVault();
+        initSnow(); 
+        drawSnow(); 
+        loadVault();
     </script>
 </body>
 </html>
