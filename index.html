@@ -71,17 +71,7 @@
         .btn { background: #fff; color: #000; border: none; padding: 20px 50px; font-weight: 700; cursor: pointer; letter-spacing: 2px; text-transform: uppercase; font-size: 0.7rem; text-decoration: none; display: inline-flex; align-items: center; gap: 10px; }
         .btn:hover { background: var(--primary); box-shadow: 0 0 20px rgba(0, 243, 255, 0.4); }
 
-        /* Fixed Credit Tag - Main Screen Only */
-        .credit-tag { 
-            position: fixed; 
-            bottom: 20px; 
-            left: 20px; 
-            font-size: 0.6rem; 
-            letter-spacing: 4px; 
-            opacity: 0.2; 
-            text-transform: uppercase; 
-            z-index: 1; /* Behind overlay but above background */
-        }
+        .credit-tag { position: fixed; bottom: 20px; left: 20px; font-size: 0.6rem; letter-spacing: 4px; opacity: 0.2; text-transform: uppercase; z-index: 1; }
 
         #snow-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
         #adminBtn { position: fixed; bottom: 20px; right: 20px; width: 35px; height: 35px; opacity: 0.1; cursor: pointer; z-index: 1000; display: flex; align-items: center; justify-content: center; color: var(--primary); border: 1px solid var(--primary); font-size: 0.8rem; font-weight: 700; }
@@ -122,16 +112,16 @@
             <div class="page-upper">
                 <img id="pageIcon" class="page-icon-img" src="" alt="">
                 <div class="page-info-text">
-                    <div id="pageType" class="type-tag">VAULT PAGE</div>
+                    <div id="pageType" class="type-tag">VAULT ITEM</div>
                     <h1 id="pageTitle"></h1>
                     <p id="pageDesc"></p>
                     <div style="margin-top:30px;">
-                        <a id="pageLink" href="#" target="_blank" class="btn">VISIT PAGE</a>
+                        <a id="pageLink" href="#" target="_blank" class="btn">ACCESS CONTENT</a>
                     </div>
                 </div>
             </div>
 
-            <div class="settings-container">
+            <div class="settings-container" id="settingsArea">
                 <div style="font-size: 0.6rem; letter-spacing: 3px; opacity: 0.3; margin-bottom: 15px; text-transform: uppercase;">Configuration & Settings</div>
                 <div class="settings-box">
                     <code id="pageSettings"></code>
@@ -179,19 +169,37 @@
 
         function handleCardClick(index) {
             const item = allLinks[index];
-            if(item.type === 'link' || item.type === 'file') { window.open(item.url, '_blank'); }
-            else {
+            // Only Direct Link opens immediately now
+            if(item.type === 'link') { 
+                window.open(item.url, '_blank'); 
+            } else {
                 const overlay = document.getElementById('pageOverlay'), mainUI = document.getElementById('mainUI');
                 document.getElementById('pageTitle').innerText = item.title;
                 document.getElementById('pageDesc').innerText = item.desc;
-                document.getElementById('pageSettings').innerText = item.settings || "// NO CONFIGURATION PROVIDED";
+                document.getElementById('pageType').innerText = item.type === 'file' ? 'FILE / DOWNLOAD' : 'VAULT PAGE';
+                document.getElementById('pageLink').innerText = item.type === 'file' ? 'DOWNLOAD FILE' : 'VISIT PAGE';
                 document.getElementById('pageLink').href = item.url;
-                document.getElementById('pageIcon').src = `https://www.google.com/s2/favicons?sz=128&domain=${new URL(item.url).hostname}`;
+                
+                // Show/Hide settings area based on if content exists
+                const settingsArea = document.getElementById('settingsArea');
+                if (item.settings && item.settings.trim() !== "") {
+                    document.getElementById('pageSettings').innerText = item.settings;
+                    settingsArea.style.display = 'block';
+                } else {
+                    settingsArea.style.display = 'none';
+                }
+
+                try {
+                    const domain = new URL(item.url).hostname;
+                    document.getElementById('pageIcon').src = `https://www.google.com/s2/favicons?sz=128&domain=${domain}`;
+                } catch(e) {
+                    document.getElementById('pageIcon').src = 'https://www.google.com/s2/favicons?sz=128&domain=google.com';
+                }
+
                 mainUI.style.filter = "blur(20px)"; 
                 overlay.style.display = 'block'; 
                 setTimeout(() => { overlay.classList.add('active'); }, 10); 
                 document.body.style.overflow = 'hidden';
-                // Hide credit when overlay is open
                 document.querySelector('.credit-tag').style.display = 'none';
             }
         }
