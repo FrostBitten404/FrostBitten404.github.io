@@ -70,7 +70,6 @@
         .credit-tag { position: fixed; bottom: 20px; left: 20px; font-size: 0.6rem; letter-spacing: 4px; opacity: 0.2; text-transform: uppercase; z-index: 1; }
         #snow-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
         
-        /* Admin UI Extensions */
         #adminBtn { position: fixed; bottom: 20px; right: 20px; width: 35px; height: 35px; opacity: 0.1; cursor: pointer; z-index: 1000; border: 1px solid var(--primary); display: flex; align-items: center; justify-content: center; color: var(--primary); }
         #adminPanel { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 6000; display: none; padding: 50px 20px; overflow-y: auto; }
         .admin-section { background: #08080c; padding: 25px; border: 1px solid #15151a; margin-bottom: 20px; max-width: 500px; margin-left: auto; margin-right: auto; }
@@ -169,76 +168,50 @@
     </div>
 
     <script>
-        const API_URL = 'https://script.google.com/macros/s/AKfycbwpmHvmhRlcZq-dhMiZ1xWfuYcZvirp89IKKlqAcWa8FbsYqJK6ruDVY_rk_V17w4rIrA/exec'; 
+        // UPDATED API URL
+        const API_URL = 'https://script.google.com/macros/s/AKfycbxfuZSmIsEmP5rcj8XrQcdagyCP4j0BvHynZi6mZEs9MvnbroUBClsYHIt_-XPKMvE26w/exec'; 
+        
         let allLinks = [], particles = [], staticSnow = [];
         let mouse = { x: -1000, y: -1000, lastX: 0, lastY: 0, vx: 0, vy: 0 };
-
         const canvas = document.getElementById('snow-canvas'), ctx = canvas.getContext('2d');
 
         window.addEventListener('mousemove', e => {
-            mouse.vx = e.clientX - mouse.lastX;
-            mouse.vy = e.clientY - mouse.lastY;
-            mouse.lastX = e.clientX;
-            mouse.lastY = e.clientY;
-            mouse.x = e.clientX;
-            mouse.y = e.clientY;
+            mouse.vx = e.clientX - mouse.lastX; mouse.vy = e.clientY - mouse.lastY;
+            mouse.lastX = e.clientX; mouse.lastY = e.clientY;
+            mouse.x = e.clientX; mouse.y = e.clientY;
         });
 
         function initSnow() {
             canvas.width = window.innerWidth; canvas.height = window.innerHeight;
             particles = [];
-            for(let i=0; i<150; i++) {
-                let p = new Snow();
-                p.y = Math.random() * canvas.height;
-                particles.push(p);
-            }
+            for(let i=0; i<150; i++) { let p = new Snow(); p.y = Math.random() * canvas.height; particles.push(p); }
         }
 
         class Snow {
             constructor() { this.reset(); }
-            reset() {
-                this.x = Math.random() * canvas.width;
-                this.y = -10;
-                this.r = Math.random() * 2 + 1;
-                this.sx = (Math.random() - 0.5) * 1;
-                this.sy = Math.random() * 1 + 0.5;
-            }
+            reset() { this.x = Math.random() * canvas.width; this.y = -10; this.r = Math.random() * 2 + 1; this.sx = (Math.random() - 0.5) * 1; this.sy = Math.random() * 1 + 0.5; }
             update() {
-                let dx = this.x - mouse.x;
-                let dy = this.y - mouse.y;
-                let dist = Math.sqrt(dx*dx + dy*dy);
-                if(dist < 100) {
-                    let force = (100 - dist) / 100;
-                    this.x += (dx/dist) * force * 2 + (mouse.vx * 0.05);
-                    this.y += (dy/dist) * force * 2 + (mouse.vy * 0.05);
-                }
-                this.x += this.sx;
-                this.y += this.sy;
-                if(this.y > canvas.height - 2) {
-                    staticSnow.push({ x: this.x, y: canvas.height - Math.random()*3, r: this.r, time: Date.now() });
-                    this.reset();
-                }
+                let dx = this.x - mouse.x, dy = this.y - mouse.y, dist = Math.sqrt(dx*dx + dy*dy);
+                if(dist < 100) { let force = (100 - dist) / 100; this.x += (dx/dist) * force * 2 + (mouse.vx * 0.05); this.y += (dy/dist) * force * 2 + (mouse.vy * 0.05); }
+                this.x += this.sx; this.y += this.sy;
+                if(this.y > canvas.height - 2) { staticSnow.push({ x: this.x, y: canvas.height - Math.random()*3, r: this.r, time: Date.now() }); this.reset(); }
             }
             draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.r, 0, Math.PI*2); ctx.fill(); }
         }
 
         function animate() {
-            ctx.clearRect(0,0,canvas.width,canvas.height);
-            ctx.fillStyle = "rgba(255,255,255,0.4)";
+            ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle = "rgba(255,255,255,0.4)";
             particles.forEach(p => { p.update(); p.draw(); });
-            const now = Date.now();
-            staticSnow = staticSnow.filter(p => now - p.time < 60000);
+            const now = Date.now(); staticSnow = staticSnow.filter(p => now - p.time < 60000);
             staticSnow.forEach(p => { ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); ctx.fill(); });
             requestAnimationFrame(animate);
         }
 
         async function loadVault() {
             try {
-                const res = await fetch(API_URL);
-                allLinks = await res.json();
+                const res = await fetch(API_URL); allLinks = await res.json();
                 document.getElementById('status').style.display = 'none';
-                renderItems(allLinks);
-                renderManage();
+                renderItems(allLinks); renderManage();
             } catch (e) { setTimeout(loadVault, 2000); }
         }
 
@@ -250,8 +223,7 @@
 
         function filterCategory(type, btn) {
             document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            renderItems(type === 'all' ? allLinks : allLinks.filter(l => l.type === type));
+            btn.classList.add('active'); renderItems(type === 'all' ? allLinks : allLinks.filter(l => l.type === type));
         }
 
         function filterSearch() {
@@ -274,15 +246,14 @@
                 if (item.settings) { document.getElementById('pageSettings').innerText = item.settings; sArea.style.display = 'block'; }
                 else { sArea.style.display = 'none'; }
                 
+                // ICON LOGIC: Use custom icon from sheet, else fallback to favicon
                 if (item.icon && item.icon.trim() !== "") {
                     document.getElementById('pageIcon').src = item.icon;
                 } else {
                     try {
                         const domain = new URL(item.url).hostname;
                         document.getElementById('pageIcon').src = `https://www.google.com/s2/favicons?sz=128&domain=${domain}`;
-                    } catch(e) {
-                        document.getElementById('pageIcon').src = 'https://www.google.com/s2/favicons?sz=128&domain=google.com';
-                    }
+                    } catch(e) { document.getElementById('pageIcon').src = 'https://www.google.com/s2/favicons?sz=128&domain=google.com'; }
                 }
 
                 mainUI.style.filter = "blur(20px)"; overlay.style.display = 'block';
@@ -300,12 +271,7 @@
 
         function toggleAdmin(s) { document.getElementById('adminPanel').style.display = s ? 'block' : 'none'; }
         
-        function checkAuth() { 
-            if(document.getElementById('pass').value === "YM2012") { 
-                document.getElementById('loginBox').style.display = 'none'; 
-                document.getElementById('actions').style.display = 'block'; 
-            } 
-        }
+        function checkAuth() { if(document.getElementById('pass').value === "YM2012") { document.getElementById('loginBox').style.display = 'none'; document.getElementById('actions').style.display = 'block'; } }
 
         function updateAdminPreview(val) {
             const preview = document.getElementById('adminIconPreview');
@@ -334,7 +300,6 @@
                 timestamp: new Date().toISOString(), 
                 action: 'add' 
             } : { title, url, action: 'delete' }; 
-
             await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) }); 
             setTimeout(() => location.reload(), 1500);
         }
