@@ -17,7 +17,8 @@
             --text: #e0e0ff; 
             --red: #ff4444; 
             --blue-new: #0077ff; 
-            --admin-bg: rgba(2, 2, 5, 0.98);
+            --admin-bg: #030305; /* Solid dark for admin background base */
+            --glass-border: rgba(255, 255, 255, 0.08);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; transition: all 0.3s ease; }
@@ -195,7 +196,7 @@
         }
         .btn:hover { background: var(--accent); }
 
-        /* Admin Trigger */
+        /* Admin Trigger (Main Menu) */
         #adminBtn { 
             position: fixed; bottom: 20px; right: 20px; 
             width: 30px; height: 30px; opacity: 0.1; 
@@ -205,79 +206,173 @@
         }
         #adminBtn:hover { opacity: 1; }
 
-        /* Admin Panel */
+        /* --- NEW ADMIN PANEL STYLES --- */
         #adminPanel { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: var(--admin-bg); 
             z-index: 6000; display: none; padding: 0; 
-            overflow-y: auto; backdrop-filter: blur(40px);
-        }
-        
-        .admin-nav {
-            display: flex; justify-content: center; gap: 20px;
-            padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.05);
-            background: rgba(0,0,0,0.4); margin-bottom: 40px;
-        }
-        
-        .admin-nav-btn {
-            background: none; border: none; color: rgba(255,255,255,0.3);
-            font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase;
-            font-weight: 700; cursor: pointer; padding: 10px;
-        }
-        .admin-nav-btn.active { color: #fff; border-bottom: 2px solid #fff; }
-
-        .admin-section { 
-            background: rgba(255,255,255,0.02); padding: 40px; 
-            border: 1px solid rgba(255,255,255,0.05); 
-            max-width: 700px; margin: 0 auto 40px; border-radius: 4px;
+            overflow: hidden; 
         }
 
-        .admin-input-group { margin-bottom: 20px; position: relative; }
+        /* 1. Login Screen Improvements */
+        #loginBox {
+            height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            background: radial-gradient(circle at center, #0f0f16 0%, #000000 100%);
+        }
+
+        .login-card-wide {
+            width: 100%;
+            max-width: 550px; /* Wider */
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(25px); /* Strong glass effect */
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            padding: 60px 50px;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            border-radius: 2px;
+        }
+
+        /* 2. Sidebar Layout for Admin Dashboard */
+        .admin-dashboard-wrapper {
+            display: flex;
+            height: 100vh;
+            width: 100%;
+        }
+
+        .admin-sidebar {
+            width: 260px;
+            background: rgba(10, 10, 15, 0.5);
+            border-right: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            padding: 40px 0;
+            backdrop-filter: blur(15px);
+            flex-shrink: 0;
+        }
+
+        .sidebar-brand {
+            padding: 0 30px 40px;
+            border-bottom: 1px solid var(--glass-border);
+            margin-bottom: 20px;
+            font-size: 0.8rem;
+            letter-spacing: 4px;
+            color: var(--accent);
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .admin-sidebar-btn {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.4);
+            padding: 18px 30px;
+            text-align: left;
+            font-size: 0.65rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 700;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .admin-sidebar-btn:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .admin-sidebar-btn.active {
+            color: #fff;
+            background: rgba(0, 243, 255, 0.05);
+            border-left-color: var(--accent);
+        }
+
+        /* 3. Admin Content Area */
+        .admin-content {
+            flex-grow: 1;
+            padding: 60px;
+            overflow-y: auto;
+            background: radial-gradient(circle at top right, rgba(20, 25, 40, 0.3), transparent);
+        }
+
+        .admin-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            padding: 40px;
+            max-width: 900px;
+            margin: 0 auto;
+            border-radius: 4px;
+        }
+
+        .admin-title {
+            font-size: 1rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: #fff;
+            margin-bottom: 40px;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 20px;
+        }
+
+        /* Admin Input Styling */
+        .admin-input-group { margin-bottom: 25px; position: relative; }
         .admin-label {
             display: block; font-size: 0.55rem; letter-spacing: 2px;
-            text-transform: uppercase; margin-bottom: 8px; color: rgba(255,255,255,0.4);
+            text-transform: uppercase; margin-bottom: 10px; color: rgba(255,255,255,0.4);
         }
 
         input, select, textarea { 
-            background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.1); 
-            padding: 14px; color: #fff; width: 100%; outline: none; font-size: 0.8rem; 
+            background: rgba(0, 0, 0, 0.3); 
+            border: 1px solid var(--glass-border); 
+            padding: 16px; color: #fff; width: 100%; outline: none; font-size: 0.8rem; 
+            border-radius: 2px;
         }
-        input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+        input:focus, select:focus, textarea:focus { border-color: var(--accent); background: rgba(0, 0, 0, 0.5); }
 
+        /* Grid for Form */
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        
         .icon-preview-box {
-            position: absolute; right: 0px; top: 32px;
-            width: 80px; height: 80px; border: 1px solid rgba(255,255,255,0.15);
-            background: rgba(0,0,0,0.6); display: flex; align-items: center;
-            justify-content: center; padding: 10px; z-index: 5;
-            backdrop-filter: blur(5px);
+            position: absolute; right: 10px; top: 32px;
+            width: 46px; height: 46px; border: 1px solid var(--glass-border);
+            background: #000; display: flex; align-items: center;
+            justify-content: center; padding: 5px; z-index: 5;
         }
         #liveIconPreview { width: 100%; height: 100%; object-fit: contain; }
 
+        /* Manage List Items */
         .manage-item {
-            display: grid; grid-template-columns: 1fr auto; align-items: center;
-            padding: 15px 20px; background: rgba(255,255,255,0.02);
-            border: 1px solid rgba(255,255,255,0.05); margin-bottom: 10px; gap: 15px;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px; background: rgba(255,255,255,0.02);
+            border: 1px solid var(--glass-border); margin-bottom: 10px;
         }
-        .manage-item-title { font-size: 0.75rem; font-weight: 700; color: #fff; text-transform: uppercase; }
-        .manage-item-meta { font-size: 0.55rem; opacity: 0.4; text-transform: uppercase; }
+        .manage-item-title { font-size: 0.75rem; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 1px; }
+        .manage-item-meta { font-size: 0.55rem; opacity: 0.4; text-transform: uppercase; margin-top: 5px; }
         
         .del-btn {
-            background: none; border: 1px solid rgba(255, 68, 68, 0.3);
-            color: var(--red); padding: 8px 15px; font-size: 0.6rem;
+            background: transparent; border: 1px solid rgba(255, 68, 68, 0.3);
+            color: var(--red); padding: 10px 20px; font-size: 0.6rem;
             cursor: pointer; letter-spacing: 1px; font-weight: 700; text-transform: uppercase;
         }
-        .del-btn:hover { background: var(--red); color: #fff; }
+        .del-btn:hover { background: var(--red); color: #fff; border-color: var(--red); }
 
         #toast { position: fixed; top: 20px; right: 20px; background: #fff; color: #000; padding: 15px 30px; font-size: 0.7rem; font-weight: 700; letter-spacing: 2px; transform: translateX(200%); transition: transform 0.5s ease; z-index: 9999; }
         #toast.show { transform: translateX(0); }
 
         .credit-tag { position: fixed; bottom: 20px; left: 20px; font-size: 0.6rem; letter-spacing: 4px; opacity: 0.2; text-transform: uppercase; z-index: 1; }
 
-        @media (max-width: 600px) {
-            .logo { font-size: 1rem; letter-spacing: 6px; }
-            #pageOverlay { padding: 60px 15px; }
-            .vault-content-container { padding: 30px 15px; }
-            .icon-preview-box { position: relative; top: 0; width: 60px; height: 60px; margin-top: 10px; }
+        @media (max-width: 800px) {
+            .admin-dashboard-wrapper { flex-direction: column; }
+            .admin-sidebar { width: 100%; padding: 20px 0; border-right: none; border-bottom: 1px solid var(--glass-border); height: auto; }
+            .admin-sidebar-btn { text-align: center; border-left: none; border-bottom: 3px solid transparent; }
+            .admin-sidebar-btn.active { border-left: none; border-bottom-color: var(--accent); }
+            .sidebar-brand { display: none; }
+            .admin-content { padding: 30px 20px; }
+            .form-row { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -286,6 +381,7 @@
     <canvas id="snow-canvas"></canvas>
     <div id="toast">SYSTEM UPDATED</div>
 
+    <!-- MAIN MENU (UNCHANGED) -->
     <div id="mainUI" class="container">
         <header><div class="logo">Frost | Vault</div></header>
 
@@ -311,7 +407,7 @@
 
     <div class="credit-tag">MADE BY BATATES</div>
 
-    <!-- Details Overlay -->
+    <!-- Details Overlay (UNCHANGED) -->
     <div id="pageOverlay">
         <div class="close-page" onclick="closePage()">← BACK TO LIST</div>
         <div class="vault-content-container">
@@ -338,80 +434,92 @@
     <!-- Admin Trigger -->
     <div id="adminBtn" onclick="toggleAdmin(true)">A</div>
 
-    <!-- Admin Panel -->
+    <!-- ADMIN PANEL (REDESIGNED) -->
     <div id="adminPanel">
-        <div id="loginBox" style="height: 100vh; display: flex; align-items: center; justify-content: center;">
-            <div class="admin-section" style="width: 100%; max-width: 450px;">
-                <h2 style="font-size:0.75rem; letter-spacing:4px; margin-bottom:30px; text-align:center; color:#fff; text-transform:uppercase;">Admin Login</h2>
+        
+        <!-- Enhanced Login Box -->
+        <div id="loginBox" class="admin-login-wrapper">
+            <div class="login-card-wide">
+                <h2 style="font-size:0.8rem; letter-spacing:6px; margin-bottom:40px; color:#fff; text-transform:uppercase;">Admin Access</h2>
                 <div class="admin-input-group">
-                    <span class="admin-label">Password</span>
-                    <input type="password" id="pass" placeholder="Enter key" style="text-align: center;">
+                    <input type="password" id="pass" placeholder="AUTHENTICATION KEY" style="text-align: center; font-size: 1rem; letter-spacing: 2px;">
                 </div>
-                <button class="btn" onclick="checkAuth()">LOGIN</button>
-                <button class="btn" style="background:none; color:rgba(255,255,255,0.3); margin-top:10px;" onclick="toggleAdmin(false)">CANCEL</button>
+                <button class="btn" style="width: 100%; margin-top: 10px;" onclick="checkAuth()">LOGIN</button>
+                <button style="background:none; border:none; color:rgba(255,255,255,0.3); margin-top:20px; font-size: 0.6rem; letter-spacing: 2px; cursor: pointer; text-transform: uppercase;" onclick="toggleAdmin(false)">Return to Vault</button>
             </div>
         </div>
         
-        <div id="actions" style="display:none;">
-            <div class="admin-nav">
-                <button class="admin-nav-btn active" id="nav-add" onclick="showAdminTab('add')">Add Entry</button>
-                <button class="admin-nav-btn" id="nav-manage" onclick="showAdminTab('manage')">Manage Entries</button>
-                <button class="admin-nav-btn" onclick="location.reload()">Logout</button>
-            </div>
-
-            <div id="tab-add" class="admin-section">
-                <h3 style="font-size:0.7rem; letter-spacing:2px; margin-bottom:25px; color:#fff; text-transform:uppercase;">New Entry</h3>
-                
-                <div class="admin-input-group">
-                    <span class="admin-label">Entry Type</span>
-                    <select id="newType">
-                        <option value="link">DIRECT LINK</option>
-                        <option value="page">PAGE DETAILS</option>
-                        <option value="file">FILE DOWNLOAD</option>
-                    </select>
+        <!-- Sidebar Dashboard Layout -->
+        <div id="actions" class="admin-dashboard-wrapper" style="display:none;">
+            <aside class="admin-sidebar">
+                <div class="sidebar-brand">Frost Admin</div>
+                <nav style="flex-grow: 1;">
+                    <button class="admin-sidebar-btn active" id="nav-add" onclick="showAdminTab('add')">Add Entry</button>
+                    <button class="admin-sidebar-btn" id="nav-manage" onclick="showAdminTab('manage')">Manage Entries</button>
+                </nav>
+                <div style="padding: 0 30px;">
+                    <button class="admin-sidebar-btn" style="color: var(--red); padding-left: 0;" onclick="location.reload()">Logout</button>
                 </div>
+            </aside>
 
-                <div class="admin-input-group">
-                    <span class="admin-label">Title</span>
-                    <input type="text" id="newTitle" placeholder="Entry name">
-                </div>
-
-                <div class="admin-input-group" style="padding-right: 90px;">
-                    <span class="admin-label">URL</span>
-                    <input type="text" id="newUrl" placeholder="https://example.com" oninput="updateIconPreview()">
-                </div>
-                
-                <div class="admin-input-group" style="padding-right: 90px;">
-                    <span class="admin-label">Icon Image URL (Optional)</span>
-                    <input type="text" id="newIcon" placeholder="Specific image URL" oninput="updateIconPreview()">
-                    <div class="icon-preview-box">
-                        <img id="liveIconPreview" src="https://www.google.com/s2/favicons?sz=128&domain=google.com" alt="">
+            <main class="admin-content">
+                <!-- Add Tab -->
+                <div id="tab-add" class="admin-card">
+                    <div class="admin-title">Create New Entry</div>
+                    
+                    <div class="form-row">
+                        <div class="admin-input-group">
+                            <span class="admin-label">Entry Type</span>
+                            <select id="newType">
+                                <option value="link">DIRECT LINK</option>
+                                <option value="page">PAGE DETAILS</option>
+                                <option value="file">FILE DOWNLOAD</option>
+                            </select>
+                        </div>
+                        <div class="admin-input-group">
+                            <span class="admin-label">Title</span>
+                            <input type="text" id="newTitle" placeholder="Entry Name">
+                        </div>
                     </div>
+
+                    <div class="admin-input-group">
+                        <span class="admin-label">URL / Resource Link</span>
+                        <input type="text" id="newUrl" placeholder="https://example.com" oninput="updateIconPreview()">
+                    </div>
+                    
+                    <div class="admin-input-group">
+                        <span class="admin-label">Icon URL (Optional)</span>
+                        <input type="text" id="newIcon" placeholder="Specific image URL" oninput="updateIconPreview()">
+                        <div class="icon-preview-box">
+                            <img id="liveIconPreview" src="https://www.google.com/s2/favicons?sz=128&domain=google.com" alt="">
+                        </div>
+                    </div>
+
+                    <div class="admin-input-group">
+                        <span class="admin-label">Description</span>
+                        <textarea id="newDesc" placeholder="Brief summary of the entry..." style="height:80px;"></textarea>
+                    </div>
+
+                    <div class="admin-input-group">
+                        <span class="admin-label">Extra Info (Visible on Pages)</span>
+                        <textarea id="newSettings" placeholder="Additional details..." style="height:80px;"></textarea>
+                    </div>
+
+                    <button class="btn" style="width: 100%;" onclick="sendToSheet('add')">SAVE TO VAULT</button>
                 </div>
 
-                <div class="admin-input-group">
-                    <span class="admin-label">Description</span>
-                    <textarea id="newDesc" placeholder="Brief summary of the entry..." style="height:80px;"></textarea>
+                <!-- Manage Tab -->
+                <div id="tab-manage" class="admin-card" style="display:none;">
+                    <div class="admin-title">Manage Registry</div>
+                    
+                    <div class="admin-input-group">
+                        <span class="admin-label">Filter Database</span>
+                        <input type="text" id="adminManageSearch" placeholder="Type to search..." onkeyup="renderManage()">
+                    </div>
+
+                    <div id="manageList"></div>
                 </div>
-
-                <div class="admin-input-group">
-                    <span class="admin-label">Extra Info (Visible on Pages)</span>
-                    <textarea id="newSettings" placeholder="Additional details..." style="height:80px;"></textarea>
-                </div>
-
-                <button class="btn" onclick="sendToSheet('add')">SAVE TO VAULT</button>
-            </div>
-
-            <div id="tab-manage" class="admin-section">
-                <h3 style="font-size:0.7rem; letter-spacing:2px; margin-bottom:20px; color:#fff; text-transform:uppercase;">Manage Vault</h3>
-                
-                <div class="admin-input-group">
-                    <span class="admin-label">Search Current Items</span>
-                    <input type="text" id="adminManageSearch" placeholder="Type name..." onkeyup="renderManage()">
-                </div>
-
-                <div id="manageList"></div>
-            </div>
+            </main>
         </div>
     </div>
 
@@ -602,7 +710,7 @@
         function checkAuth() { 
             if(document.getElementById('pass').value === "YM2012") { 
                 document.getElementById('loginBox').style.display = 'none'; 
-                document.getElementById('actions').style.display = 'block'; 
+                document.getElementById('actions').style.display = 'flex'; 
                 showAdminTab('add');
             } else { showToast("INCORRECT KEY"); }
         }
@@ -627,8 +735,11 @@
         function showAdminTab(tab) {
             document.getElementById('tab-add').style.display = tab === 'add' ? 'block' : 'none';
             document.getElementById('tab-manage').style.display = tab === 'manage' ? 'block' : 'none';
+            
+            // Update active state in sidebar
             document.getElementById('nav-add').classList.toggle('active', tab === 'add');
             document.getElementById('nav-manage').classList.toggle('active', tab === 'manage');
+            
             if(tab === 'manage') renderManage();
         }
 
@@ -640,7 +751,7 @@
                 <div class="manage-item">
                     <div>
                         <div class="manage-item-title">${l.title}</div>
-                        <div class="manage-item-meta">${l.type}</div>
+                        <div class="manage-item-meta">${l.type} • ${l.url}</div>
                     </div>
                     <button class="del-btn" onclick="sendToSheet('delete', '${l.title}', '${l.url}')">REMOVE</button>
                 </div>`).join(''); 
