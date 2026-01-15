@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FROST | VAULT</title>
     
     <link rel="icon" href="https://static.vecteezy.com/system/resources/previews/000/550/805/non_2x/snowflake-vector-icon.jpg">
@@ -17,7 +17,7 @@
             --text: #e0e0ff; 
             --red: #ff4444; 
             --blue-new: #0077ff; 
-            --admin-bg: #030305; /* Solid dark for admin background base */
+            --admin-bg: #030305;
             --glass-border: rgba(255, 255, 255, 0.08);
         }
 
@@ -30,6 +30,7 @@
             padding: 5vh 20px; 
             overflow-x: hidden; 
             cursor: default; 
+            -webkit-tap-highlight-color: transparent;
         }
 
         /* Background Canvas */
@@ -68,7 +69,7 @@
         .cat-btn { 
             background: rgba(255, 255, 255, 0.08); 
             border: 1px solid rgba(255, 255, 255, 0.2); 
-            padding: 10px 22px; 
+            padding: 12px 24px; 
             color: #fff; 
             font-size: 0.65rem; 
             font-weight: 700; 
@@ -76,6 +77,7 @@
             cursor: pointer; 
             text-transform: uppercase; 
             border-radius: 2px;
+            white-space: nowrap;
         }
         .cat-btn.active { 
             background: #ffffff !important; 
@@ -95,9 +97,12 @@
             animation: spin 1s linear infinite; 
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .offline-warning { color: var(--red) !important; animation: pulse 2s infinite; font-weight: 700; letter-spacing: 3px; }
+        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
 
-        /* Grid System */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        /* Grid System - Responsive Update */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
         
         .card { 
             background: var(--card); 
@@ -206,7 +211,7 @@
         }
         #adminBtn:hover { opacity: 1; }
 
-        /* --- NEW ADMIN PANEL STYLES --- */
+        /* --- ADMIN PANEL STYLES --- */
         #adminPanel { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: var(--admin-bg); 
@@ -214,20 +219,20 @@
             overflow: hidden; 
         }
 
-        /* 1. Login Screen Improvements */
         #loginBox {
             height: 100vh; 
             display: flex; 
             align-items: center; 
             justify-content: center;
             background: radial-gradient(circle at center, #0f0f16 0%, #000000 100%);
+            padding: 20px;
         }
 
         .login-card-wide {
             width: 100%;
-            max-width: 550px; /* Wider */
+            max-width: 550px; 
             background: rgba(255, 255, 255, 0.02);
-            backdrop-filter: blur(25px); /* Strong glass effect */
+            backdrop-filter: blur(25px); 
             -webkit-backdrop-filter: blur(25px);
             border: 1px solid var(--glass-border);
             padding: 60px 50px;
@@ -236,7 +241,6 @@
             border-radius: 2px;
         }
 
-        /* 2. Sidebar Layout for Admin Dashboard */
         .admin-dashboard-wrapper {
             display: flex;
             height: 100vh;
@@ -266,59 +270,30 @@
         }
 
         .admin-sidebar-btn {
-            background: transparent;
-            border: none;
-            color: rgba(255, 255, 255, 0.4);
-            padding: 18px 30px;
-            text-align: left;
-            font-size: 0.65rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            font-weight: 700;
-            cursor: pointer;
-            border-left: 3px solid transparent;
-            transition: all 0.2s ease;
+            background: transparent; border: none; color: rgba(255, 255, 255, 0.4);
+            padding: 18px 30px; text-align: left; font-size: 0.65rem;
+            letter-spacing: 2px; text-transform: uppercase; font-weight: 700;
+            cursor: pointer; border-left: 3px solid transparent; transition: all 0.2s ease;
         }
 
-        .admin-sidebar-btn:hover {
-            color: #fff;
-            background: rgba(255, 255, 255, 0.02);
-        }
+        .admin-sidebar-btn:hover { color: #fff; background: rgba(255, 255, 255, 0.02); }
+        .admin-sidebar-btn.active { color: #fff; background: rgba(0, 243, 255, 0.05); border-left-color: var(--accent); }
 
-        .admin-sidebar-btn.active {
-            color: #fff;
-            background: rgba(0, 243, 255, 0.05);
-            border-left-color: var(--accent);
-        }
-
-        /* 3. Admin Content Area */
         .admin-content {
-            flex-grow: 1;
-            padding: 60px;
-            overflow-y: auto;
+            flex-grow: 1; padding: 60px; overflow-y: auto;
             background: radial-gradient(circle at top right, rgba(20, 25, 40, 0.3), transparent);
         }
 
         .admin-card {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--glass-border);
-            padding: 40px;
-            max-width: 900px;
-            margin: 0 auto;
-            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.02); border: 1px solid var(--glass-border);
+            padding: 40px; max-width: 900px; margin: 0 auto; border-radius: 4px;
         }
 
         .admin-title {
-            font-size: 1rem;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            color: #fff;
-            margin-bottom: 40px;
-            border-bottom: 1px solid var(--glass-border);
-            padding-bottom: 20px;
+            font-size: 1rem; letter-spacing: 4px; text-transform: uppercase;
+            color: #fff; margin-bottom: 40px; border-bottom: 1px solid var(--glass-border); padding-bottom: 20px;
         }
 
-        /* Admin Input Styling */
         .admin-input-group { margin-bottom: 25px; position: relative; }
         .admin-label {
             display: block; font-size: 0.55rem; letter-spacing: 2px;
@@ -326,14 +301,12 @@
         }
 
         input, select, textarea { 
-            background: rgba(0, 0, 0, 0.3); 
-            border: 1px solid var(--glass-border); 
+            background: rgba(0, 0, 0, 0.3); border: 1px solid var(--glass-border); 
             padding: 16px; color: #fff; width: 100%; outline: none; font-size: 0.8rem; 
             border-radius: 2px;
         }
         input:focus, select:focus, textarea:focus { border-color: var(--accent); background: rgba(0, 0, 0, 0.5); }
 
-        /* Grid for Form */
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         
         .icon-preview-box {
@@ -344,7 +317,6 @@
         }
         #liveIconPreview { width: 100%; height: 100%; object-fit: contain; }
 
-        /* Manage List Items */
         .manage-item {
             display: flex; justify-content: space-between; align-items: center;
             padding: 20px; background: rgba(255,255,255,0.02);
@@ -365,14 +337,26 @@
 
         .credit-tag { position: fixed; bottom: 20px; left: 20px; font-size: 0.6rem; letter-spacing: 4px; opacity: 0.2; text-transform: uppercase; z-index: 1; }
 
+        /* Responsive Improvements */
         @media (max-width: 800px) {
             .admin-dashboard-wrapper { flex-direction: column; }
-            .admin-sidebar { width: 100%; padding: 20px 0; border-right: none; border-bottom: 1px solid var(--glass-border); height: auto; }
-            .admin-sidebar-btn { text-align: center; border-left: none; border-bottom: 3px solid transparent; }
+            .admin-sidebar { width: 100%; padding: 20px 0; border-right: none; border-bottom: 1px solid var(--glass-border); height: auto; display: block;}
+            .admin-sidebar nav { display: flex; overflow-x: auto; padding-bottom: 10px; }
+            .admin-sidebar-btn { text-align: center; border-left: none; border-bottom: 3px solid transparent; white-space: nowrap; padding: 15px 20px; }
             .admin-sidebar-btn.active { border-left: none; border-bottom-color: var(--accent); }
             .sidebar-brand { display: none; }
-            .admin-content { padding: 30px 20px; }
+            .admin-content { padding: 20px 15px; }
             .form-row { grid-template-columns: 1fr; }
+            .admin-card { padding: 20px; }
+            .login-card-wide { padding: 40px 20px; }
+        }
+        @media (max-width: 480px) {
+            .container { padding-left: 15px; padding-right: 15px; }
+            .card { padding: 30px 20px; }
+            .logo { font-size: 1.2rem; letter-spacing: 8px; }
+            #vaultSearch { font-size: 0.7rem; }
+            .manage-item { flex-direction: column; align-items: flex-start; gap: 15px; }
+            .del-btn { width: 100%; text-align: center; border: 1px solid var(--red); }
         }
     </style>
 </head>
@@ -381,7 +365,6 @@
     <canvas id="snow-canvas"></canvas>
     <div id="toast">SYSTEM UPDATED</div>
 
-    <!-- MAIN MENU (UNCHANGED) -->
     <div id="mainUI" class="container">
         <header><div class="logo">Frost | Vault</div></header>
 
@@ -399,7 +382,7 @@
 
         <div id="status">
             <div class="spinner"></div>
-            <div style="font-size:0.6rem; letter-spacing:4px; opacity:0.4; color:#fff;">LOADING REGISTRY...</div>
+            <div id="statusText" style="font-size:0.6rem; letter-spacing:4px; opacity:0.4; color:#fff;">LOADING REGISTRY...</div>
         </div>
 
         <div id="mainGrid" class="grid"></div>
@@ -407,7 +390,6 @@
 
     <div class="credit-tag">MADE BY BATATES</div>
 
-    <!-- Details Overlay (UNCHANGED) -->
     <div id="pageOverlay">
         <div class="close-page" onclick="closePage()">← BACK TO LIST</div>
         <div class="vault-content-container">
@@ -431,13 +413,9 @@
         </div>
     </div>
 
-    <!-- Admin Trigger -->
     <div id="adminBtn" onclick="toggleAdmin(true)">A</div>
 
-    <!-- ADMIN PANEL (REDESIGNED) -->
     <div id="adminPanel">
-        
-        <!-- Enhanced Login Box -->
         <div id="loginBox" class="admin-login-wrapper">
             <div class="login-card-wide">
                 <h2 style="font-size:0.8rem; letter-spacing:6px; margin-bottom:40px; color:#fff; text-transform:uppercase;">Admin Access</h2>
@@ -449,7 +427,6 @@
             </div>
         </div>
         
-        <!-- Sidebar Dashboard Layout -->
         <div id="actions" class="admin-dashboard-wrapper" style="display:none;">
             <aside class="admin-sidebar">
                 <div class="sidebar-brand">Frost Admin</div>
@@ -463,10 +440,8 @@
             </aside>
 
             <main class="admin-content">
-                <!-- Add Tab -->
                 <div id="tab-add" class="admin-card">
                     <div class="admin-title">Create New Entry</div>
-                    
                     <div class="form-row">
                         <div class="admin-input-group">
                             <span class="admin-label">Entry Type</span>
@@ -481,12 +456,10 @@
                             <input type="text" id="newTitle" placeholder="Entry Name">
                         </div>
                     </div>
-
                     <div class="admin-input-group">
                         <span class="admin-label">URL / Resource Link</span>
                         <input type="text" id="newUrl" placeholder="https://example.com" oninput="updateIconPreview()">
                     </div>
-                    
                     <div class="admin-input-group">
                         <span class="admin-label">Icon URL (Optional)</span>
                         <input type="text" id="newIcon" placeholder="Specific image URL" oninput="updateIconPreview()">
@@ -494,29 +467,23 @@
                             <img id="liveIconPreview" src="https://www.google.com/s2/favicons?sz=128&domain=google.com" alt="">
                         </div>
                     </div>
-
                     <div class="admin-input-group">
                         <span class="admin-label">Description</span>
                         <textarea id="newDesc" placeholder="Brief summary of the entry..." style="height:80px;"></textarea>
                     </div>
-
                     <div class="admin-input-group">
                         <span class="admin-label">Extra Info (Visible on Pages)</span>
                         <textarea id="newSettings" placeholder="Additional details..." style="height:80px;"></textarea>
                     </div>
-
                     <button class="btn" style="width: 100%;" onclick="sendToSheet('add')">SAVE TO VAULT</button>
                 </div>
 
-                <!-- Manage Tab -->
                 <div id="tab-manage" class="admin-card" style="display:none;">
                     <div class="admin-title">Manage Registry</div>
-                    
                     <div class="admin-input-group">
                         <span class="admin-label">Filter Database</span>
                         <input type="text" id="adminManageSearch" placeholder="Type to search..." onkeyup="renderManage()">
                     </div>
-
                     <div id="manageList"></div>
                 </div>
             </main>
@@ -525,11 +492,31 @@
 
     <script>
         const API_URL = 'https://script.google.com/macros/s/AKfycbxfuZSmIsEmP5rcj8XrQcdagyCP4j0BvHynZi6mZEs9MvnbroUBClsYHIt_-XPKMvE26w/exec'; 
+        const CACHE_KEY = 'frost_vault_offline_data';
         
         let allLinks = [], particles = [];
         let currentCategory = 'all';
+        let isOfflineMode = false;
         let mouse = { x: -1000, y: -1000, lastX: 0, lastY: 0, vx: 0, vy: 0 };
         const canvas = document.getElementById('snow-canvas'), ctx = canvas.getContext('2d');
+
+        // --- OFFLINE CACHE FUNCTIONS ---
+        function getCachedData() {
+            try {
+                const cached = localStorage.getItem(CACHE_KEY);
+                return cached ? JSON.parse(cached) : null;
+            } catch (e) {
+                console.warn("Cache corrupt, clearing...");
+                localStorage.removeItem(CACHE_KEY);
+                return null;
+            }
+        }
+
+        function setCachedData(data) {
+            try {
+                localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+            } catch (e) { console.error("Cache save failed", e); }
+        }
 
         window.addEventListener('mousemove', e => {
             mouse.vx = e.clientX - mouse.lastX; 
@@ -540,18 +527,22 @@
             mouse.y = e.clientY;
         });
 
+        // Debounce Resize
+        let resizeTimeout;
+        window.onresize = () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => { initSnow(); }, 200);
+        };
+
         function initSnow() {
             canvas.width = window.innerWidth; 
             canvas.height = window.innerHeight;
             particles = [];
-            
-            // Triple-layer parallax snow
             const layerConfigs = [
-                { count: 40, size: [1.5, 2.5], speed: [1.5, 2.5], op: [0.3, 0.5] }, // Front (large/fast)
-                { count: 60, size: [0.8, 1.4], speed: [0.8, 1.2], op: [0.2, 0.4] }, // Mid
-                { count: 80, size: [0.3, 0.7], speed: [0.3, 0.6], op: [0.1, 0.2] }  // Back (tiny/slow)
+                { count: 40, size: [1.5, 2.5], speed: [1.5, 2.5], op: [0.3, 0.5] },
+                { count: 60, size: [0.8, 1.4], speed: [0.8, 1.2], op: [0.2, 0.4] },
+                { count: 80, size: [0.3, 0.7], speed: [0.3, 0.6], op: [0.1, 0.2] }
             ];
-
             layerConfigs.forEach(layer => {
                 for(let i=0; i < layer.count; i++) {
                     let p = new Snow(layer);
@@ -565,9 +556,10 @@
             constructor(config) { 
                 this.config = config;
                 this.reset(); 
-                this.velX = 0; 
-                this.velY = 0; 
+                this.swayFreq = Math.random() * 0.02 + 0.005;
+                this.swayAmp = Math.random() * 0.5 + 0.2;
                 this.swing = Math.random() * 100;
+                this.velX = 0; this.velY = 0; 
             }
             reset() { 
                 this.x = Math.random() * canvas.width; 
@@ -578,9 +570,8 @@
                 this.opacity = Math.random() * (this.config.op[1] - this.config.op[0]) + this.config.op[0];
             }
             update() {
-                this.swing += 0.02;
-                let drift = Math.sin(this.swing) * 0.3;
-
+                this.swing += this.swayFreq;
+                let drift = Math.sin(this.swing) * this.swayAmp;
                 let dx = this.x - mouse.x;
                 let dy = this.y - mouse.y;
                 let dist = Math.sqrt(dx*dx + dy*dy);
@@ -589,21 +580,16 @@
                     this.velX += (dx/dist) * force * 0.3 + (mouse.vx * 0.08 * force); 
                     this.velY += (dy/dist) * force * 0.3 + (mouse.vy * 0.08 * force); 
                 }
-                
-                this.velX *= 0.94; 
-                this.velY *= 0.94;
+                this.velX *= 0.94; this.velY *= 0.94;
                 this.x += this.sx + this.velX + drift; 
                 this.y += this.sy + this.velY;
-                
                 if(this.y > canvas.height + 10) this.reset();
                 if(this.x > canvas.width + 10) this.x = -5;
                 if(this.x < -10) this.x = canvas.width + 5;
             }
             draw() { 
                 ctx.fillStyle = `rgba(255,255,255,${this.opacity})`;
-                ctx.beginPath(); 
-                ctx.arc(this.x, this.y, this.r, 0, Math.PI*2); 
-                ctx.fill(); 
+                ctx.beginPath(); ctx.arc(this.x, this.y, this.r, 0, Math.PI*2); ctx.fill(); 
             }
         }
 
@@ -614,13 +600,49 @@
         }
 
         async function loadVault() {
-            try {
-                const res = await fetch(API_URL); 
-                allLinks = await res.json();
+            const cached = getCachedData();
+            // Optimistically load cache first if available
+            if (cached) {
+                allLinks = cached;
                 document.getElementById('status').style.display = 'none';
+                filterVault();
+            }
+
+            try {
+                // Network check
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 8000); 
+
+                const res = await fetch(API_URL, { signal: controller.signal });
+                clearTimeout(timeoutId);
+
+                const data = await res.json();
+                allLinks = data;
+                setCachedData(data);
+                
+                // System Online
+                isOfflineMode = false;
+                document.getElementById('status').style.display = 'none';
+                document.getElementById('statusText').innerText = "SYSTEM ONLINE";
+                document.getElementById('statusText').classList.remove('offline-warning');
                 filterVault(); 
             } catch (e) { 
-                setTimeout(loadVault, 3000); 
+                console.error("Network Failure", e);
+                isOfflineMode = true;
+                
+                if (allLinks.length > 0) {
+                    // Cache Loaded + Network Fail = Offline Mode
+                    document.getElementById('status').style.display = 'flex';
+                    const sTxt = document.getElementById('statusText');
+                    sTxt.innerText = "⚠ OFFLINE MODE ACTIVE";
+                    sTxt.classList.add('offline-warning');
+                    document.querySelector('.spinner').style.borderTopColor = 'var(--red)';
+                    showToast("NETWORK ERROR: SYSTEM OFFLINE");
+                } else {
+                    // No Cache + Network Fail = Critical Error
+                    document.getElementById('statusText').innerText = "CRITICAL FAILURE: NO CONNECTION";
+                }
+                setTimeout(loadVault, 10000); // Retry logic
             }
         }
 
@@ -672,7 +694,6 @@
                 document.getElementById('pageDesc').innerText = item.desc;
                 document.getElementById('pageType').innerText = item.type;
                 document.getElementById('pageLink').href = item.url;
-                
                 document.getElementById('pageLink').innerText = item.type === 'file' ? 'DOWNLOAD' : 'VISIT SITE';
 
                 const sArea = document.getElementById('settingsArea');
@@ -703,6 +724,12 @@
         }
 
         function toggleAdmin(s) { 
+            // Security Lock: Prevent opening admin if offline
+            if (s && isOfflineMode) {
+                showToast("ACCESS DENIED: SYSTEM OFFLINE");
+                return;
+            }
+
             document.getElementById('adminPanel').style.display = s ? 'block' : 'none'; 
             if(!s) document.getElementById('pass').value = '';
         }
@@ -719,34 +746,27 @@
             const customIcon = document.getElementById('newIcon').value;
             const targetUrl = document.getElementById('newUrl').value;
             const preview = document.getElementById('liveIconPreview');
-
             if (customIcon) {
                 preview.src = customIcon;
             } else if (targetUrl) {
                 try {
                     const domain = new URL(targetUrl).hostname;
                     preview.src = `https://www.google.com/s2/favicons?sz=128&domain=${domain}`;
-                } catch (e) {
-                    preview.src = 'https://www.google.com/s2/favicons?sz=128&domain=google.com';
-                }
+                } catch (e) { preview.src = 'https://www.google.com/s2/favicons?sz=128&domain=google.com'; }
             }
         }
 
         function showAdminTab(tab) {
             document.getElementById('tab-add').style.display = tab === 'add' ? 'block' : 'none';
             document.getElementById('tab-manage').style.display = tab === 'manage' ? 'block' : 'none';
-            
-            // Update active state in sidebar
             document.getElementById('nav-add').classList.toggle('active', tab === 'add');
             document.getElementById('nav-manage').classList.toggle('active', tab === 'manage');
-            
             if(tab === 'manage') renderManage();
         }
 
         function renderManage() { 
             const q = document.getElementById('adminManageSearch').value.toLowerCase();
             const filtered = allLinks.filter(l => l.title.toLowerCase().includes(q));
-            
             document.getElementById('manageList').innerHTML = filtered.map(l => `
                 <div class="manage-item">
                     <div>
@@ -764,6 +784,11 @@
         }
 
         async function sendToSheet(action, title, url) { 
+            if (isOfflineMode) {
+                showToast("ERROR: OFFLINE MODE ACTIVE");
+                return;
+            }
+
             showToast("COMMUNICATING...");
             const payload = action === 'add' ? { 
                 title: document.getElementById('newTitle').value, 
@@ -783,7 +808,7 @@
             } catch (e) { showToast("ERROR"); }
         }
 
-        window.onresize = initSnow; initSnow(); animate(); loadVault();
+        initSnow(); animate(); loadVault();
     </script>
 </body>
 </html>
