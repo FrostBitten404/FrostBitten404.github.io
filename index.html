@@ -17,8 +17,8 @@
             --text: #e0e0ff; 
             --red: #ff4444; 
             --blue-new: #0077ff; 
-            --admin-bg: #030305;
-            --glass-border: rgba(255, 255, 255, 0.08);
+            --admin-bg: #010103;
+            --glass-border: rgba(255, 255, 255, 0.1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; transition: all 0.3s ease; }
@@ -33,7 +33,6 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* Background Canvas */
         #snow-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
 
         .container { max-width: 1000px; margin: 0 auto; position: relative; z-index: 2; padding-bottom: 60px; }
@@ -48,45 +47,55 @@
             text-shadow: 0 0 20px rgba(255, 255, 255, 0.3); 
         }
 
-        /* Controls */
+        .fixed-credits {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            font-size: 0.55rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            opacity: 0.3;
+            color: #fff;
+            z-index: 1001;
+            pointer-events: none;
+        }
+
         .controls-wrapper { display: flex; flex-direction: column; align-items: center; gap: 25px; margin-bottom: 50px; }
         
         .search-container { display: flex; width: 100%; max-width: 500px; gap: 10px; }
         #vaultSearch { 
             background: rgba(255, 255, 255, 0.03); 
-            border: 1px solid rgba(255, 255, 255, 1); 
+            border: 1px solid rgba(255, 255, 255, 0.2); 
             padding: 15px 20px; 
             width: 100%; 
-            border-radius: 0px; 
+            border-radius: 2px; 
             color: #fff; 
             outline: none; 
             font-size: 0.8rem; 
             letter-spacing: 2px; 
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
         }
+        #vaultSearch:focus { border-color: #fff; background: rgba(255,255,255,0.08); }
 
         .categories { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
         .cat-btn { 
-            background: rgba(255, 255, 255, 0.08); 
-            border: 1px solid rgba(255, 255, 255, 0.2); 
+            background: rgba(255, 255, 255, 0.05); 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
             padding: 12px 24px; 
-            color: #fff; 
+            color: rgba(255,255,255,0.6); 
             font-size: 0.65rem; 
             font-weight: 700; 
             letter-spacing: 2px; 
             cursor: pointer; 
             text-transform: uppercase; 
             border-radius: 2px;
-            white-space: nowrap;
         }
         .cat-btn.active { 
             background: #ffffff !important; 
             color: #000000 !important; 
             border-color: #ffffff; 
-            box-shadow: 0 0 25px rgba(255,255,255,0.4); 
+            box-shadow: 0 0 25px rgba(255,255,255,0.3); 
         }
 
-        /* Loading State */
         #status { display: flex; flex-direction: column; align-items: center; gap: 15px; margin: 50px 0; }
         .spinner { 
             width: 30px; 
@@ -98,10 +107,6 @@
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
-        .offline-warning { color: var(--red) !important; animation: pulse 2s infinite; font-weight: 700; letter-spacing: 3px; }
-        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
-
-        /* Grid System - Responsive Update */
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
         
         .card { 
@@ -109,8 +114,6 @@
             padding: 40px 30px; 
             border-radius: 4px; 
             border: 1px solid rgba(255, 255, 255, 0.05); 
-            text-decoration: none; 
-            color: inherit; 
             animation: fadeInUp 0.8s ease forwards; 
             opacity: 0; 
             display: block; 
@@ -122,9 +125,9 @@
         
         .card:hover { 
             border-color: #ffffff; 
-            box-shadow: 0 0 30px rgba(255, 255, 255, 0.15); 
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.1); 
             transform: translateY(-5px); 
-            background: rgba(13, 13, 20, 0.8); 
+            background: rgba(255, 255, 255, 0.05); 
         }
         
         .type-tag { font-size: 0.5rem; letter-spacing: 2px; color: var(--accent); margin-bottom: 10px; display: block; opacity: 0.6; text-transform: uppercase; }
@@ -137,226 +140,135 @@
             border-radius: 2px; 
             margin-left: 8px; 
             font-weight: 700;
-            letter-spacing: 1px;
         }
 
-        .card-title { font-size: 0.85rem; font-weight: 700; margin-bottom: 10px; color: #fff; letter-spacing: 2px; text-transform: uppercase; display: flex; align-items: center; flex-wrap: wrap; }
+        .card-title { font-size: 0.85rem; font-weight: 700; margin-bottom: 10px; color: #fff; letter-spacing: 2px; text-transform: uppercase; display: flex; align-items: center; }
         .card-desc { font-size: 0.7rem; color: rgba(224, 224, 255, 0.4); line-height: 1.8; }
 
-        /* Enhanced Page Overlay */
         #pageOverlay { 
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
-            background: radial-gradient(circle at 50% 50%, rgba(5, 5, 15, 0.98) 0%, rgba(1, 1, 3, 1) 100%); 
+            background: rgba(1, 1, 3, 0.98); 
             z-index: 5000; display: none; 
-            overflow-y: auto; padding: 100px 20px; opacity: 0; transition: opacity 0.6s ease; backdrop-filter: blur(25px);
+            overflow-y: auto; padding: 100px 20px; opacity: 0; transition: opacity 0.5s ease; backdrop-filter: blur(20px);
         }
         #pageOverlay.active { opacity: 1; display: block; }
         
-        .close-page { position: fixed; top: 30px; left: 30px; color: var(--text); cursor: pointer; font-size: 0.7rem; letter-spacing: 3px; opacity: 0.4; z-index: 5001; }
-        .close-page:hover { opacity: 1; color: #fff; }
+        .close-page { position: fixed; top: 30px; left: 30px; color: #fff; cursor: pointer; font-size: 0.7rem; letter-spacing: 3px; opacity: 0.4; z-index: 5001; }
+        .close-page:hover { opacity: 1; }
 
         .vault-content-container { 
             max-width: 800px; margin: 0 auto; 
             background: rgba(255, 255, 255, 0.02); 
             border: 1px solid rgba(255, 255, 255, 0.05);
             padding: 60px 40px;
-            border-radius: 8px;
+            border-radius: 4px;
         }
 
         .page-header { text-align: center; margin-bottom: 50px; }
         #pageIcon { 
-            width: 80px; height: 80px; 
+            width: 70px; height: 70px; 
             border: 1px solid rgba(255, 255, 255, 0.1); 
-            padding: 10px; background: rgba(0,0,0,0.3);
+            padding: 10px; background: rgba(255,255,255,0.03);
             object-fit: contain; margin-bottom: 25px;
         }
         
         #pageType { 
             display: inline-block; padding: 4px 12px; 
-            background: rgba(255, 255, 255, 0.05); 
-            border: 1px solid rgba(255, 255, 255, 0.1); 
-            color: #fff; font-size: 0.6rem; 
-            border-radius: 20px; margin-bottom: 15px; 
-            text-transform: uppercase;
+            background: rgba(0, 243, 255, 0.1); 
+            border: 1px solid var(--accent); 
+            color: var(--accent); font-size: 0.6rem; 
+            border-radius: 2px; margin-bottom: 15px; 
+            text-transform: uppercase; letter-spacing: 1px;
         }
 
         .settings-box { 
-            background: #050508; 
-            border-left: 2px solid var(--accent); 
+            background: #000; 
+            border: 1px solid rgba(255,255,255,0.1);
             padding: 25px; 
-            font-family: 'Courier New', Courier, monospace; 
+            font-family: 'Courier New', monospace; 
             font-size: 0.75rem; 
-            color: #b0fbff; 
+            color: var(--accent); 
             white-space: pre-wrap; 
             margin-top: 15px;
-            overflow-x: auto;
+            max-height: 400px;
+            overflow-y: auto;
         }
         
         .btn { 
             background: #ffffff; color: #000000; border: none; 
             padding: 18px 45px; font-weight: 700; cursor: pointer; 
             letter-spacing: 3px; text-transform: uppercase; font-size: 0.75rem; 
-            display: inline-flex; align-items: center; gap: 10px; border-radius: 0px;
+            display: inline-flex; align-items: center; gap: 10px; border-radius: 2px;
             text-decoration: none; width: 100%; justify-content: center;
         }
-        .btn:hover { background: var(--accent); }
+        .btn:hover { background: var(--accent); box-shadow: 0 0 20px rgba(0, 243, 255, 0.4); }
 
-        /* Admin Trigger (Main Menu) */
-        #adminBtn { 
-            position: fixed; bottom: 20px; right: 20px; 
-            width: 30px; height: 30px; opacity: 0.1; 
-            cursor: pointer; z-index: 1000; 
-            display: flex; align-items: center; justify-content: center; 
-            color: #fff; font-size: 0.7rem; font-weight: 200;
-        }
+        #adminBtn { position: fixed; bottom: 20px; right: 20px; width: 30px; height: 30px; opacity: 0.05; cursor: pointer; z-index: 1000; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 0.7rem; }
         #adminBtn:hover { opacity: 1; }
 
-        /* --- ADMIN PANEL STYLES --- */
-        #adminPanel { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: var(--admin-bg); 
-            z-index: 6000; display: none; padding: 0; 
-            overflow: hidden; 
-        }
+        #adminPanel { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 6000; display: none; overflow: hidden; }
 
-        #loginBox {
-            height: 100vh; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-            background: radial-gradient(circle at center, #0f0f16 0%, #000000 100%);
-            padding: 20px;
-        }
+        #loginBox { height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .login-card-wide { width: 100%; max-width: 450px; text-align: center; }
 
-        .login-card-wide {
-            width: 100%;
-            max-width: 550px; 
-            background: rgba(255, 255, 255, 0.02);
-            backdrop-filter: blur(25px); 
-            -webkit-backdrop-filter: blur(25px);
-            border: 1px solid var(--glass-border);
-            padding: 60px 50px;
-            text-align: center;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
-            border-radius: 2px;
+        .admin-dashboard-wrapper { display: flex; height: 100vh; width: 100%; }
+        .admin-sidebar { width: 260px; background: #050508; border-right: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; padding: 40px 0; }
+        .sidebar-brand { padding: 0 30px 40px; font-size: 0.8rem; letter-spacing: 4px; color: #fff; text-transform: uppercase; font-weight: 700; opacity: 0.5; }
+        
+        .admin-sidebar-btn { 
+            background: transparent; border: none; color: rgba(255, 255, 255, 0.3); padding: 18px 30px; text-align: left; 
+            font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; cursor: pointer; 
         }
+        .admin-sidebar-btn.active { color: #fff; background: rgba(255,255,255,0.05); border-left: 3px solid #fff; }
 
-        .admin-dashboard-wrapper {
-            display: flex;
-            height: 100vh;
-            width: 100%;
-        }
-
-        .admin-sidebar {
-            width: 260px;
-            background: rgba(10, 10, 15, 0.5);
-            border-right: 1px solid var(--glass-border);
-            display: flex;
-            flex-direction: column;
-            padding: 40px 0;
-            backdrop-filter: blur(15px);
-            flex-shrink: 0;
-        }
-
-        .sidebar-brand {
-            padding: 0 30px 40px;
-            border-bottom: 1px solid var(--glass-border);
-            margin-bottom: 20px;
-            font-size: 0.8rem;
-            letter-spacing: 4px;
-            color: var(--accent);
-            text-transform: uppercase;
-            font-weight: 700;
-        }
-
-        .admin-sidebar-btn {
-            background: transparent; border: none; color: rgba(255, 255, 255, 0.4);
-            padding: 18px 30px; text-align: left; font-size: 0.65rem;
-            letter-spacing: 2px; text-transform: uppercase; font-weight: 700;
-            cursor: pointer; border-left: 3px solid transparent; transition: all 0.2s ease;
-        }
-
-        .admin-sidebar-btn:hover { color: #fff; background: rgba(255, 255, 255, 0.02); }
-        .admin-sidebar-btn.active { color: #fff; background: rgba(0, 243, 255, 0.05); border-left-color: var(--accent); }
-
-        .admin-content {
-            flex-grow: 1; padding: 60px; overflow-y: auto;
-            background: radial-gradient(circle at top right, rgba(20, 25, 40, 0.3), transparent);
-        }
-
-        .admin-card {
-            background: rgba(255, 255, 255, 0.02); border: 1px solid var(--glass-border);
-            padding: 40px; max-width: 900px; margin: 0 auto; border-radius: 4px;
-        }
-
-        .admin-title {
-            font-size: 1rem; letter-spacing: 4px; text-transform: uppercase;
-            color: #fff; margin-bottom: 40px; border-bottom: 1px solid var(--glass-border); padding-bottom: 20px;
-        }
+        .admin-content { flex-grow: 1; padding: 60px; overflow-y: auto; }
+        .admin-card { max-width: 800px; margin: 0 auto; }
+        .admin-title { font-size: 1rem; letter-spacing: 4px; text-transform: uppercase; color: #fff; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
 
         .admin-input-group { margin-bottom: 25px; position: relative; }
-        .admin-label {
-            display: block; font-size: 0.55rem; letter-spacing: 2px;
-            text-transform: uppercase; margin-bottom: 10px; color: rgba(255,255,255,0.4);
-        }
+        .admin-label { display: block; font-size: 0.6rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; color: rgba(255,255,255,0.5); font-weight: 700; }
 
         input, select, textarea { 
-            background: rgba(0, 0, 0, 0.3); border: 1px solid var(--glass-border); 
-            padding: 16px; color: #fff; width: 100%; outline: none; font-size: 0.8rem; 
+            background: #000; 
+            border: 1px solid rgba(255,255,255,0.2); 
+            padding: 16px; 
+            color: #fff; 
+            width: 100%; 
+            outline: none; 
+            font-size: 0.8rem; 
             border-radius: 2px;
+            appearance: none;
         }
-        input:focus, select:focus, textarea:focus { border-color: var(--accent); background: rgba(0, 0, 0, 0.5); }
+        input:focus, select:focus, textarea:focus { border-color: #fff; background: #050508; }
+        input:disabled, select:disabled { opacity: 0.3; cursor: not-allowed; border-color: rgba(255,255,255,0.05); }
 
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         
         .icon-preview-box {
-            position: absolute; right: 10px; top: 32px;
-            width: 46px; height: 46px; border: 1px solid var(--glass-border);
-            background: #000; display: flex; align-items: center;
-            justify-content: center; padding: 5px; z-index: 5;
+            position: absolute; right: 10px; top: 38px;
+            width: 40px; height: 40px; border: 1px solid rgba(255,255,255,0.1);
+            background: #000; display: flex; align-items: center; justify-content: center; padding: 5px;
         }
         #liveIconPreview { width: 100%; height: 100%; object-fit: contain; }
 
         .manage-item {
             display: flex; justify-content: space-between; align-items: center;
             padding: 20px; background: rgba(255,255,255,0.02);
-            border: 1px solid var(--glass-border); margin-bottom: 10px;
+            border: 1px solid rgba(255,255,255,0.05); margin-bottom: 10px;
         }
-        .manage-item-title { font-size: 0.75rem; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 1px; }
-        .manage-item-meta { font-size: 0.55rem; opacity: 0.4; text-transform: uppercase; margin-top: 5px; }
-        
-        .del-btn {
-            background: transparent; border: 1px solid rgba(255, 68, 68, 0.3);
-            color: var(--red); padding: 10px 20px; font-size: 0.6rem;
-            cursor: pointer; letter-spacing: 1px; font-weight: 700; text-transform: uppercase;
-        }
-        .del-btn:hover { background: var(--red); color: #fff; border-color: var(--red); }
+        .del-btn { background: transparent; border: 1px solid rgba(255, 68, 68, 0.3); color: var(--red); padding: 10px 20px; font-size: 0.6rem; cursor: pointer; text-transform: uppercase; font-weight: 700; }
+        .del-btn:hover { background: var(--red); color: #fff; }
 
-        #toast { position: fixed; top: 20px; right: 20px; background: #fff; color: #000; padding: 15px 30px; font-size: 0.7rem; font-weight: 700; letter-spacing: 2px; transform: translateX(200%); transition: transform 0.5s ease; z-index: 9999; }
+        #toast { position: fixed; top: 20px; right: 20px; background: #fff; color: #000; padding: 15px 30px; font-size: 0.7rem; font-weight: 700; letter-spacing: 2px; transform: translateX(200%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 9999; }
         #toast.show { transform: translateX(0); }
 
-        .credit-tag { position: fixed; bottom: 20px; left: 20px; font-size: 0.6rem; letter-spacing: 4px; opacity: 0.2; text-transform: uppercase; z-index: 1; }
-
-        /* Responsive Improvements */
         @media (max-width: 800px) {
             .admin-dashboard-wrapper { flex-direction: column; }
-            .admin-sidebar { width: 100%; padding: 20px 0; border-right: none; border-bottom: 1px solid var(--glass-border); height: auto; display: block;}
-            .admin-sidebar nav { display: flex; overflow-x: auto; padding-bottom: 10px; }
-            .admin-sidebar-btn { text-align: center; border-left: none; border-bottom: 3px solid transparent; white-space: nowrap; padding: 15px 20px; }
-            .admin-sidebar-btn.active { border-left: none; border-bottom-color: var(--accent); }
-            .sidebar-brand { display: none; }
-            .admin-content { padding: 20px 15px; }
+            .admin-sidebar { width: 100%; height: auto; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.05); padding: 20px 0; }
+            .admin-sidebar nav { display: flex; overflow-x: auto; }
+            .admin-sidebar-btn { padding: 15px 20px; white-space: nowrap; border-left: none; }
+            .admin-content { padding: 30px 15px; }
             .form-row { grid-template-columns: 1fr; }
-            .admin-card { padding: 20px; }
-            .login-card-wide { padding: 40px 20px; }
-        }
-        @media (max-width: 480px) {
-            .container { padding-left: 15px; padding-right: 15px; }
-            .card { padding: 30px 20px; }
-            .logo { font-size: 1.2rem; letter-spacing: 8px; }
-            #vaultSearch { font-size: 0.7rem; }
-            .manage-item { flex-direction: column; align-items: flex-start; gap: 15px; }
-            .del-btn { width: 100%; text-align: center; border: 1px solid var(--red); }
         }
     </style>
 </head>
@@ -364,9 +276,12 @@
 
     <canvas id="snow-canvas"></canvas>
     <div id="toast">SYSTEM UPDATED</div>
+    <div class="fixed-credits">Made by Batates</div>
 
     <div id="mainUI" class="container">
-        <header><div class="logo">Frost | Vault</div></header>
+        <header>
+            <div class="logo">Frost | Vault</div>
+        </header>
 
         <div class="controls-wrapper">
             <div class="search-container">
@@ -375,6 +290,7 @@
             <div class="categories">
                 <button class="cat-btn active" data-cat="all" onclick="setCategory('all', this)">All Items</button>
                 <button class="cat-btn" data-cat="link" onclick="setCategory('link', this)">Links</button>
+                <button class="cat-btn" data-cat="modpack" onclick="setCategory('modpack', this)">Modpacks</button>
                 <button class="cat-btn" data-cat="page" onclick="setCategory('page', this)">Pages</button>
                 <button class="cat-btn" data-cat="file" onclick="setCategory('file', this)">Files</button>
             </div>
@@ -382,16 +298,15 @@
 
         <div id="status">
             <div class="spinner"></div>
-            <div id="statusText" style="font-size:0.6rem; letter-spacing:4px; opacity:0.4; color:#fff;">LOADING REGISTRY...</div>
+            <div id="statusText" style="font-size:0.6rem; letter-spacing:4px; opacity:0.4; color:#fff;">SYNCHRONIZING...</div>
         </div>
 
         <div id="mainGrid" class="grid"></div>
     </div>
 
-    <div class="credit-tag">MADE BY BATATES</div>
-
+    <!-- Overlay UI -->
     <div id="pageOverlay">
-        <div class="close-page" onclick="closePage()">← BACK TO LIST</div>
+        <div class="close-page" onclick="closePage()">← BACK TO VAULT</div>
         <div class="vault-content-container">
             <div class="page-header">
                 <img id="pageIcon" src="" alt="">
@@ -399,15 +314,10 @@
                 <div id="pageType"></div>
                 <h1 id="pageTitle" style="letter-spacing:4px; text-transform:uppercase; font-size: 1.4rem; color: #fff; margin-top: 10px;"></h1>
             </div>
-            
-            <p id="pageDesc" style="opacity:0.6; line-height:2; margin-bottom:50px; font-size: 0.9rem; text-align: left;"></p>
-            
-            <a id="pageLink" href="#" target="_blank" class="btn">VISIT SITE</a>
-            
+            <p id="pageDesc" style="opacity:0.6; line-height:2; margin-bottom:50px; font-size: 0.9rem;"></p>
+            <a id="pageLink" href="#" target="_blank" class="btn">ACCESS RESOURCE</a>
             <div id="settingsArea" style="margin-top:60px;">
-                <div style="font-size:0.6rem; color: var(--accent); margin-bottom:10px; letter-spacing: 2px; font-weight: 700; text-transform: uppercase;">
-                    Additional Data
-                </div>
+                <div id="metaTitle" style="font-size:0.6rem; color: #fff; opacity: 0.4; margin-bottom:10px; letter-spacing: 2px; font-weight: 700; text-transform: uppercase;">Technical Metadata</div>
                 <div class="settings-box"><code id="pageSettings"></code></div>
             </div>
         </div>
@@ -415,15 +325,15 @@
 
     <div id="adminBtn" onclick="toggleAdmin(true)">A</div>
 
+    <!-- Admin Panel UI -->
     <div id="adminPanel">
-        <div id="loginBox" class="admin-login-wrapper">
+        <div id="loginBox">
             <div class="login-card-wide">
-                <h2 style="font-size:0.8rem; letter-spacing:6px; margin-bottom:40px; color:#fff; text-transform:uppercase;">Admin Access</h2>
-                <div class="admin-input-group">
-                    <input type="password" id="pass" placeholder="AUTHENTICATION KEY" style="text-align: center; font-size: 1rem; letter-spacing: 2px;">
-                </div>
-                <button class="btn" style="width: 100%; margin-top: 10px;" onclick="checkAuth()">LOGIN</button>
-                <button style="background:none; border:none; color:rgba(255,255,255,0.3); margin-top:20px; font-size: 0.6rem; letter-spacing: 2px; cursor: pointer; text-transform: uppercase;" onclick="toggleAdmin(false)">Return to Vault</button>
+                <h2 style="font-size:0.8rem; letter-spacing:6px; margin-bottom:10px; color:#fff; text-transform:uppercase;">Authentication</h2>
+                <div style="font-size:0.5rem; letter-spacing:3px; opacity:0.2; color:#fff; margin-bottom:40px;">Admin Access Restricted</div>
+                <input type="password" id="pass" placeholder="KEY" style="text-align: center; margin-bottom: 20px;">
+                <button class="btn" onclick="checkAuth()">ENTER</button>
+                <button style="background:none; border:none; color:rgba(255,255,255,0.2); margin-top:30px; font-size: 0.6rem; letter-spacing: 2px; cursor: pointer;" onclick="toggleAdmin(false)">RETURN</button>
             </div>
         </div>
         
@@ -432,57 +342,70 @@
                 <div class="sidebar-brand">Frost Admin</div>
                 <nav style="flex-grow: 1;">
                     <button class="admin-sidebar-btn active" id="nav-add" onclick="showAdminTab('add')">Add Entry</button>
-                    <button class="admin-sidebar-btn" id="nav-manage" onclick="showAdminTab('manage')">Manage Entries</button>
+                    <button class="admin-sidebar-btn" id="nav-manage" onclick="showAdminTab('manage')">Database</button>
                 </nav>
+                <div class="fixed-credits" style="position:static; margin:0 30px 40px; opacity:0.1;">Made by Batates</div>
                 <div style="padding: 0 30px;">
-                    <button class="admin-sidebar-btn" style="color: var(--red); padding-left: 0;" onclick="location.reload()">Logout</button>
+                    <button class="admin-sidebar-btn" style="color: var(--red);" onclick="location.reload()">Logout</button>
                 </div>
             </aside>
 
             <main class="admin-content">
                 <div id="tab-add" class="admin-card">
-                    <div class="admin-title">Create New Entry</div>
+                    <div class="admin-title" id="adminFormTitle">Create New Resource</div>
+                    
+                    <div id="updateToggle" class="admin-input-group" style="display:none; margin-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 20px;">
+                        <span class="admin-label">Action Mode</span>
+                        <div style="display:flex; gap:10px;">
+                             <button class="cat-btn active" id="mode-new" onclick="setMode('add')">New Row</button>
+                             <button class="cat-btn" id="mode-update" onclick="setMode('update')">Push Update</button>
+                        </div>
+                    </div>
+
                     <div class="form-row">
                         <div class="admin-input-group">
-                            <span class="admin-label">Entry Type</span>
-                            <select id="newType">
+                            <span class="admin-label">Registry Type</span>
+                            <select id="newType" onchange="toggleAdminView()">
                                 <option value="link">DIRECT LINK</option>
+                                <option value="modpack">MODPACK (CHANGELOG)</option>
                                 <option value="page">PAGE DETAILS</option>
                                 <option value="file">FILE DOWNLOAD</option>
                             </select>
                         </div>
                         <div class="admin-input-group">
-                            <span class="admin-label">Title</span>
-                            <input type="text" id="newTitle" placeholder="Entry Name">
+                            <span class="admin-label" id="label-title">Title</span>
+                            <!-- Hidden Select for Update Mode -->
+                            <select id="updateTargetSelect" style="display:none;" onchange="syncUpdateTitle()">
+                                <option value="">Select a Modpack...</option>
+                            </select>
+                            <!-- Visible Input for New Mode -->
+                            <input type="text" id="newTitle" placeholder="Resource Name">
                         </div>
                     </div>
                     <div class="admin-input-group">
-                        <span class="admin-label">URL / Resource Link</span>
-                        <input type="text" id="newUrl" placeholder="https://example.com" oninput="updateIconPreview()">
+                        <span class="admin-label">Endpoint URL</span>
+                        <input type="text" id="newUrl" placeholder="https://..." oninput="updateIconPreview()">
                     </div>
                     <div class="admin-input-group">
-                        <span class="admin-label">Icon URL (Optional)</span>
-                        <input type="text" id="newIcon" placeholder="Specific image URL" oninput="updateIconPreview()">
-                        <div class="icon-preview-box">
-                            <img id="liveIconPreview" src="https://www.google.com/s2/favicons?sz=128&domain=google.com" alt="">
-                        </div>
+                        <span class="admin-label">Custom Icon (URL)</span>
+                        <input type="text" id="newIcon" placeholder="Leave empty for auto-favicon" oninput="updateIconPreview()">
+                        <div class="icon-preview-box"><img id="liveIconPreview" src="https://www.google.com/s2/favicons?sz=128&domain=google.com"></div>
                     </div>
                     <div class="admin-input-group">
                         <span class="admin-label">Description</span>
-                        <textarea id="newDesc" placeholder="Brief summary of the entry..." style="height:80px;"></textarea>
+                        <textarea id="newDesc" placeholder="Summary..." style="height:80px;"></textarea>
                     </div>
                     <div class="admin-input-group">
-                        <span class="admin-label">Extra Info (Visible on Pages)</span>
-                        <textarea id="newSettings" placeholder="Additional details..." style="height:80px;"></textarea>
+                        <span class="admin-label" id="label-settings">Metadata / Extra Info</span>
+                        <textarea id="newSettings" placeholder="JSON or plain text info..." style="height:80px;"></textarea>
                     </div>
-                    <button class="btn" style="width: 100%;" onclick="sendToSheet('add')">SAVE TO VAULT</button>
+                    <button class="btn" id="submitBtn" onclick="handleFormSubmit()">DEPLOY TO VAULT</button>
                 </div>
 
                 <div id="tab-manage" class="admin-card" style="display:none;">
-                    <div class="admin-title">Manage Registry</div>
+                    <div class="admin-title">Resource Registry</div>
                     <div class="admin-input-group">
-                        <span class="admin-label">Filter Database</span>
-                        <input type="text" id="adminManageSearch" placeholder="Type to search..." onkeyup="renderManage()">
+                        <input type="text" id="adminManageSearch" placeholder="Filter resources..." onkeyup="renderManage()">
                     </div>
                     <div id="manageList"></div>
                 </div>
@@ -491,61 +414,34 @@
     </div>
 
     <script>
-        const API_URL = 'https://script.google.com/macros/s/AKfycbxfuZSmIsEmP5rcj8XrQcdagyCP4j0BvHynZi6mZEs9MvnbroUBClsYHIt_-XPKMvE26w/exec'; 
-        const CACHE_KEY = 'frost_vault_offline_data';
+        const API_URL = 'https://script.google.com/macros/s/AKfycbyuOVD0jQgwsROt-GAqqbUC883vJpHsX2VFOBRGpdgHvIkOB-M0Cu7H_e68ybSOhd2Jxw/exec'; 
+        const CACHE_KEY = 'frost_vault_cache';
         
         let allLinks = [], particles = [];
         let currentCategory = 'all';
         let isOfflineMode = false;
+        let currentActionMode = 'add';
         let mouse = { x: -1000, y: -1000, lastX: 0, lastY: 0, vx: 0, vy: 0 };
         const canvas = document.getElementById('snow-canvas'), ctx = canvas.getContext('2d');
 
-        // --- OFFLINE CACHE FUNCTIONS ---
-        function getCachedData() {
-            try {
-                const cached = localStorage.getItem(CACHE_KEY);
-                return cached ? JSON.parse(cached) : null;
-            } catch (e) {
-                console.warn("Cache corrupt, clearing...");
-                localStorage.removeItem(CACHE_KEY);
-                return null;
-            }
-        }
-
-        function setCachedData(data) {
-            try {
-                localStorage.setItem(CACHE_KEY, JSON.stringify(data));
-            } catch (e) { console.error("Cache save failed", e); }
-        }
-
         window.addEventListener('mousemove', e => {
-            mouse.vx = e.clientX - mouse.lastX; 
-            mouse.vy = e.clientY - mouse.lastY;
-            mouse.lastX = e.clientX; 
-            mouse.lastY = e.clientY;
-            mouse.x = e.clientX; 
-            mouse.y = e.clientY;
+            mouse.vx = e.clientX - mouse.lastX; mouse.vy = e.clientY - mouse.lastY;
+            mouse.lastX = e.clientX; mouse.lastY = e.clientY;
+            mouse.x = e.clientX; mouse.y = e.clientY;
         });
 
-        // Debounce Resize
-        let resizeTimeout;
-        window.onresize = () => {
-            clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(() => { initSnow(); }, 200);
-        };
+        window.onresize = () => { initSnow(); };
 
         function initSnow() {
-            canvas.width = window.innerWidth; 
-            canvas.height = window.innerHeight;
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
             particles = [];
-            const layerConfigs = [
-                { count: 40, size: [1.5, 2.5], speed: [1.5, 2.5], op: [0.3, 0.5] },
-                { count: 60, size: [0.8, 1.4], speed: [0.8, 1.2], op: [0.2, 0.4] },
-                { count: 80, size: [0.3, 0.7], speed: [0.3, 0.6], op: [0.1, 0.2] }
+            const configs = [
+                { count: 40, size: [1.5, 2.5], speed: [1.2, 2.2], op: [0.3, 0.5] },
+                { count: 100, size: [0.5, 1.2], speed: [0.5, 1.0], op: [0.1, 0.3] }
             ];
-            layerConfigs.forEach(layer => {
-                for(let i=0; i < layer.count; i++) {
-                    let p = new Snow(layer);
+            configs.forEach(c => {
+                for(let i=0; i<c.count; i++){
+                    let p = new Snow(c);
                     p.y = Math.random() * canvas.height;
                     particles.push(p);
                 }
@@ -553,259 +449,273 @@
         }
 
         class Snow {
-            constructor(config) { 
-                this.config = config;
-                this.reset(); 
-                this.swayFreq = Math.random() * 0.02 + 0.005;
-                this.swayAmp = Math.random() * 0.5 + 0.2;
-                this.swing = Math.random() * 100;
-                this.velX = 0; this.velY = 0; 
-            }
-            reset() { 
-                this.x = Math.random() * canvas.width; 
-                this.y = -20; 
-                this.r = Math.random() * (this.config.size[1] - this.config.size[0]) + this.config.size[0]; 
-                this.sx = (Math.random() - 0.5) * 0.2; 
-                this.sy = Math.random() * (this.config.speed[1] - this.config.speed[0]) + this.config.speed[0]; 
-                this.opacity = Math.random() * (this.config.op[1] - this.config.op[0]) + this.config.op[0];
+            constructor(c) { this.c = c; this.reset(); this.swing = Math.random() * 100; this.velX = 0; this.velY = 0; }
+            reset() {
+                this.x = Math.random() * canvas.width; this.y = -20;
+                this.r = Math.random() * (this.c.size[1]-this.c.size[0]) + this.c.size[0];
+                this.sy = Math.random() * (this.c.speed[1]-this.c.speed[0]) + this.c.speed[0];
+                this.opacity = Math.random() * (this.c.op[1]-this.c.op[0]) + this.c.op[0];
             }
             update() {
-                this.swing += this.swayFreq;
-                let drift = Math.sin(this.swing) * this.swayAmp;
-                let dx = this.x - mouse.x;
-                let dy = this.y - mouse.y;
+                this.swing += 0.01;
+                let drift = Math.sin(this.swing) * 0.4;
+                let dx = this.x - mouse.x, dy = this.y - mouse.y;
                 let dist = Math.sqrt(dx*dx + dy*dy);
-                if(dist < 100) { 
-                    let force = (100 - dist) / 100; 
-                    this.velX += (dx/dist) * force * 0.3 + (mouse.vx * 0.08 * force); 
-                    this.velY += (dy/dist) * force * 0.3 + (mouse.vy * 0.08 * force); 
+                if(dist < 100) {
+                    let force = (100 - dist)/100;
+                    this.velX += (dx/dist) * force * 0.4 + (mouse.vx * 0.1 * force);
+                    this.velY += (dy/dist) * force * 0.4 + (mouse.vy * 0.1 * force);
                 }
-                this.velX *= 0.94; this.velY *= 0.94;
-                this.x += this.sx + this.velX + drift; 
-                this.y += this.sy + this.velY;
+                this.velX *= 0.92; this.velY *= 0.92;
+                this.x += drift + this.velX; this.y += this.sy + this.velY;
                 if(this.y > canvas.height + 10) this.reset();
-                if(this.x > canvas.width + 10) this.x = -5;
-                if(this.x < -10) this.x = canvas.width + 5;
+                if(this.x > canvas.width + 10) this.x = -5; if(this.x < -10) this.x = canvas.width + 5;
             }
-            draw() { 
-                ctx.fillStyle = `rgba(255,255,255,${this.opacity})`;
-                ctx.beginPath(); ctx.arc(this.x, this.y, this.r, 0, Math.PI*2); ctx.fill(); 
-            }
+            draw() { ctx.fillStyle = `rgba(255,255,255,${this.opacity})`; ctx.beginPath(); ctx.arc(this.x, this.y, this.r, 0, Math.PI*2); ctx.fill(); }
         }
 
-        function animate() {
-            ctx.clearRect(0,0,canvas.width,canvas.height); 
-            particles.forEach(p => { p.update(); p.draw(); });
-            requestAnimationFrame(animate);
-        }
+        function animate() { ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); }
 
         async function loadVault() {
-            const cached = getCachedData();
-            // Optimistically load cache first if available
-            if (cached) {
-                allLinks = cached;
-                document.getElementById('status').style.display = 'none';
-                filterVault();
-            }
-
+            const cached = localStorage.getItem(CACHE_KEY);
+            if (cached) { allLinks = JSON.parse(cached); document.getElementById('status').style.display = 'none'; filterVault(); }
             try {
-                // Network check
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 8000); 
-
-                const res = await fetch(API_URL, { signal: controller.signal });
-                clearTimeout(timeoutId);
-
+                const res = await fetch(API_URL);
                 const data = await res.json();
-                allLinks = data;
-                setCachedData(data);
-                
-                // System Online
-                isOfflineMode = false;
-                document.getElementById('status').style.display = 'none';
-                document.getElementById('statusText').innerText = "SYSTEM ONLINE";
-                document.getElementById('statusText').classList.remove('offline-warning');
-                filterVault(); 
+                allLinks = data; localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+                isOfflineMode = false; document.getElementById('status').style.display = 'none'; filterVault(); 
+                populateUpdateMenu();
             } catch (e) { 
-                console.error("Network Failure", e);
                 isOfflineMode = true;
-                
-                if (allLinks.length > 0) {
-                    // Cache Loaded + Network Fail = Offline Mode
-                    document.getElementById('status').style.display = 'flex';
-                    const sTxt = document.getElementById('statusText');
-                    sTxt.innerText = "⚠ OFFLINE MODE ACTIVE";
-                    sTxt.classList.add('offline-warning');
-                    document.querySelector('.spinner').style.borderTopColor = 'var(--red)';
-                    showToast("NETWORK ERROR: SYSTEM OFFLINE");
-                } else {
-                    // No Cache + Network Fail = Critical Error
-                    document.getElementById('statusText').innerText = "CRITICAL FAILURE: NO CONNECTION";
+                if(allLinks.length > 0) {
+                    const st = document.getElementById('statusText');
+                    st.innerText = "OFFLINE CACHE ACTIVE"; st.classList.add('offline-warning');
                 }
-                setTimeout(loadVault, 10000); // Retry logic
+                setTimeout(loadVault, 10000);
+            }
+        }
+
+        function populateUpdateMenu() {
+            const select = document.getElementById('updateTargetSelect');
+            const modpacks = allLinks.filter(l => l.type === 'modpack');
+            select.innerHTML = '<option value="">Select a Modpack...</option>' + 
+                modpacks.map(m => `<option value="${m.title}">${m.title}</option>`).join('');
+        }
+
+        function syncUpdateTitle() {
+            const select = document.getElementById('updateTargetSelect');
+            const titleInput = document.getElementById('newTitle');
+            titleInput.value = select.value;
+            
+            // Auto-fill existing description and URL if possible to facilitate checking
+            const existing = allLinks.find(l => l.title === select.value);
+            if(existing) {
+                document.getElementById('newUrl').value = existing.url;
+                document.getElementById('newDesc').value = existing.desc;
             }
         }
 
         function isNew(ts) {
-            if (!ts) return false;
-            const diff = (new Date() - new Date(ts)) / (1000 * 60 * 60);
-            return diff <= 24 && diff >= 0; 
+            if(!ts) return false;
+            return (new Date() - new Date(ts)) / 3600000 <= 24;
         }
 
         function renderItems(links) {
-            document.getElementById('mainGrid').innerHTML = links.map((l) => {
-                const safeUrl = encodeURIComponent(l.url);
-                const showNew = isNew(l.timestamp) ? `<span class="new-tag">NEW</span>` : '';
-                return `
-                    <div class="card" onclick="handleCardClick('${safeUrl}')">
-                        <span class="type-tag">${l.type}</span>
-                        <div class="card-title">${l.title} ${showNew}</div>
-                        <p class="card-desc">${l.desc || '...'}</p>
-                    </div>`;
-            }).join('');
+            document.getElementById('mainGrid').innerHTML = links.map(l => `
+                <div class="card" onclick="handleCardClick('${encodeURIComponent(l.url)}')">
+                    <span class="type-tag">${l.type}</span>
+                    <div class="card-title">${l.title} ${isNew(l.timestamp) ? '<span class="new-tag">NEW</span>' : ''}</div>
+                    <p class="card-desc">${l.desc || 'No description available.'}</p>
+                </div>
+            `).join('');
         }
 
         function filterVault() {
-            const query = document.getElementById('vaultSearch').value.toLowerCase();
-            const filtered = allLinks.filter(item => {
-                const matchesCategory = (currentCategory === 'all' || item.type === currentCategory);
-                return matchesCategory && item.title.toLowerCase().includes(query);
-            });
+            const q = document.getElementById('vaultSearch').value.toLowerCase();
+            const filtered = allLinks.filter(l => (currentCategory === 'all' || l.type === currentCategory) && l.title.toLowerCase().includes(q));
             renderItems(filtered);
         }
 
         function setCategory(type, btn) {
             currentCategory = type;
             document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            filterVault();
+            btn.classList.add('active'); filterVault();
         }
 
         function handleCardClick(urlParam) {
-            const targetUrl = decodeURIComponent(urlParam);
-            const item = allLinks.find(l => l.url === targetUrl);
+            const url = decodeURIComponent(urlParam);
+            const item = allLinks.find(l => l.url === url);
             if(!item) return;
-
-            if(item.type === 'link') { 
-                window.open(item.url, '_blank'); 
-            } else {
+            if(item.type === 'link') { window.open(item.url, '_blank'); } else {
                 const overlay = document.getElementById('pageOverlay');
                 document.getElementById('pageTitle').innerText = item.title;
                 document.getElementById('pageDesc').innerText = item.desc;
                 document.getElementById('pageType').innerText = item.type;
                 document.getElementById('pageLink').href = item.url;
-                document.getElementById('pageLink').innerText = item.type === 'file' ? 'DOWNLOAD' : 'VISIT SITE';
-
-                const sArea = document.getElementById('settingsArea');
-                if (item.settings && item.settings.trim() !== "") { 
-                    document.getElementById('pageSettings').innerText = item.settings; 
-                    sArea.style.display = 'block'; 
-                } else { sArea.style.display = 'none'; }
+                document.getElementById('pageLink').innerText = (item.type === 'file' || item.type === 'modpack') ? 'DOWNLOAD RESOURCE' : 'OPEN PAGE';
                 
-                if (item.icon) document.getElementById('pageIcon').src = item.icon;
-                else {
-                    try {
-                        const domain = new URL(item.url).hostname;
-                        document.getElementById('pageIcon').src = `https://www.google.com/s2/favicons?sz=128&domain=${domain}`;
-                    } catch(e) { document.getElementById('pageIcon').src = 'https://www.google.com/s2/favicons?sz=128&domain=google.com'; }
+                const sArea = document.getElementById('settingsArea');
+                const sLabel = document.getElementById('metaTitle');
+                if (item.type === 'modpack') {
+                    sLabel.innerText = "Changelog / Versions";
+                } else {
+                    sLabel.innerText = "Technical Metadata";
                 }
 
-                overlay.style.display = 'block';
-                setTimeout(() => overlay.classList.add('active'), 10);
+                if (item.settings?.trim()) { 
+                    document.getElementById('pageSettings').innerText = item.settings; 
+                    sArea.style.display = 'block'; 
+                } else { 
+                    sArea.style.display = 'none'; 
+                }
+                
+                const domain = item.url.includes('http') ? new URL(item.url).hostname : 'google.com';
+                document.getElementById('pageIcon').src = item.icon || `https://www.google.com/s2/favicons?sz=128&domain=${domain}`;
+                overlay.style.display = 'block'; setTimeout(() => overlay.classList.add('active'), 10);
                 document.body.style.overflow = 'hidden';
             }
         }
 
         function closePage() {
             const overlay = document.getElementById('pageOverlay');
-            overlay.classList.remove('active'); 
-            setTimeout(() => { overlay.style.display = 'none'; }, 600);
+            overlay.classList.remove('active'); setTimeout(() => { overlay.style.display = 'none'; }, 500);
             document.body.style.overflow = 'auto';
         }
 
         function toggleAdmin(s) { 
-            // Security Lock: Prevent opening admin if offline
-            if (s && isOfflineMode) {
-                showToast("ACCESS DENIED: SYSTEM OFFLINE");
-                return;
-            }
-
+            if(s && isOfflineMode) return showToast("OFFLINE MODE"); 
             document.getElementById('adminPanel').style.display = s ? 'block' : 'none'; 
-            if(!s) document.getElementById('pass').value = '';
         }
 
         function checkAuth() { 
             if(document.getElementById('pass').value === "YM2012") { 
                 document.getElementById('loginBox').style.display = 'none'; 
                 document.getElementById('actions').style.display = 'flex'; 
-                showAdminTab('add');
-            } else { showToast("INCORRECT KEY"); }
+                showAdminTab('add'); 
+            } else { showToast("ACCESS DENIED"); } 
         }
 
-        function updateIconPreview() {
-            const customIcon = document.getElementById('newIcon').value;
-            const targetUrl = document.getElementById('newUrl').value;
-            const preview = document.getElementById('liveIconPreview');
-            if (customIcon) {
-                preview.src = customIcon;
-            } else if (targetUrl) {
-                try {
-                    const domain = new URL(targetUrl).hostname;
-                    preview.src = `https://www.google.com/s2/favicons?sz=128&domain=${domain}`;
-                } catch (e) { preview.src = 'https://www.google.com/s2/favicons?sz=128&domain=google.com'; }
+        function toggleAdminView() {
+            const type = document.getElementById('newType').value;
+            const updateToggle = document.getElementById('updateToggle');
+            const setLabel = document.getElementById('label-settings');
+            
+            if (type === 'modpack') {
+                updateToggle.style.display = 'block';
+                setLabel.innerText = "Changelog Entry";
+            } else {
+                updateToggle.style.display = 'none';
+                setLabel.innerText = "Metadata / Extra Info";
+                setMode('add');
             }
         }
 
-        function showAdminTab(tab) {
-            document.getElementById('tab-add').style.display = tab === 'add' ? 'block' : 'none';
-            document.getElementById('tab-manage').style.display = tab === 'manage' ? 'block' : 'none';
-            document.getElementById('nav-add').classList.toggle('active', tab === 'add');
-            document.getElementById('nav-manage').classList.toggle('active', tab === 'manage');
-            if(tab === 'manage') renderManage();
+        function setMode(mode) {
+            currentActionMode = mode;
+            document.getElementById('mode-new').classList.toggle('active', mode === 'add');
+            document.getElementById('mode-update').classList.toggle('active', mode === 'update');
+            document.getElementById('submitBtn').innerText = mode === 'update' ? "PUSH UPDATE" : "DEPLOY TO VAULT";
+            
+            const titleInput = document.getElementById('newTitle');
+            const titleSelect = document.getElementById('updateTargetSelect');
+            const labelTitle = document.getElementById('label-title');
+            
+            const urlInput = document.getElementById('newUrl');
+            const descInput = document.getElementById('newDesc');
+            const iconInput = document.getElementById('newIcon');
+            const settingsInput = document.getElementById('newSettings');
+
+            if (mode === 'update') {
+                titleInput.style.display = 'none';
+                titleSelect.style.display = 'block';
+                labelTitle.innerText = "Target Modpack";
+                
+                // Allow URL update during push update because URLs change with versions
+                urlInput.placeholder = "Enter NEW Modpack URL...";
+                descInput.disabled = true;
+                iconInput.disabled = true;
+                settingsInput.placeholder = "Enter what's new in this version (will be appended)...";
+                
+                populateUpdateMenu();
+            } else {
+                titleInput.style.display = 'block';
+                titleSelect.style.display = 'none';
+                labelTitle.innerText = "Title";
+                
+                urlInput.disabled = false;
+                descInput.disabled = false;
+                iconInput.disabled = false;
+                urlInput.placeholder = "https://...";
+                settingsInput.placeholder = "JSON or plain text info...";
+            }
         }
 
-        function renderManage() { 
+        function updateIconPreview() {
+            const icon = document.getElementById('newIcon').value;
+            const url = document.getElementById('newUrl').value;
+            const preview = document.getElementById('liveIconPreview');
+            if(icon) preview.src = icon;
+            else if(url) { try { preview.src = `https://www.google.com/s2/favicons?sz=128&domain=${new URL(url).hostname}`; } catch(e){} }
+        }
+
+        function showAdminTab(t) {
+            document.getElementById('tab-add').style.display = t === 'add' ? 'block' : 'none';
+            document.getElementById('tab-manage').style.display = t === 'manage' ? 'block' : 'none';
+            document.getElementById('nav-add').classList.toggle('active', t === 'add');
+            document.getElementById('nav-manage').classList.toggle('active', t === 'manage');
+            if(t === 'manage') renderManage();
+        }
+
+        function renderManage() {
             const q = document.getElementById('adminManageSearch').value.toLowerCase();
             const filtered = allLinks.filter(l => l.title.toLowerCase().includes(q));
             document.getElementById('manageList').innerHTML = filtered.map(l => `
                 <div class="manage-item">
-                    <div>
-                        <div class="manage-item-title">${l.title}</div>
-                        <div class="manage-item-meta">${l.type} • ${l.url}</div>
-                    </div>
+                    <div><div style="font-weight:700; font-size:0.7rem;">${l.title}</div><div style="font-size:0.5rem; opacity:0.5;">${l.type}</div></div>
                     <button class="del-btn" onclick="sendToSheet('delete', '${l.title}', '${l.url}')">REMOVE</button>
-                </div>`).join(''); 
+                </div>
+            `).join('');
         }
 
-        function showToast(msg) {
-            const t = document.getElementById('toast');
-            t.innerText = msg; t.classList.add('show');
-            setTimeout(() => t.classList.remove('show'), 3000);
+        function showToast(m) { const t = document.getElementById('toast'); t.innerText = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
+
+        function handleFormSubmit() {
+            const title = document.getElementById('newTitle').value;
+            if(!title) return showToast("TITLE REQUIRED");
+            
+            if(currentActionMode === 'add' && !document.getElementById('newUrl').value) return showToast("URL REQUIRED");
+            
+            sendToSheet(currentActionMode);
         }
 
-        async function sendToSheet(action, title, url) { 
-            if (isOfflineMode) {
-                showToast("ERROR: OFFLINE MODE ACTIVE");
-                return;
-            }
-
-            showToast("COMMUNICATING...");
-            const payload = action === 'add' ? { 
-                title: document.getElementById('newTitle').value, 
-                url: document.getElementById('newUrl').value, 
+        async function sendToSheet(action, titleOverride, urlOverride) {
+            showToast("PROCESSING...");
+            
+            // For update action, use the title to find the row in the sheet
+            const payload = {
+                action: action,
+                title: titleOverride || document.getElementById('newTitle').value, 
+                url: urlOverride || document.getElementById('newUrl').value,
                 icon: document.getElementById('newIcon').value, 
-                desc: document.getElementById('newDesc').value, 
+                desc: document.getElementById('newDesc').value,
                 type: document.getElementById('newType').value, 
-                settings: document.getElementById('newSettings').value, 
-                timestamp: new Date().toISOString(), 
-                action: 'add' 
-            } : { title, url, action: 'delete' }; 
+                settings: document.getElementById('newSettings').value,
+                timestamp: new Date().toISOString()
+            };
 
             try {
-                await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) }); 
-                showToast("SUCCESS");
+                await fetch(API_URL, { 
+                    method: 'POST', 
+                    mode: 'no-cors', 
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload) 
+                });
+                showToast("COMPLETE"); 
+                localStorage.removeItem(CACHE_KEY);
                 setTimeout(() => location.reload(), 1500);
-            } catch (e) { showToast("ERROR"); }
+            } catch(e) { 
+                showToast("NETWORK ERROR"); 
+            }
         }
 
         initSnow(); animate(); loadVault();
