@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FROST | VAULT v1.2.6</title>
+    <title>FROST | VAULT v1.2.7</title>
     
     <link rel="icon" href="https://static.vecteezy.com/system/resources/previews/000/550/805/non_2x/snowflake-vector-icon.jpg">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400;700&display=swap" rel="stylesheet">
@@ -542,6 +542,7 @@
                 allLinks = JSON.parse(cached); 
                 document.getElementById('status').style.display = 'none'; 
                 filterVault(true);
+                handleDeepLink();
             }
             try {
                 const res = await fetch(API_URL);
@@ -550,6 +551,7 @@
                 isOfflineMode = false; document.getElementById('status').style.display = 'none'; 
                 filterVault(true); 
                 populateUpdateMenu();
+                handleDeepLink();
             } catch (e) { 
                 isOfflineMode = true;
                 if(allLinks.length > 0) {
@@ -557,6 +559,17 @@
                     st.innerText = "OFFLINE CACHE ACTIVE";
                 }
                 setTimeout(loadVault, 10000);
+            }
+        }
+
+        // restores deep link capability via hash
+        function handleDeepLink() {
+            const hash = decodeURIComponent(window.location.hash.substring(1));
+            if (hash && allLinks.length > 0) {
+                const item = allLinks.find(l => l.title === hash);
+                if (item) {
+                    handleCardClick(encodeURIComponent(item.url), false);
+                }
             }
         }
 
@@ -644,7 +657,7 @@
             filterVault(false);
         }
 
-        function handleCardClick(urlParam) {
+        function handleCardClick(urlParam, updateHash = true) {
             const url = decodeURIComponent(urlParam);
             const item = allLinks.find(l => l.url === url);
             if(!item) return;
@@ -652,6 +665,9 @@
             if(item.type === 'link') { 
                 window.open(item.url, '_blank'); 
             } else {
+                // Update hash for deep linking
+                if (updateHash) window.location.hash = encodeURIComponent(item.title);
+
                 const overlay = document.getElementById('pageOverlay');
                 document.getElementById('pageTitle').innerText = item.title;
                 document.getElementById('pageDesc').innerText = item.desc;
@@ -682,6 +698,8 @@
             overlay.classList.remove('active'); 
             setTimeout(() => { overlay.style.display = 'none'; }, 500);
             document.body.style.overflow = 'auto';
+            // Clear hash
+            window.location.hash = '';
         }
 
         function toggleAdmin(s) { 
