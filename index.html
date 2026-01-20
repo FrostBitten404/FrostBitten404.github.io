@@ -878,11 +878,21 @@
         function showToast(m) { const t = document.getElementById('toast'); t.innerText = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
 
         function handleFormSubmit() {
-            const title = document.getElementById('newTitle').value;
-            if(!title) return showToast("TITLE REQUIRED");
-            clearAdminDraft();
-            sendToSheet(currentActionMode);
-        }
+    const title = document.getElementById('newTitle').value;
+    if(!title) return showToast("TITLE REQUIRED");
+
+    const type = document.getElementById('newType').value;
+
+    clearAdminDraft();
+
+    // IMPORTANT: send correct action for collection push updates
+    if (type === 'modpack' && currentActionMode === 'update') {
+        sendToSheet('pushUpdate');
+    } else {
+        sendToSheet(currentActionMode);
+    }
+}
+
 
         async function sendToSheet(action, titleOverride, urlOverride) {
             showToast("PROCESSING...");
